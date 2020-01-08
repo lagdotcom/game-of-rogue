@@ -1,6 +1,6 @@
 import Game from './Game';
 import { rooms } from './rooms';
-import { oneof, int, rnd, any } from './tools';
+import { oneof, int, rnd, any, directions } from './tools';
 import { Grid } from './Grid';
 import {
     ROOMGEN_ATTEMPTS,
@@ -16,16 +16,7 @@ import Item from './Item';
 const debugCleanup = true;
 const debugFits = false;
 
-const surrounds = [
-    { x: 0, y: -1 },
-    { x: 1, y: -1 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-    { x: -1, y: 1 },
-    { x: -1, y: 0 },
-    { x: -1, y: -1 },
-];
+const surrounds = Object.values(directions);
 
 export default class Architect {
     g: Game;
@@ -339,12 +330,12 @@ export default class Architect {
     randomEnemy() {
         this.g.t.todo('Architect.randomEnemy');
 
-        return new Enemy();
+        return new Enemy(this.g);
     }
 
     randomItem() {
         this.g.t.todo('Architect.randomItem');
 
-        return new Item();
+        return new Item(this.g);
     }
 }

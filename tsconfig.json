@@ -4,8 +4,8 @@
         "experimentalDecorators": true,
         "sourceMap": true,
         "module": "CommonJS",
-        "target": "es2016",
-        "lib": ["dom", "es2016"],
+        "target": "es2017",
+        "lib": ["dom", "es2017"],
         "esModuleInterop": true,
         "outDir": "dist",
         "rootDir": "src"

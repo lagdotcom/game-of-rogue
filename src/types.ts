@@ -1,5 +1,6 @@
 import Player from './Player';
 import { Floor } from './Floor';
+import Point from './Point';
 
 export interface GameEventMap {
     'architect.begin': GameEvent;
@@ -29,4 +30,26 @@ export enum Tile {
     Enemy = 'E',
     Treasure = '$',
     Player = '@',
+}
+
+export interface Token {
+    bg: string;
+    char: string;
+    fg: string;
+}
+
+export interface Actor extends Token {
+    energy: number;
+    pos: Point;
+}
+
+export enum Dir {
+    North,
+    NorthEast,
+    East,
+    SouthEast,
+    South,
+    SouthWest,
+    West,
+    NorthWest,
 }
