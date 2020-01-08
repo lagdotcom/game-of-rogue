@@ -1,5 +1,4 @@
 import Point from './Point';
-import { oneof, includes } from './tools';
 
 export class Grid {
     contents: string[][];
@@ -51,7 +50,7 @@ export class Grid {
         let points: Point[] = [];
         for (let y = 0; y < this.height; y++)
             for (let x = 0; x < this.width; x++)
-                if (includes(values, this.get(x, y)))
+                if (values.includes(this.get(x, y)))
                     points.push(new Point(x, y));
         return points;
     }

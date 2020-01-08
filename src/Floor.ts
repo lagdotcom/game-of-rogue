@@ -1,4 +1,4 @@
-import { Grid } from './grid';
+import { Grid } from './Grid';
 import Enemy from './Enemy';
 import Item from './Item';
 import { Tile } from './types';

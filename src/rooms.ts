@@ -8,7 +8,7 @@ import smallTreasure from '../res/room/small-treasure.txt';
 import tJunction from '../res/room/t-junction.txt';
 import tinyPillarHall from '../res/room/tiny-pillar-hall.txt';
 import yard from '../res/room/yard.txt';
-import { Grid } from './grid';
+import { Grid } from './Grid';
 
 function room(name: string, s: string) {
     let lines = s.replace('\r', '').split('\n');

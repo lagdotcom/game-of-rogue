@@ -1,7 +1,7 @@
 import Game from './Game';
 import { rooms } from './rooms';
 import { oneof, int, rnd, any } from './tools';
-import { Grid } from './grid';
+import { Grid } from './Grid';
 import {
     ROOMGEN_ATTEMPTS,
     ROOMGEN_MINROOMS,
