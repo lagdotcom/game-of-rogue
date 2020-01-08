@@ -4,18 +4,18 @@ import Architect from './Architect';
 import Trace from './Trace';
 import { Floor } from './Floor';
 import Point from './Point';
-import seedrandom, { prng } from 'seedrandom';
+import RNG, { tychei } from './RNG';
 
 export default class Game {
     architect: Architect;
     display: Display;
     hooks: Hooks;
-    rng: prng;
+    rng: RNG;
     t: Trace;
 
     constructor(parent: HTMLElement) {
         this.t = new Trace();
-        this.t.enter('Game');
+        this.t.enter('Game.new');
         this.seed();
 
         this.display = new Display(parent, 80, 40);
@@ -24,14 +24,12 @@ export default class Game {
         this.architect = new Architect(this);
         this.hooks = new Hooks(this);
 
-        this.t.leave('Game');
+        this.t.leave('Game.new');
     }
 
     seed(s?: string) {
-        if (!s) s = seedrandom()().toString();
-
-        this.rng = seedrandom(s);
-        this.t.message('rng seed', s);
+        this.rng = new tychei(s);
+        this.t.message('rng seed', this.rng.getSeed());
     }
 
     showAll(f: Floor) {

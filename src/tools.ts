@@ -1,15 +1,15 @@
-import { prng } from 'seedrandom';
+import RNG from './RNG';
 
 export function int(n: number) {
     return Math.floor(n);
 }
 
-export function rnd(gen: prng, max: number) {
-    return Math.floor(gen() * max);
+export function rnd(rng: RNG, max: number) {
+    return Math.floor(rng.next() * max);
 }
 
-export function oneof<T>(gen: prng, list: T[]) {
-    return list.length ? list[rnd(gen, list.length)] : null;
+export function oneof<T>(rng: RNG, list: T[]) {
+    return list.length ? list[rnd(rng, list.length)] : null;
 }
 
 export function includes<T>(list: T[], value: T) {
