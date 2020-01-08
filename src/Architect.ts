@@ -13,6 +13,20 @@ import Enemy from './Enemy';
 import Point from './Point';
 import Item from './Item';
 
+const debugCleanup = true;
+const debugFits = false;
+
+const surrounds = [
+    { x: 0, y: -1 },
+    { x: 1, y: -1 },
+    { x: 1, y: 0 },
+    { x: 1, y: 1 },
+    { x: 0, y: 1 },
+    { x: -1, y: 1 },
+    { x: -1, y: 0 },
+    { x: -1, y: -1 },
+];
+
 export default class Architect {
     g: Game;
 
@@ -98,6 +112,7 @@ export default class Architect {
         if (p.x + r.width >= m.width) return false;
         if (p.y + r.height >= m.height) return false;
 
+        if (debugFits) this.g.t.enter('fits', r.name, p);
         let newdoor = false;
         for (let cx = p.x; cx < p.x + r.width; cx++) {
             for (let cy = p.y; cy < p.y + r.height; cy++) {
@@ -111,19 +126,36 @@ export default class Architect {
                     dt != Tile.NotDoor &&
                     dt != Tile.Empty &&
                     dt != st
-                )
+                ) {
+                    if (debugFits) {
+                        this.g.t.message('conflict', cx, cy, dt, st);
+                        this.g.t.leave('fits');
+                    }
                     return false;
-                if (dt == Tile.NotDoor && st == Tile.Door) return false;
+                }
+
+                if (dt == Tile.NotDoor && st == Tile.Door) {
+                    if (debugFits) {
+                        this.g.t.message('notdoor', cx, cy, dt, st);
+                        this.g.t.leave('fits');
+                    }
+                    return false;
+                }
+
                 if ((dt == Tile.Wall || dt == Tile.Door) && st == Tile.Door)
                     newdoor = true;
             }
         }
 
+        if (debugFits) {
+            this.g.t.message('door found?', newdoor);
+            this.g.t.leave('fits');
+        }
         return newdoor;
     }
 
     cleanup(m: Grid) {
-        this.g.t.enter('Architect.cleanup');
+        if (debugCleanup) this.g.t.enter('Architect.cleanup');
         let cleanup = true;
         while (cleanup) {
             cleanup = false;
@@ -157,25 +189,25 @@ export default class Architect {
 
                     // door to wall? carve it out
                     if (tl == Tile.Space && tr == Tile.Wall) {
-                        this.g.t.message('carve right', x, y);
+                        if (debugCleanup) this.g.t.message('carve right', x, y);
                         cleanup = true;
                         m.set(x + 1, y, Tile.Space);
                         continue;
                     }
                     if (tr == Tile.Space && tl == Tile.Wall) {
-                        this.g.t.message('carve left', x, y);
+                        if (debugCleanup) this.g.t.message('carve left', x, y);
                         cleanup = true;
                         m.set(x - 1, y, Tile.Space);
                         continue;
                     }
                     if (tu == Tile.Space && td == Tile.Wall) {
-                        this.g.t.message('carve down', x, y);
+                        if (debugCleanup) this.g.t.message('carve down', x, y);
                         cleanup = true;
                         m.set(x, y + 1, Tile.Space);
                         continue;
                     }
                     if (td == Tile.Space && tu == Tile.Wall) {
-                        this.g.t.message('carve up', x, y);
+                        if (debugCleanup) this.g.t.message('carve up', x, y);
                         cleanup = true;
                         m.set(x, y - 1, Tile.Space);
                         continue;
@@ -200,7 +232,8 @@ export default class Architect {
                     if (tu == Tile.Space) spaces++;
                     if (td == Tile.Space) spaces++;
                     if (spaces > 2) {
-                        this.g.t.message('too many spaces', x, y);
+                        if (debugCleanup)
+                            this.g.t.message('too many spaces', x, y);
                         cleanup = true;
                         m.set(x, y, Tile.Space);
                         continue;
@@ -213,7 +246,8 @@ export default class Architect {
                         (tu == Tile.Space && td == Tile.Door) ||
                         (td == Tile.Space && tu == Tile.Door)
                     ) {
-                        this.g.t.message('too many doors', x, y);
+                        if (debugCleanup)
+                            this.g.t.message('too many doors', x, y);
                         cleanup = true;
                         m.set(x, y, Tile.Space);
                         continue;
@@ -226,7 +260,8 @@ export default class Architect {
                         (tu == Tile.Empty && td == Tile.Space) ||
                         (td == Tile.Empty && tu == Tile.Space)
                     ) {
-                        this.g.t.message('door to nowhere', x, y);
+                        if (debugCleanup)
+                            this.g.t.message('door to nowhere', x, y);
                         cleanup = true;
                         m.set(x, y, Tile.Wall);
                         continue;
@@ -234,8 +269,19 @@ export default class Architect {
                 }
             }
         }
+
+        m.find(Tile.Space, Tile.Door).forEach(p => {
+            if (
+                any(surrounds, s => m.get(p.x + s.x, p.y + s.y) === Tile.Empty)
+            ) {
+                if (debugCleanup)
+                    this.g.t.message('leak plugged', m.get(p.x, p.y), p);
+                m.set(p.x, p.y, Tile.Wall);
+            }
+        });
+
         //m.replace(Tile.Empty, Tile.Wall);
-        this.g.t.leave('Architect.cleanup');
+        if (debugCleanup) this.g.t.leave('Architect.cleanup');
     }
 
     addEnemies(f: Floor) {

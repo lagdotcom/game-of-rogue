@@ -1,9 +1,11 @@
+import ambushYard from '../res/room/ambush-yard.txt';
 import bend from '../res/room/bend.txt';
 import grandHall from '../res/room/grand-hall.txt';
 import guardedVault from '../res/room/guarded-vault.txt';
 import junction from '../res/room/junction.txt';
 import longCorridor from '../res/room/long-corridor.txt';
 import smallTreasure from '../res/room/small-treasure.txt';
+import tJunction from '../res/room/t-junction.txt';
 import tinyPillarHall from '../res/room/tiny-pillar-hall.txt';
 import yard from '../res/room/yard.txt';
 import { Grid } from './grid';
@@ -20,12 +22,14 @@ function room(name: string, s: string) {
 }
 
 export const rooms = [
+    ['ambush-yard', ambushYard],
     ['bend', bend],
     ['grand-hall', grandHall],
     ['guarded-vault', guardedVault],
     ['junction', junction],
     ['long-corridor', longCorridor],
     ['small-treasure', smallTreasure],
+    ['t-junction', tJunction],
     ['tiny-pillar-hall', tinyPillarHall],
     ['yard', yard],
 ].map(a => room(a[0], a[1]));
