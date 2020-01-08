@@ -28,4 +28,5 @@ export enum Tile {
     NotDoor = 'd',
     Enemy = 'E',
     Treasure = '$',
+    Player = '@',
 }

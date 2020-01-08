@@ -5,6 +5,21 @@ import Trace from './Trace';
 import { Floor } from './Floor';
 import Point from './Point';
 import RNG, { tychei } from './RNG';
+import { Tile } from './types';
+
+interface TileColour {
+    fg: string;
+    bg: string;
+}
+
+const colours: { [index: string]: TileColour } = {
+    [Tile.Player]: { fg: 'white', bg: '#202020' },
+    [Tile.Door]: { fg: 'brown', bg: 'black' },
+    [Tile.Space]: { fg: '#404040', bg: 'black' },
+    [Tile.Wall]: { fg: '#808080', bg: 'black' },
+    [Tile.Enemy]: { fg: 'red', bg: '#200000' },
+    [Tile.Treasure]: { fg: 'yellow', bg: '#202000' },
+};
 
 export default class Game {
     architect: Architect;
@@ -40,17 +55,19 @@ export default class Game {
                 let p = new Point(x, y);
                 let enemy = f.enemyAt(p);
                 let item = f.itemAt(p);
+                let t: string;
                 if (f.player.equals(p)) {
-                    this.display.at(x, y).set('white', '#222222', '@');
+                    t = '@';
                 } else if (enemy) {
-                    this.display.at(x, y).set('red', '#220000', 'E');
+                    t = Tile.Enemy;
                 } else if (item) {
-                    this.display.at(x, y).set('yellow', '#222200', '$');
+                    t = Tile.Treasure;
                 } else {
-                    this.display
-                        .at(x, y)
-                        .set('white', 'black', f.map.get(x, y));
+                    t = f.map.get(x, y);
                 }
+
+                if (colours[t])
+                    this.display.at(x, y).set(colours[t].fg, colours[t].bg, t);
             }
     }
 }
