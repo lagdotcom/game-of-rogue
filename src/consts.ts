@@ -36,23 +36,23 @@ export const LIGHTS_STEP = 1;
 export const LIGHTS_FRAGMENTS = 3;
 
 export const dirOffsets: { [dir: number]: { x: number; y: number } } = {
-    [Dir.North]: { x: 0, y: -1 },
-    [Dir.NorthEast]: { x: 1, y: -1 },
-    [Dir.East]: { x: 1, y: 0 },
-    [Dir.SouthEast]: { x: 1, y: 1 },
-    [Dir.South]: { x: 0, y: 1 },
-    [Dir.SouthWest]: { x: -1, y: 1 },
-    [Dir.West]: { x: -1, y: 0 },
-    [Dir.NorthWest]: { x: -1, y: -1 },
+    [Dir.N]: { x: 0, y: -1 },
+    [Dir.NE]: { x: 1, y: -1 },
+    [Dir.E]: { x: 1, y: 0 },
+    [Dir.SE]: { x: 1, y: 1 },
+    [Dir.S]: { x: 0, y: 1 },
+    [Dir.SW]: { x: -1, y: 1 },
+    [Dir.W]: { x: -1, y: 0 },
+    [Dir.NW]: { x: -1, y: -1 },
 };
 
 export const dirAngles: { [dir: number]: number } = {
-    [Dir.North]: 270,
-    [Dir.NorthEast]: 315,
-    [Dir.East]: 0,
-    [Dir.SouthEast]: 45,
-    [Dir.South]: 90,
-    [Dir.SouthWest]: 135,
-    [Dir.West]: 180,
-    [Dir.NorthWest]: 225,
+    [Dir.N]: 270,
+    [Dir.NE]: 315,
+    [Dir.E]: 0,
+    [Dir.SE]: 45,
+    [Dir.S]: 90,
+    [Dir.SW]: 135,
+    [Dir.W]: 180,
+    [Dir.NW]: 225,
 };

@@ -43,23 +43,34 @@ export interface Token {
 }
 
 export interface Actor extends Token {
-    energy: number;
+    balance: number;
+    balanceMax: number;
+    cloneOf?: Actor;
     facing: Dir;
-    fov: number;
     g: Game;
+    hp: number;
+    hpMax: number;
+    ki: number;
+    kiMax: number;
+    name: string;
+    nextmove: number;
     pos: XY;
-    sight: number;
+    sightFov: number;
+    sightRange: number;
+    str: number;
+
+    spend(t: number): void;
 }
 
 export enum Dir {
-    North,
-    NorthEast,
-    East,
-    SouthEast,
-    South,
-    SouthWest,
-    West,
-    NorthWest,
+    N,
+    NE,
+    E,
+    SE,
+    S,
+    SW,
+    W,
+    NW,
 }
 
 export interface XY {
@@ -73,4 +84,23 @@ export interface Traceline {
     end: XY;
     visited: XY[];
     hit?: Actor;
+}
+
+export interface Skill {
+    name: string;
+    balance: number;
+    ki: number;
+    movetimer: number;
+    fn: (a: Actor) => boolean;
+}
+
+export interface Class {
+    name: string;
+    skills: Skill[];
+    hp: number;
+    hpg: number;
+    ki: number;
+    kig: number;
+    str: number;
+    strg: number;
 }

@@ -7,12 +7,12 @@ export function getSightCone(a: Actor) {
     let cx = mid(a.pos.x);
     let cy = mid(a.pos.y);
 
-    let sideangle = -a.fov / 2;
+    let sideangle = -a.sightFov / 2;
     let modangle = dirAngles[a.facing];
     let startang = modangle + sideangle;
     if (startang < 0) startang += 360;
     let ang = startang;
-    let anglesteps = a.fov / LIGHTS_STEP + 1;
+    let anglesteps = a.sightFov / LIGHTS_STEP + 1;
 
     a.g.t.enter('getSightCone', a);
     for (let s = 0; s < anglesteps; s++) {
@@ -20,15 +20,15 @@ export function getSightCone(a: Actor) {
         if (ang < 0) ang += 360;
         let rad = deg2rad(ang);
 
-        let ex = cx + a.sight * Math.cos(rad);
-        let ey = cy + a.sight * Math.sin(rad);
+        let ex = cx + a.sightRange * Math.cos(rad);
+        let ey = cy + a.sightRange * Math.sin(rad);
 
         let results = a.g.trace(
             cx,
             cy,
             ex,
             ey,
-            a.sight * LIGHTS_FRAGMENTS,
+            a.sightRange * LIGHTS_FRAGMENTS,
             p => {
                 // can always see own tile
                 if (p == a.pos) return true;

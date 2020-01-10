@@ -31,3 +31,7 @@ export function eq(a: XY, b: XY) {
 export function mid(n: number) {
     return Math.round(n) + 0.499;
 }
+
+export function capf(s: string) {
+    return s.substr(0, 1).toUpperCase() + s.substr(1);
+}

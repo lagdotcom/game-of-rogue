@@ -1,26 +1,18 @@
-import { Actor, Dir, XY } from './types';
+import { Dir } from './types';
 import Game from './Game';
+import { AbstractActor } from './AbstractActor';
 
-export default class Enemy implements Actor {
+export default class Enemy extends AbstractActor {
     isActor: true;
     isEnemy: true;
-    bg: string;
-    char: string;
-    energy: number;
-    facing: Dir;
-    fg: string;
-    fov: number;
-    g: Game;
-    pos: XY;
-    sight: number;
 
     constructor(g: Game) {
-        this.isActor = this.isEnemy = true;
+        super(g, 'Enemy');
+        this.isEnemy = true;
         this.bg = '#200000';
         this.char = 'E';
-        this.facing = Dir.North;
+        this.facing = Dir.N;
         this.fg = 'red';
-        this.fov = 160;
-        this.g = g;
+        this.sightFov = 160;
     }
 }

@@ -7,10 +7,11 @@ import RNG, { tychei } from './RNG';
 import { Tile, Actor, Token, Dir, Traceline, XY } from './types';
 import Player from './Player';
 import Input from './Input';
-import { eq, any, mid } from './tools';
+import { eq, any, oneof } from './tools';
 import { getSightCone } from './lights';
 import { dirOffsets } from './consts';
-import Item from './Item';
+import { Samurai } from './classes';
+import Log from './Log';
 
 interface TileColour {
     fg: string;
@@ -30,6 +31,7 @@ export default class Game {
     f: Floor;
     hooks: Hooks;
     input: Input;
+    log: Log;
     player: Player;
     rng: RNG;
     t: Trace;
@@ -46,7 +48,8 @@ export default class Game {
         this.architect = new Architect(this);
         this.hooks = new Hooks(this);
         this.input = new Input(this);
-        this.player = new Player(this);
+        this.log = new Log(this);
+        this.player = new Player(this, Samurai);
 
         this.t.leave('Game.new');
     }

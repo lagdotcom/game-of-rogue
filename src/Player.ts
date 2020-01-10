@@ -1,32 +1,24 @@
-import { Actor, Dir, XY, Tile } from './types';
+import { Dir, Class } from './types';
 import Game from './Game';
-import { getSightCone } from './lights';
+import { AbstractActor } from './AbstractActor';
 
-export default class Player implements Actor {
+export default class Player extends AbstractActor {
     isActor: true;
     isPlayer: true;
-    bg: string;
-    char: string;
-    energy: number;
-    facing: Dir;
-    fg: string;
-    fov: number;
-    g: Game;
-    pos: XY;
-    sight: number;
+    class: Class;
 
-    constructor(g: Game) {
-        this.isActor = this.isPlayer = true;
+    constructor(g: Game, spec: Class) {
+        super(g, 'Player');
+        this.isPlayer = true;
         this.bg = '#202020';
+        this.class = spec;
         this.char = '@';
-        this.facing = Dir.North;
+        this.facing = Dir.N;
         this.fg = 'white';
-        this.fov = 160;
-        this.g = g;
-        this.sight = 5;
-    }
-
-    litTiles() {
-        return getSightCone(this);
+        this.hp = this.hpMax = spec.hp;
+        this.ki = this.kiMax = spec.ki;
+        this.sightFov = 160;
+        this.sightRange = 5;
+        this.str = spec.str;
     }
 }
