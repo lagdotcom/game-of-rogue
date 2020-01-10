@@ -6,7 +6,7 @@ export function int(n: number) {
 }
 
 export function rnd(rng: RNG, max: number) {
-    return Math.floor(rng.next() * max);
+    return int(rng.next() * max);
 }
 
 export function oneof<T>(rng: RNG, list: T[]) {

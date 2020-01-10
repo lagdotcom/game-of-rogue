@@ -1,4 +1,5 @@
 import { XY } from './types';
+import { int } from './tools';
 
 interface GridRef extends XY {
     g: Grid;
@@ -46,20 +47,20 @@ export class Grid {
     }
 
     ref(x: number, y: number) {
-        let rx = Math.floor(x),
-            ry = Math.floor(y);
+        let rx = int(x),
+            ry = int(y);
         return this.contains(rx, ry) ? this.refs[ry][rx] : this.oob;
     }
 
     get(x: number, y: number) {
-        let rx = Math.floor(x),
-            ry = Math.floor(y);
+        let rx = int(x),
+            ry = int(y);
         return this.contains(rx, ry) ? this.contents[ry][rx] : this.default;
     }
 
     set(x: number, y: number, value: string) {
-        let rx = Math.floor(x),
-            ry = Math.floor(y);
+        let rx = int(x),
+            ry = int(y);
         this.contents[ry][rx] = value;
     }
 
@@ -77,7 +78,7 @@ export class Grid {
     }
 
     find(...values: string[]) {
-        let points: XY[] = [];
+        let points: GridRef[] = [];
         for (let y = 0; y < this.height; y++)
             for (let x = 0; x < this.width; x++)
                 if (values.includes(this.get(x, y)))

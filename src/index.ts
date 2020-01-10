@@ -1,20 +1,8 @@
 import Game from './Game';
 
 window.addEventListener('load', () => {
-    let game = new Game(document.body);
+    let game = new Game(document.getElementById('game-container'));
     (<any>window).G = game;
 
-    let genFloorBtn = document.createElement('button');
-    genFloorBtn.innerText = 'Generate Floor';
-    genFloorBtn.addEventListener('click', () => {
-        game.enter(
-            game.architect.generate(
-                1,
-                game.display.width,
-                game.display.height,
-                200,
-            ),
-        );
-    });
-    document.body.append(genFloorBtn);
+    game.debugNewFloor();
 });

@@ -168,4 +168,15 @@ export default class Game {
 
         return tl;
     }
+
+    debugNewFloor() {
+        this.enter(
+            this.architect.generate(
+                1,
+                this.display.width,
+                this.display.height,
+                200,
+            ),
+        );
+    }
 }

@@ -31,6 +31,10 @@ export default class Input {
                 return this.g.playerMove(Dir.West);
             case 'Home':
                 return this.g.playerMove(Dir.NorthWest);
+
+            // DEBUG
+            case 'r':
+                return this.g.debugNewFloor();
         }
     }
 }
