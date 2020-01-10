@@ -1,6 +1,6 @@
 import Player from './Player';
 import { Floor } from './Floor';
-import Point from './Point';
+import Game from './Game';
 
 export interface GameEventMap {
     'architect.begin': GameEvent;
@@ -40,7 +40,11 @@ export interface Token {
 
 export interface Actor extends Token {
     energy: number;
-    pos: Point;
+    facing: Dir;
+    fov: number;
+    g: Game;
+    pos: XY;
+    sight: number;
 }
 
 export enum Dir {
@@ -52,4 +56,17 @@ export enum Dir {
     SouthWest,
     West,
     NorthWest,
+}
+
+export interface XY {
+    x: number;
+    y: number;
+}
+
+export interface Traceline {
+    start: XY;
+    projected: XY;
+    end: XY;
+    visited: XY[];
+    hit?: Actor;
 }

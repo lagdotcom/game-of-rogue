@@ -1,6 +1,5 @@
 import RNG from './RNG';
-import { Dir } from './types';
-import Point from './Point';
+import { XY } from './types';
 
 export function int(n: number) {
     return Math.floor(n);
@@ -20,13 +19,15 @@ export function any<T>(list: T[], fn: (item: T) => boolean) {
     return false;
 }
 
-export const directions: { [dir: number]: { x: number; y: number } } = {
-    [Dir.North]: { x: 0, y: -1 },
-    [Dir.NorthEast]: { x: 1, y: -1 },
-    [Dir.East]: { x: 1, y: 0 },
-    [Dir.SouthEast]: { x: 1, y: 1 },
-    [Dir.South]: { x: 0, y: 1 },
-    [Dir.SouthWest]: { x: -1, y: 1 },
-    [Dir.West]: { x: -1, y: 0 },
-    [Dir.NorthWest]: { x: -1, y: -1 },
-};
+const pi2 = Math.PI * 2;
+export function deg2rad(a: number): number {
+    return (pi2 * a) / 360;
+}
+
+export function eq(a: XY, b: XY) {
+    return a.x === b.x && a.y === b.y;
+}
+
+export function mid(n: number) {
+    return Math.round(n) + 0.499;
+}

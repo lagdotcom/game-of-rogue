@@ -3,11 +3,12 @@ import Hooks from './Hooks';
 import Architect from './Architect';
 import Trace from './Trace';
 import { Floor } from './Floor';
-import Point from './Point';
 import RNG, { tychei } from './RNG';
-import { Tile, Actor, Token, Dir } from './types';
+import { Tile, Actor, Token, Dir, Traceline, XY } from './types';
 import Player from './Player';
 import Input from './Input';
+import { eq, any, mid } from './tools';
+import { getSightCone } from './lights';
 
 interface TileColour {
     fg: string;
@@ -24,6 +25,7 @@ export default class Game {
     actors: Actor[];
     architect: Architect;
     display: Display;
+    f: Floor;
     hooks: Hooks;
     input: Input;
     player: Player;
@@ -52,33 +54,92 @@ export default class Game {
         this.t.message('rng seed', this.rng.getSeed());
     }
 
-    showAll(f: Floor) {
+    enter(f: Floor) {
+        this.t.enter('enter', f);
+        this.f = f;
+        this.player.pos = f.player;
+
+        this.redraw();
+
+        this.t.leave('enter');
+    }
+
+    redraw() {
         this.display.fill(' ');
 
-        for (let y = 0; y < f.map.height; y++)
-            for (let x = 0; x < f.map.width; x++) {
-                let p = new Point(x, y);
-                let enemy = f.enemyAt(p);
-                let item = f.itemAt(p);
-                let tok: Token;
+        let tdraw = this.drawTile.bind(this);
+        getSightCone(this.player).forEach(tdraw);
+    }
 
-                if (f.player.equals(p)) {
-                    tok = this.player;
-                } else if (enemy) {
-                    tok = enemy;
-                } else if (item) {
-                    tok = item;
-                } else {
-                    let char = f.map.get(x, y);
-                    if (!colours[char]) continue;
-                    tok = { ...colours[char], char };
-                }
+    drawTile(p: XY) {
+        let enemy = this.f.enemyAt(p);
+        let item = this.f.itemAt(p);
+        let tok: Token;
 
-                this.display.at(x, y).set(tok.fg, tok.bg, tok.char);
-            }
+        if (eq(this.f.player, p)) {
+            tok = this.player;
+        } else if (enemy) {
+            tok = enemy;
+        } else if (item) {
+            tok = item;
+        } else {
+            let char = this.f.map.get(p.x, p.y);
+            if (!colours[char]) return;
+            tok = { ...colours[char], char };
+        }
+
+        this.display.at(p.x, p.y).set(tok.fg, tok.bg, tok.char);
     }
 
     playerMove(d: Dir) {
         this.t.todo('Game.playerMove', d);
+
+        if (this.player.facing != d) {
+            this.player.facing = d;
+            this.redraw();
+        }
+    }
+
+    trace(
+        sx: number,
+        sy: number,
+        ex: number,
+        ey: number,
+        steps: number,
+        cb: (p: XY) => boolean,
+    ): Traceline {
+        sx = mid(sx);
+        sy = mid(sy);
+        ex = mid(ex);
+        ey = mid(ey);
+
+        let tl: Traceline = {
+            start: this.f.map.ref(sx, sy),
+            projected: this.f.map.ref(ex, ey),
+            visited: [],
+            end: null,
+        };
+
+        let tx = sx;
+        let ty = sy;
+        let dx = (ex - sx) / steps;
+        let dy = (ey - sy) / steps;
+
+        for (let s = 0; s <= steps; s++) {
+            let p = this.f.map.ref(tx, ty);
+            if (!any(tl.visited, v => eq(v, p))) {
+                tl.visited.push(p);
+
+                if (!cb(p)) {
+                    tl.end = p;
+                    return tl;
+                }
+            }
+
+            tx += dx;
+            ty += dy;
+        }
+
+        return tl;
     }
 }

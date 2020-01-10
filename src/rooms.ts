@@ -12,8 +12,7 @@ import { Grid } from './Grid';
 
 function room(name: string, s: string) {
     let lines = s.replace('\r', '').split('\n');
-    let g = new Grid(lines[0].length, lines.length);
-    g.name = name;
+    let g = new Grid(name, lines[0].length, lines.length);
 
     for (let y = 0; y < g.height; y++)
         for (let x = 0; x < g.width; x++) g.set(x, y, lines[y][x]);

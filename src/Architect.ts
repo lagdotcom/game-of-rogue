@@ -1,22 +1,22 @@
 import Game from './Game';
 import { rooms } from './rooms';
-import { oneof, int, rnd, any, directions } from './tools';
+import { oneof, int, rnd, any, eq } from './tools';
 import { Grid } from './Grid';
 import {
     ROOMGEN_ATTEMPTS,
     ROOMGEN_MINROOMS,
     ROOMGEN_MINENEMIES,
+    dirOffsets,
 } from './consts';
-import { Tile } from './types';
+import { Tile, XY } from './types';
 import { Floor } from './Floor';
 import Enemy from './Enemy';
-import Point from './Point';
 import Item from './Item';
 
 const debugCleanup = true;
 const debugFits = false;
 
-const surrounds = Object.values(directions);
+const surrounds = Object.values(dirOffsets);
 
 export default class Architect {
     g: Game;
@@ -26,17 +26,24 @@ export default class Architect {
     }
 
     generate(
+        floor: number,
         width: number,
         height: number,
         maxparts: number,
         recurse: boolean = false,
     ): Floor {
         if (!recurse) {
-            this.g.t.enter('Architect.generate', width, height, maxparts);
+            this.g.t.enter(
+                'Architect.generate',
+                width,
+                height,
+                maxparts,
+                this.g.rng.getSeed(),
+            );
             this.g.hooks.fire('architect.begin', {});
         }
 
-        let f = new Floor(width, height);
+        let f = new Floor(`Floor${floor}`, width, height);
         let centre = this.randomRoom();
         let cx = int((width - centre.width) / 2);
         let cy = int((height - centre.height) / 2);
@@ -45,20 +52,16 @@ export default class Architect {
 
         let attempts = 0;
         let parts = 1;
-        let taken: Point[] = [];
+        let taken = new Set<XY>();
         while (parts < maxparts) {
             let room = this.randomRoom();
             let pos = this.pickPastePoint(f.map, room, '#', 'd');
 
-            if (
-                pos &&
-                this.fits(f.map, room, pos) &&
-                !any(taken, p => p.x == pos.x && p.y == pos.y)
-            ) {
+            if (pos && this.fits(f.map, room, pos) && !taken.has(pos)) {
                 this.g.t.message(`pasted ${room.name} @${pos.x},${pos.y}`);
                 f.map.paste(pos.x, pos.y, room, ' ');
                 parts++;
-                taken.push(pos);
+                taken.add(pos);
             } else {
                 attempts++;
                 if (attempts > ROOMGEN_ATTEMPTS) {
@@ -70,7 +73,7 @@ export default class Architect {
 
         if (parts < ROOMGEN_MINROOMS) {
             this.g.t.message("didn't generate enough rooms, retrying");
-            return this.generate(width, height, maxparts, true);
+            return this.generate(floor, width, height, maxparts, true);
         }
 
         this.cleanup(f.map);
@@ -88,16 +91,17 @@ export default class Architect {
         return room.rotate(rnd(this.g.rng, 4));
     }
 
-    pickPastePoint(g: Grid, r: Grid, ...t: string[]): Point {
+    pickPastePoint(g: Grid, r: Grid, ...t: string[]): XY {
         let w = oneof(this.g.rng, g.find(...t));
         if (!w) return null;
 
-        if (rnd(this.g.rng, 2)) w.x = w.x - r.width + 1;
-        if (rnd(this.g.rng, 2)) w.y = w.y - r.height + 1;
-        return w;
+        return {
+            x: rnd(this.g.rng, 2) ? w.x : w.x - r.width + 1,
+            y: rnd(this.g.rng, 2) ? w.y : w.y - r.height + 1,
+        };
     }
 
-    fits(m: Grid, r: Grid, p: Point) {
+    fits(m: Grid, r: Grid, p: XY) {
         if (p.x < 0) return false;
         if (p.y < 0) return false;
         if (p.x + r.width >= m.width) return false;

@@ -1,29 +1,29 @@
 import { Grid } from './Grid';
 import Enemy from './Enemy';
 import Item from './Item';
-import { Tile } from './types';
-import Point from './Point';
+import { Tile, XY } from './types';
+import { eq } from './tools';
 
 export class Floor {
     enemies: Enemy[];
     items: Item[];
     map: Grid;
-    player: Point;
+    player: XY;
 
-    constructor(width: number, height: number) {
-        this.map = new Grid(width, height, Tile.Empty);
+    constructor(name: string, width: number, height: number) {
+        this.map = new Grid(name, width, height, Tile.Empty);
         this.enemies = [];
         this.items = [];
         this.player = null;
     }
 
-    enemyAt(p: Point) {
-        let enemies = this.enemies.filter(e => p.equals(e.pos));
+    enemyAt(p: XY) {
+        let enemies = this.enemies.filter(e => eq(e.pos, p));
         return enemies.length ? enemies[0] : null;
     }
 
-    itemAt(p: Point) {
-        let items = this.items.filter(i => p.equals(i.pos));
+    itemAt(p: XY) {
+        let items = this.items.filter(i => eq(i.pos, p));
         return items.length ? items[0] : null;
     }
 }

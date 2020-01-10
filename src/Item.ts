@@ -1,5 +1,4 @@
-import Point from './Point';
-import { Token } from './types';
+import { Token, XY } from './types';
 import Game from './Game';
 
 export default class Item implements Token {
@@ -7,7 +6,7 @@ export default class Item implements Token {
     char: string;
     fg: string;
     g: Game;
-    pos: Point;
+    pos: XY;
 
     constructor(g: Game) {
         // TODO

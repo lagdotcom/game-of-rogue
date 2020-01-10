@@ -1,20 +1,23 @@
-import Point from './Point';
-import { Actor } from './types';
+import { Actor, Dir, XY } from './types';
 import Game from './Game';
 
 export default class Enemy implements Actor {
     bg: string;
     char: string;
     energy: number;
+    facing: Dir;
     fg: string;
+    fov: number;
     g: Game;
-    pos: Point;
+    pos: XY;
+    sight: number;
 
     constructor(g: Game) {
-        // TODO
         this.bg = '#200000';
         this.char = 'E';
-        this.g = g;
+        this.facing = Dir.North;
         this.fg = 'red';
+        this.fov = 160;
+        this.g = g;
     }
 }

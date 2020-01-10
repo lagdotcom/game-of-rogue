@@ -7,8 +7,9 @@ window.addEventListener('load', () => {
     let genFloorBtn = document.createElement('button');
     genFloorBtn.innerText = 'Generate Floor';
     genFloorBtn.addEventListener('click', () => {
-        game.showAll(
+        game.enter(
             game.architect.generate(
+                1,
                 game.display.width,
                 game.display.height,
                 200,
