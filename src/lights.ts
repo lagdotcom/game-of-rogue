@@ -30,6 +30,9 @@ export function getSightCone(a: Actor) {
             ey,
             a.sight * LIGHTS_FRAGMENTS,
             p => {
+                // can always see own tile
+                if (p == a.pos) return true;
+
                 let tile = a.g.f.map.get(p.x, p.y);
                 return tile === Tile.Space;
             },

@@ -33,6 +33,10 @@ export enum Tile {
 }
 
 export interface Token {
+    isActor?: true;
+    isEnemy?: true;
+    isItem?: true;
+    isPlayer?: true;
     bg: string;
     char: string;
     fg: string;

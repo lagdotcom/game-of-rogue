@@ -9,6 +9,8 @@ import Player from './Player';
 import Input from './Input';
 import { eq, any, mid } from './tools';
 import { getSightCone } from './lights';
+import { dirOffsets } from './consts';
+import Item from './Item';
 
 interface TileColour {
     fg: string;
@@ -58,6 +60,7 @@ export default class Game {
         this.t.enter('enter', f);
         this.f = f;
         this.player.pos = f.player;
+        this.actors = [this.player, ...this.f.enemies];
 
         this.redraw();
 
@@ -76,7 +79,7 @@ export default class Game {
         let item = this.f.itemAt(p);
         let tok: Token;
 
-        if (eq(this.f.player, p)) {
+        if (eq(this.player.pos, p)) {
             tok = this.player;
         } else if (enemy) {
             tok = enemy;
@@ -91,12 +94,40 @@ export default class Game {
         this.display.at(p.x, p.y).set(tok.fg, tok.bg, tok.char);
     }
 
+    contents(p: XY): Token[] {
+        return [
+            ...this.actors.filter(a => a.pos == p),
+            ...this.f.items.filter(i => i.pos == p),
+        ];
+    }
+
     playerMove(d: Dir) {
         this.t.todo('Game.playerMove', d);
 
         if (this.player.facing != d) {
             this.player.facing = d;
             this.redraw();
+            return;
+        }
+
+        const current = this.player.pos;
+        const mod = dirOffsets[d];
+        const dest = this.f.map.ref(current.x + mod.x, current.y + mod.y);
+        let possible = true;
+        this.contents(dest).forEach(x => {
+            if (x.isActor) possible = false;
+        });
+
+        if (possible) {
+            switch (this.f.map.get(dest.x, dest.y)) {
+                case Tile.Door:
+                case Tile.Space:
+                    this.player.pos = dest;
+                    this.redraw();
+
+                default:
+                // TODO: oof
+            }
         }
     }
 

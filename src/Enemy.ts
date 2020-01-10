@@ -2,6 +2,8 @@ import { Actor, Dir, XY } from './types';
 import Game from './Game';
 
 export default class Enemy implements Actor {
+    isActor: true;
+    isEnemy: true;
     bg: string;
     char: string;
     energy: number;
@@ -13,6 +15,7 @@ export default class Enemy implements Actor {
     sight: number;
 
     constructor(g: Game) {
+        this.isActor = this.isEnemy = true;
         this.bg = '#200000';
         this.char = 'E';
         this.facing = Dir.North;

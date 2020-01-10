@@ -3,6 +3,8 @@ import Game from './Game';
 import { getSightCone } from './lights';
 
 export default class Player implements Actor {
+    isActor: true;
+    isPlayer: true;
     bg: string;
     char: string;
     energy: number;
@@ -14,6 +16,7 @@ export default class Player implements Actor {
     sight: number;
 
     constructor(g: Game) {
+        this.isActor = this.isPlayer = true;
         this.bg = '#202020';
         this.char = '@';
         this.facing = Dir.North;
