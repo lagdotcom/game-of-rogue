@@ -1,11 +1,11 @@
 import { Actor, Tile, XY } from './types';
 import { LIGHTS_FRAGMENTS, dirAngles, LIGHTS_STEP } from './consts';
-import { deg2rad } from './tools';
+import { deg2rad, mid } from './tools';
 
 export function getSightCone(a: Actor) {
     let set = new Set<XY>();
-    let cx = a.pos.x;
-    let cy = a.pos.y;
+    let cx = mid(a.pos.x);
+    let cy = mid(a.pos.y);
 
     let sideangle = -a.fov / 2;
     let modangle = dirAngles[a.facing];

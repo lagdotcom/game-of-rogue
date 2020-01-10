@@ -139,11 +139,6 @@ export default class Game {
         steps: number,
         cb: (p: XY) => boolean,
     ): Traceline {
-        sx = mid(sx);
-        sy = mid(sy);
-        ex = mid(ex);
-        ey = mid(ey);
-
         let tl: Traceline = {
             start: this.f.map.ref(sx, sy),
             projected: this.f.map.ref(ex, ey),
