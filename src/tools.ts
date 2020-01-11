@@ -24,10 +24,6 @@ export function deg2rad(a: number): number {
     return (pi2 * a) / 360;
 }
 
-export function eq(a: XY, b: XY) {
-    return a.x === b.x && a.y === b.y;
-}
-
 export function mid(n: number) {
     return Math.round(n) + 0.499;
 }

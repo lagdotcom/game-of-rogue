@@ -1,5 +1,6 @@
 import { Actor, Dir, XY } from './types';
 import Game from './Game';
+import Item from './Item';
 
 export abstract class AbstractActor implements Actor {
     balance: number;
@@ -33,5 +34,9 @@ export abstract class AbstractActor implements Actor {
     spend(t: number) {
         this.nextmove -= t;
         this.g.actors.sort((a, b) => a.nextmove - b.nextmove);
+    }
+
+    equip(i: Item) {
+        this.g.t.todo('Actor.equip', i);
     }
 }

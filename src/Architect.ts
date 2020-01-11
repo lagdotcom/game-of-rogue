@@ -1,6 +1,6 @@
 import Game from './Game';
 import { rooms } from './rooms';
-import { oneof, int, rnd, any, eq } from './tools';
+import { oneof, int, rnd, any } from './tools';
 import { Grid } from './Grid';
 import {
     ROOMGEN_ATTEMPTS,
@@ -10,8 +10,9 @@ import {
 } from './consts';
 import { Tile, XY } from './types';
 import { Floor } from './Floor';
-import Enemy from './Enemy';
-import Item from './Item';
+import { randomItem } from './Item';
+import { EnemyNinja } from './en/EnemyNinja';
+import { EnemySamurai } from './en/EnemySamurai';
 
 const debugCleanup = true;
 const debugFits = false;
@@ -283,7 +284,7 @@ export default class Architect {
         this.g.t.enter('Architect.addEnemies');
 
         f.map.find(Tile.Enemy).forEach(p => {
-            let enemy = this.randomEnemy();
+            let enemy = randomEnemy(this.g);
             f.map.set(p.x, p.y, Tile.Space);
 
             enemy.pos = p;
@@ -291,7 +292,7 @@ export default class Architect {
         });
 
         while (f.enemies.length < ROOMGEN_MINENEMIES) {
-            let enemy = this.randomEnemy();
+            let enemy = randomEnemy(this.g);
             let p = oneof(this.g.rng, f.map.find(Tile.Space));
 
             if (!f.enemyAt(p)) {
@@ -307,7 +308,7 @@ export default class Architect {
         this.g.t.enter('Architect.addTreasure');
 
         f.map.find(Tile.Treasure).forEach(p => {
-            let item = this.randomItem();
+            let item = randomItem(this.g);
             f.map.set(p.x, p.y, Tile.Space);
 
             item.pos = p;
@@ -330,16 +331,11 @@ export default class Architect {
 
         this.g.t.leave('Architect.placePlayer');
     }
+}
 
-    randomEnemy() {
-        this.g.t.todo('Architect.randomEnemy');
+const enemies = [EnemyNinja, EnemySamurai];
 
-        return new Enemy(this.g);
-    }
-
-    randomItem() {
-        this.g.t.todo('Architect.randomItem');
-
-        return new Item(this.g);
-    }
+export function randomEnemy(g: Game) {
+    const eclass = oneof(g.rng, enemies);
+    return new eclass(g);
 }

@@ -7,7 +7,6 @@ import RNG, { tychei } from './RNG';
 import { Tile, Actor, Token, Dir, Traceline, XY } from './types';
 import Player from './Player';
 import Input from './Input';
-import { eq, any, oneof } from './tools';
 import { getSightCone } from './lights';
 import { dirOffsets } from './consts';
 import { Samurai } from './classes';
@@ -82,7 +81,7 @@ export default class Game {
         let item = this.f.itemAt(p);
         let tok: Token;
 
-        if (eq(this.player.pos, p)) {
+        if (this.player.pos == p) {
             tok = this.player;
         } else if (enemy) {
             tok = enemy;
@@ -145,7 +144,7 @@ export default class Game {
         let tl: Traceline = {
             start: this.f.map.ref(sx, sy),
             projected: this.f.map.ref(ex, ey),
-            visited: [],
+            visited: new Set<XY>(),
             end: null,
         };
 
@@ -156,8 +155,8 @@ export default class Game {
 
         for (let s = 0; s <= steps; s++) {
             let p = this.f.map.ref(tx, ty);
-            if (!any(tl.visited, v => eq(v, p))) {
-                tl.visited.push(p);
+            if (!tl.visited.has(p)) {
+                tl.visited.add(p);
 
                 if (!cb(p)) {
                     tl.end = p;

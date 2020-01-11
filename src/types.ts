@@ -1,11 +1,13 @@
 import Player from './Player';
 import { Floor } from './Floor';
 import Game from './Game';
+import Item from './Item';
 
 export interface GameEventMap {
     'architect.begin': GameEvent;
     'architect.end': FloorEvent;
     'floor.enter': FloorEvent;
+    'player.attack': AttackEvent;
     'player.move': PlayerEvent;
     'player.turn': PlayerEvent;
 }
@@ -18,6 +20,12 @@ export interface FloorEvent extends GameEvent {
 
 export interface PlayerEvent extends GameEvent {
     player: Player;
+}
+
+export interface AttackEvent extends GameEvent {
+    attacker: Actor;
+    victim: Actor;
+    weapon: Item;
 }
 
 export enum Tile {
@@ -43,6 +51,7 @@ export interface Token {
 }
 
 export interface Actor extends Token {
+    isActor: true;
     balance: number;
     balanceMax: number;
     cloneOf?: Actor;
@@ -82,7 +91,7 @@ export interface Traceline {
     start: XY;
     projected: XY;
     end: XY;
-    visited: XY[];
+    visited: Set<XY>;
     hit?: Actor;
 }
 
@@ -98,9 +107,70 @@ export interface Class {
     name: string;
     skills: Skill[];
     hp: number;
-    hpg: number;
+    hpGain: number;
     ki: number;
-    kig: number;
+    kiGain: number;
     str: number;
-    strg: number;
+    strGain: number;
+}
+
+export enum ItemType {
+    Armour,
+    Weapon,
+}
+
+export enum ItemSlot {
+    Body,
+    Head,
+    Primary,
+    Secondary,
+    BothHands,
+}
+
+export type Mod = number;
+export interface Mods {
+    armour?: Mod;
+    sightFov?: Mod;
+}
+
+export interface ItemTraits {
+    arrow?: boolean;
+    blade?: boolean;
+    bow?: boolean;
+    fist?: boolean;
+    handle?: boolean;
+    knife?: boolean;
+    legendary?: boolean;
+    missile?: boolean;
+    point?: boolean;
+    sword?: boolean;
+    wood?: boolean;
+}
+
+export interface ItemTemplate {
+    name: string;
+    article: string;
+    type: ItemType;
+    slot?: ItemSlot;
+    weight?: number;
+    mods: Mods;
+    rarity: number;
+    stacked: boolean;
+    findamt?: (g: Game) => number;
+    traits: ItemTraits;
+    listeners?: {
+        [type in keyof GameEventMap]?: (e: GameEventMap[type]) => void;
+    };
+}
+
+export interface WeaponTemplate extends ItemTemplate {
+    type: ItemType.Weapon;
+    hands: number;
+    offhand: boolean;
+    movetimer: number;
+    strength: number;
+    thrown: boolean;
+    ammo: boolean;
+    missile: boolean;
+    firedBy?: ItemTraits;
 }
