@@ -337,8 +337,9 @@ const enemies = [EnemyNinja, EnemySamurai];
 
 export function randomEnemy(g: Game) {
     const eclass = oneof(g.rng, enemies);
-    const e = new eclass(g);
+    g.t.enter('randomEnemy', eclass.name);
 
-    g.t.message('randomEnemy', e);
+    const e = new eclass(g);
+    g.t.leave('randomEnemy');
     return e;
 }

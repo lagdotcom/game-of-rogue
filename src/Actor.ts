@@ -94,14 +94,14 @@ export abstract class Actor {
     }
 
     get(i: Item) {
-        this.g.t.todo('Actor.get', i);
+        this.g.t.todo('Actor.get', this.name, i.template.name);
 
         this.inventory.push(i);
     }
 
     equip(i: Item) {
-        this.g.t.enter('Actor.equip', this, i);
         if (i.type == ItemType.Other) return false;
+        this.g.t.enter('Actor.equip', this.name, i.template.name);
 
         if (i.type == ItemType.Weapon) {
             const wi = <Weapon>i;
@@ -221,14 +221,14 @@ export abstract class Actor {
     }
 
     equipApply<T extends keyof Equipment>(i: Equipment[T], sl: T) {
-        this.g.t.todo('Actor.equipApply', i, sl);
+        this.g.t.todo('Actor.equipApply', this.name, i.template.name, sl);
         this.equipment[sl] = i;
         this.inventory = this.inventory.filter(x => x != i);
     }
 
     unequip(sl: ItemSlot) {
-        this.g.t.todo('Actor.unequip', sl);
         if (!this.equipment[sl]) return true;
+        this.g.t.todo('Actor.unequip', this.name, sl);
 
         let i = this.equipment[sl];
         this.inventory.push(i);
@@ -237,7 +237,7 @@ export abstract class Actor {
     }
 
     unequipApply(i: Item) {
-        this.g.t.todo('Actor.unequipApply', i);
+        this.g.t.todo('Actor.unequipApply', this.name, i.template.name);
         return true;
     }
 
@@ -246,7 +246,7 @@ export abstract class Actor {
     }
 
     ai() {
-        this.g.t.todo('Actor.ai', this);
+        this.g.t.todo('Actor.ai', this.name);
         return false;
     }
 }

@@ -131,7 +131,7 @@ function randomItemTemplate(g: Game) {
 }
 
 function randomEnchant(g: Game, i: Item) {
-    g.t.todo('randomEnchant', i);
+    g.t.todo('randomEnchant', i.template.name);
 }
 
 function instantiateItem(g: Game, template: ItemTemplate) {
@@ -146,7 +146,7 @@ function instantiateItem(g: Game, template: ItemTemplate) {
 }
 
 export function constructItem(g: Game, template: ItemTemplate) {
-    g.t.enter('constructItem', template);
+    g.t.enter('constructItem', template.name);
     const item = instantiateItem(g, template);
 
     if (!template.traits.legendary && rnd(g.rng, 100) < MAGIC_CHANCE) {
