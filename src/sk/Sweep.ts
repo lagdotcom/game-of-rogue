@@ -1,7 +1,9 @@
-import { Skill, Dir, Actor } from '../types';
+import { Dir } from '../types';
 import { dirOffsets } from '../consts';
 import Player from '../Player';
 import { attack } from '../combat';
+import { Skill } from '../Skill';
+import { Actor } from '../Actor';
 
 const clockwise = {
     [Dir.N]: [Dir.NE, Dir.E, Dir.SE, Dir.S],
@@ -20,8 +22,8 @@ function getSweepDir(from: Dir, to: Dir) {
 
 function sweepAttack(a: Actor, ox: number, oy: number) {
     const p = a.g.f.map.ref(ox + a.pos.x, oy + a.pos.y);
-    a.g.contents(p).forEach(v => {
-        if (v.isActor) attack(a, <Actor>v);
+    a.g.blockers(p).forEach(v => {
+        attack(a, v);
     });
 }
 

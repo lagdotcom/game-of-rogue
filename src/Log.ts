@@ -1,5 +1,5 @@
 import Game from './Game';
-import { Actor } from './types';
+import { Actor } from './Actor';
 import { capf } from './tools';
 
 const argLookup = {

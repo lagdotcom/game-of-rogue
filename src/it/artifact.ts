@@ -1,4 +1,5 @@
-import { WeaponTemplate, ItemType } from '../types';
+import { ItemType } from '../types';
+import { WeaponTemplate } from '../Item';
 
 export const kusanagi: WeaponTemplate = {
     name: 'Kusanagi-no-Tsurugi',

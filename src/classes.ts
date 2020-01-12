@@ -1,4 +1,4 @@
-import { Class } from './types';
+import { Class } from './Class';
 import { Kick } from './sk/Kick';
 import { Sweep } from './sk/Sweep';
 import { Clone } from './sk/Clone';

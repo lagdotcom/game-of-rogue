@@ -1,8 +1,8 @@
 import { Dir } from './types';
 import Game from './Game';
-import { AbstractActor } from './AbstractActor';
+import { Actor } from './Actor';
 
-export default class Enemy extends AbstractActor {
+export default class Enemy extends Actor {
     isActor: true;
     isEnemy: true;
 
@@ -13,6 +13,5 @@ export default class Enemy extends AbstractActor {
         this.char = 'E';
         this.facing = Dir.N;
         this.fg = 'red';
-        this.sightFov = 160;
     }
 }

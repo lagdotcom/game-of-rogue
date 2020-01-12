@@ -1,4 +1,5 @@
-import { ItemType, ItemSlot, ItemTemplate, Mods, ItemTraits } from '../types';
+import { ItemType, ItemSlot, Mods, ItemTraits } from '../types';
+import { ArmourTemplate } from '../Item';
 
 function a(i: {
     article?: string;
@@ -8,7 +9,7 @@ function a(i: {
     slot: ItemSlot;
     traits?: ItemTraits;
     weight?: number;
-}): ItemTemplate {
+}): ArmourTemplate {
     return {
         name: i.name,
         article: i.article || 'a',

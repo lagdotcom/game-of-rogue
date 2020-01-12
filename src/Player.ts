@@ -1,8 +1,9 @@
-import { Dir, Class } from './types';
+import { Dir } from './types';
+import { Class } from './Class';
 import Game from './Game';
-import { AbstractActor } from './AbstractActor';
+import { Actor } from './Actor';
 
-export default class Player extends AbstractActor {
+export default class Player extends Actor {
     isActor: true;
     isPlayer: true;
     class: Class;
@@ -17,8 +18,6 @@ export default class Player extends AbstractActor {
         this.fg = 'white';
         this.hp = this.hpMax = spec.hp;
         this.ki = this.kiMax = spec.ki;
-        this.sightFov = 160;
-        this.sightRange = 5;
         this.str = spec.str;
     }
 }

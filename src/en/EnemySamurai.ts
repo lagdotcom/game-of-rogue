@@ -4,12 +4,14 @@ import { rnd } from '../tools';
 import { constructItem } from '../Item';
 import { katana, yumi, ya, wakizashi } from '../it/weapon';
 import { domaru, sujibachi } from '../it/armor';
+import { namegen } from '../names';
 
 export class EnemySamurai extends Enemy {
     constructor(g: Game) {
         super(g);
 
         this.char = 'S';
+        this.name = namegen(g);
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, katana));

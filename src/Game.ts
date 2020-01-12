@@ -4,13 +4,15 @@ import Architect from './Architect';
 import Trace from './Trace';
 import { Floor } from './Floor';
 import RNG, { tychei } from './RNG';
-import { Tile, Actor, Token, Dir, Traceline, XY } from './types';
+import { Tile, Token, Dir, XY } from './types';
 import Player from './Player';
 import Input from './Input';
 import { getSightCone } from './lights';
 import { dirOffsets } from './consts';
 import { Samurai } from './classes';
 import Log from './Log';
+import { Actor } from './Actor';
+import { Traceline } from './Traceline';
 
 interface TileColour {
     fg: string;
@@ -86,7 +88,7 @@ export default class Game {
         } else if (enemy) {
             tok = enemy;
         } else if (item) {
-            tok = item;
+            tok = item.token;
         } else {
             let char = this.f.map.get(p.x, p.y);
             if (!colours[char]) return;
@@ -96,41 +98,13 @@ export default class Game {
         this.display.at(p.x, p.y).set(tok.fg, tok.bg, tok.char);
     }
 
-    contents(p: XY): Token[] {
-        return [
-            ...this.actors.filter(a => a.pos == p),
-            ...this.f.items.filter(i => i.pos == p),
-        ];
+    blockers(p: XY) {
+        return this.actors.filter(a => a.pos == p);
     }
 
     playerMove(d: Dir) {
-        this.t.todo('Game.playerMove', d);
-
-        if (this.player.facing != d) {
-            this.player.facing = d;
-            this.redraw();
-            return;
-        }
-
-        const current = this.player.pos;
-        const mod = dirOffsets[d];
-        const dest = this.f.map.ref(current.x + mod.x, current.y + mod.y);
-        let possible = true;
-        this.contents(dest).forEach(x => {
-            if (x.isActor) possible = false;
-        });
-
-        if (possible) {
-            switch (this.f.map.get(dest.x, dest.y)) {
-                case Tile.Door:
-                case Tile.Space:
-                    this.player.pos = dest;
-                    this.redraw();
-
-                default:
-                // TODO: oof
-            }
-        }
+        if (this.player.facing != d) return this.player.turn(d, true);
+        return this.player.move(dirOffsets[d], true);
     }
 
     trace(

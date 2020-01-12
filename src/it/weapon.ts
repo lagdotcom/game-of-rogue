@@ -1,6 +1,7 @@
-import { ItemType, Mods, ItemTraits, WeaponTemplate } from '../types';
+import { ItemType, Mods, ItemTraits } from '../types';
 import Game from '../Game';
 import { rnd } from '../tools';
+import { WeaponTemplate } from '../Item';
 
 function w(i: {
     article?: string;
@@ -30,7 +31,7 @@ function w(i: {
         rarity: i.rarity || 1,
         stacked: i.stacked || false,
         findamt: i.findamt,
-        hands: i.hands || 1,
+        hands: i.hands || (i.ammo ? 0 : 1),
         offhand: i.offhand || false,
         strength: i.strength,
         movetimer: i.movetimer || 1,

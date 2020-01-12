@@ -1,6 +1,7 @@
-import { Actor, Tile, XY } from './types';
+import { Tile, XY } from './types';
 import { LIGHTS_FRAGMENTS, dirAngles, LIGHTS_STEP } from './consts';
 import { deg2rad, mid } from './tools';
+import { Actor } from './Actor';
 
 export function getSightCone(a: Actor) {
     let set = new Set<XY>();

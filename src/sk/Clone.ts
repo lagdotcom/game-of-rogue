@@ -1,4 +1,4 @@
-import { Skill } from '../types';
+import { Skill } from '../Skill';
 
 export const Clone: Skill = {
     name: 'Clone',
