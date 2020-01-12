@@ -6,9 +6,11 @@ type InputHandler = (code: string, shift: boolean, ctrl: boolean) => boolean;
 export default class Input {
     g: Game;
     handler: InputHandler;
+    listening: boolean;
 
     constructor(g: Game) {
         this.g = g;
+        this.listening = false;
         document.addEventListener('keydown', this.keydown.bind(this));
     }
 
@@ -47,7 +49,8 @@ export default class Input {
     }
 
     keydown(e: KeyboardEvent) {
-        console.log('keydown', e.key);
+        if (!this.listening) return;
+        //this.g.t.message('keydown', e.key);
 
         if (this.handler) {
             if (this.handler(e.key, e.shiftKey, e.metaKey)) {
@@ -88,6 +91,9 @@ export default class Input {
             // DEBUG
             case 'r':
                 return this.g.debugNewFloor();
+
+            case 's':
+                return this.g.debugShowAll();
         }
     }
 }

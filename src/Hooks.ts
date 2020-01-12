@@ -2,6 +2,7 @@ import Game from './Game';
 import { Floor } from './Floor';
 import { Actor } from './Actor';
 import { Weapon } from './Item';
+import { Dir, XY } from './types';
 
 // TODO: type Handler<T extends keyof GameEventMap> = (e: GameEventMap[T]) => any;
 type Handler = (e: GameEvent) => any;
@@ -40,18 +41,28 @@ export interface GameEventMap {
     'architect.end': FloorEvent;
     'floor.enter': FloorEvent;
     'player.attack': AttackEvent;
-    'player.move': GameEvent;
-    'player.turn': GameEvent;
+    'player.move': MoveEvent;
+    'player.turn': TurnEvent;
 }
 
 export interface GameEvent {}
-
-export interface FloorEvent extends GameEvent {
-    floor: Floor;
-}
 
 export interface AttackEvent extends GameEvent {
     attacker: Actor;
     victim: Actor;
     weapon: Weapon;
+}
+
+export interface FloorEvent extends GameEvent {
+    floor: Floor;
+}
+
+export interface MoveEvent extends GameEvent {
+    actor: Actor;
+    from: XY;
+}
+
+export interface TurnEvent extends GameEvent {
+    actor: Actor;
+    from: Dir;
 }

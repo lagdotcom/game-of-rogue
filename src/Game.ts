@@ -13,6 +13,7 @@ import { Samurai } from './classes';
 import Log from './Log';
 import { Actor } from './Actor';
 import { Traceline } from './Traceline';
+import { attack } from './combat';
 
 interface TileColour {
     fg: string;
@@ -67,8 +68,25 @@ export default class Game {
         this.actors = [this.player, ...this.f.enemies];
 
         this.redraw();
+        this.input.listening = true;
 
         this.t.leave('enter');
+    }
+
+    advance() {
+        while (!this.input.listening) {
+            this.actors.sort((a, b) => a.nextmove - b.nextmove);
+
+            let a = this.actors[0];
+            if (a.isPlayer) {
+                this.input.listening = true;
+                return;
+            }
+
+            let oldmove = a.nextmove;
+            a.ai();
+            if (a.nextmove === oldmove) a.nextmove = this.player.nextmove + 1;
+        }
     }
 
     redraw() {
@@ -102,9 +120,25 @@ export default class Game {
         return this.actors.filter(a => a.pos == p);
     }
 
-    playerMove(d: Dir) {
+    playerAct(d: Dir) {
         if (this.player.facing != d) return this.player.turn(d, true);
-        return this.player.move(dirOffsets[d], true);
+
+        const o = dirOffsets[d];
+        const dest = this.f.map.ref(
+            this.player.pos.x + o.x,
+            this.player.pos.y + o.y,
+        );
+        const b = this.blockers(dest);
+        if (!b.length) return this.player.move(dest, true);
+
+        return attack(this.player, b[0]);
+    }
+
+    playerMove(d: Dir) {
+        const result = this.playerAct(d);
+        this.input.listening = false;
+        this.advance();
+        return result;
     }
 
     trace(
@@ -154,5 +188,11 @@ export default class Game {
                 200,
             ),
         );
+    }
+
+    debugShowAll() {
+        for (let y = 0; y < this.display.height; y++)
+            for (let x = 0; x < this.display.width; x++)
+                this.drawTile(this.f.map.ref(x, y));
     }
 }

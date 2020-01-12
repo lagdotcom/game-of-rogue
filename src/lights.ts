@@ -15,7 +15,7 @@ export function getSightCone(a: Actor) {
     let ang = startang;
     let anglesteps = a.sightFov / LIGHTS_STEP + 1;
 
-    a.g.t.enter('getSightCone', a);
+    //a.g.t.enter('getSightCone', a);
     for (let s = 0; s < anglesteps; s++) {
         ang = modangle + sideangle;
         if (ang < 0) ang += 360;
@@ -42,8 +42,8 @@ export function getSightCone(a: Actor) {
 
         results.visited.forEach(p => set.add(p));
     }
-    a.g.t.message('set', set);
-    a.g.t.leave('getSightCone');
+    //a.g.t.message('set', set);
+    //a.g.t.leave('getSightCone');
 
     return set;
 }

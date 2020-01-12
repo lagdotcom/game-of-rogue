@@ -41,7 +41,8 @@ export const Sweep: Skill = {
             }
 
             a.ki -= Sweep.ki;
-            let facing = a.facing;
+            const from = a.facing;
+            let facing = from;
             let sweep = getSweepDir(a.facing, dir);
             let weaponname = 'weapon';
             a.g.log.info('%an sweep%as %ar %b#!', a, weaponname);
@@ -59,7 +60,7 @@ export const Sweep: Skill = {
 
             a.facing = facing;
             if (a.isPlayer) {
-                a.g.hooks.fire('player.turn', { player: <Player>a });
+                a.g.hooks.fire('player.turn', { actor: a, from });
                 a.g.redraw();
             }
 

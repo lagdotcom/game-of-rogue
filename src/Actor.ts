@@ -44,22 +44,22 @@ export abstract class Actor {
         this.inventory = [];
         this.kiRegen = 0.1;
         this.name = name;
+        this.nextmove = 0;
         this.moveCost = 1;
         this.sightFov = 160;
         this.sightRange = 5;
         this.turnCost = 0.5;
     }
 
-    move(m: XY, spend: boolean) {
-        let d = this.g.f.map.ref(this.pos.x + m.x, this.pos.y + m.y);
+    move(dest: XY, spend: boolean) {
+        if (this.g.f.map.get(dest.x, dest.y) == Tile.Wall) return false;
+        if (this.g.actors.filter(a => a.pos == dest).length) return false;
 
-        if (this.g.f.map.get(d.x, d.y) == Tile.Wall) return false;
-        if (this.g.actors.filter(a => a.pos == d).length) return false;
-
-        this.pos = d;
+        const from = this.pos;
+        this.pos = dest;
         if (this.isPlayer) {
             this.g.redraw();
-            this.g.hooks.fire('player.move', {});
+            this.g.hooks.fire('player.move', { actor: this, from });
         }
         if (spend) this.spend(this.moveCost);
         return true;
@@ -68,18 +68,18 @@ export abstract class Actor {
     turn(d: Dir, spend: boolean) {
         if (this.facing == d) return false;
 
+        const from = this.facing;
         this.facing = d;
         if (this.isPlayer) {
             this.g.redraw();
-            this.g.hooks.fire('player.turn', {});
+            this.g.hooks.fire('player.turn', { actor: this, from });
         }
         if (spend) this.spend(this.turnCost);
         return true;
     }
 
     spend(t: number) {
-        this.nextmove -= t;
-        this.g.actors.sort((a, b) => a.nextmove - b.nextmove);
+        this.nextmove += t;
     }
 
     regen(t: number) {
@@ -243,5 +243,10 @@ export abstract class Actor {
 
     slotused(sl: ItemSlot) {
         return !!this.equipment[sl];
+    }
+
+    ai() {
+        this.g.t.todo('Actor.ai', this);
+        return false;
     }
 }
