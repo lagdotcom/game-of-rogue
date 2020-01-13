@@ -121,7 +121,7 @@ export default class Game {
             tok = { ...colours[char], char };
         }
 
-        this.display.at(p.x, p.y).set(tok.fg, tok.bg, tok.char);
+        this.display.at(p.x, p.y).set(tok);
     }
 
     blockers(p: XY) {

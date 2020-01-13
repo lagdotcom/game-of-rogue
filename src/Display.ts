@@ -1,7 +1,10 @@
+import { Token } from './types';
+
 export class DisplayCell {
     el: HTMLElement;
     f: string;
     b: string;
+    bo: string;
     x: number;
     y: number;
     value: string;
@@ -14,23 +17,33 @@ export class DisplayCell {
         this.fg('white');
         this.bg('black');
         this.text(' ');
+        this.border('transparent');
     }
 
-    set(fg: string, bg: string, text: string) {
-        this.fg(fg);
-        this.bg(bg);
-        this.text(text);
+    set(tok: Token) {
+        this.fg(tok.fg);
+        this.bg(tok.bg);
+        this.text(tok.char);
+        this.border('transparent');
     }
 
     fg(colour?: string) {
-        if (colour !== undefined) this.el.style.color = this.f = colour;
+        if (colour !== undefined && this.f != colour)
+            this.el.style.color = this.f = colour;
         return this.f;
     }
 
     bg(colour?: string) {
-        if (colour !== undefined)
+        if (colour !== undefined && this.b != colour)
             this.el.style.backgroundColor = this.b = colour;
         return this.b;
+    }
+
+    border(colour?: string) {
+        if (colour !== undefined && this.bo != colour) {
+            this.el.style.borderColor = this.bo = colour;
+        }
+        return this.bo;
     }
 
     text(text?: string) {
@@ -57,19 +70,29 @@ export class Display {
         this.makeContainer();
     }
 
-    fill(s: string) {
-        this.cells.forEach(c =>
-            c.set(this.defaultForeground, this.defaultBackground, s),
-        );
+    fill(char: string) {
+        const tok = {
+            fg: this.defaultForeground,
+            bg: this.defaultBackground,
+            char,
+        };
+        this.cells.forEach(c => c.set(tok));
     }
 
     at(x: number, y: number) {
         return this.cells[y * this.width + x];
     }
 
-    str(x: number, y: number, s: string) {
+    str(x: number, y: number, s: string, fg?: string, bg?: string) {
+        let tok: Token = {
+            fg: fg ? fg : this.defaultForeground,
+            bg: bg ? bg : this.defaultBackground,
+            char: '',
+        };
+
         for (let i = 0; i < s.length; i++) {
-            this.at(x + i, y).text(s[i]);
+            tok.char = s[i];
+            this.at(x + i, y).set(tok);
         }
     }
 
