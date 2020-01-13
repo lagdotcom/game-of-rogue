@@ -146,7 +146,7 @@ function randomEnchant(g: Game, i: Item) {
     g.t.todo('randomEnchant', i.template.name);
 }
 
-function instantiateItem(g: Game, template: ItemTemplate) {
+export function instantiateItem(g: Game, template: ItemTemplate) {
     switch (template.type) {
         case ItemType.Armour:
             return new Armour(g, <ArmourTemplate>template);

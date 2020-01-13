@@ -26,6 +26,8 @@ export abstract class Actor {
     kiRegen: number;
     moveCost: number;
     name: string;
+    natural?: Weapon;
+    natural2?: Weapon;
     nextmove: number;
     pos: XY;
     sightFov: number;
@@ -253,5 +255,22 @@ export abstract class Actor {
     ai() {
         this.g.t.todo('Actor.ai', this.name);
         return false;
+    }
+
+    getPrimaryWeapon() {
+        if (this.slotused(ItemSlot.BothHands))
+            return this.equipment[ItemSlot.BothHands];
+
+        if (this.slotused(ItemSlot.Primary))
+            return this.equipment[ItemSlot.Primary];
+
+        return this.natural;
+    }
+
+    getSecondaryWeapon() {
+        if (this.slotused(ItemSlot.Secondary))
+            return this.equipment[ItemSlot.Secondary];
+
+        return this.natural2;
     }
 }

@@ -120,3 +120,10 @@ export const yumi = w({
     missile: true,
     traits: { bow: true, wood: true },
 });
+
+export const humanfists = w({
+    name: 'fists',
+    article: 'your',
+    hands: 2,
+    strength: 0,
+});
