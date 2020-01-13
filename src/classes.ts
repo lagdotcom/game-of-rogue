@@ -54,8 +54,8 @@ export const Monk: Class = {
     },
 };
 
-export const Mystic: Class = {
-    name: 'Mystic',
+export const Taoist: Class = {
+    name: 'Taoist',
     hp: 4,
     hpGain: 1,
     ki: 14,
@@ -64,6 +64,6 @@ export const Mystic: Class = {
     strGain: 0,
     skills: [],
     init: (p: Player) => {
-        p.g.t.todo('Mystic.init');
+        p.g.t.todo('Taoist.init');
     },
 };
