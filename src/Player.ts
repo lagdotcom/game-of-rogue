@@ -7,6 +7,7 @@ export default class Player extends Actor {
     isActor: true;
     isPlayer: true;
     class: Class;
+    level: number;
 
     constructor(g: Game, spec: Class) {
         super(g, 'Player');
@@ -18,6 +19,16 @@ export default class Player extends Actor {
         this.fg = 'white';
         this.hp = this.hpMax = spec.hp;
         this.ki = this.kiMax = spec.ki;
+        this.level = 1;
         this.str = spec.str;
+
+        spec.init(this);
+    }
+
+    levelUp() {
+        this.level++;
+        this.hpMax += this.class.hpGain;
+        this.kiMax += this.class.kiGain;
+        this.str += this.class.strGain;
     }
 }

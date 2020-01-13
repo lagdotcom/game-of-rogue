@@ -65,6 +65,7 @@ export const shuriken = w({
     name: 'shuriken',
     strength: 1,
     movetimer: 0.5,
+    offhand: true,
     thrown: true,
     stacked: true,
     findamt: (g: Game) => rnd(g.rng, 5) + 1,

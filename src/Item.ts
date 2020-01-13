@@ -19,6 +19,7 @@ import { GameEventMap } from './Hooks';
 export default abstract class Item {
     count?: number;
     g: Game;
+    mods: Mods;
     pos: XY;
     template: ItemTemplate;
     token: Token;
@@ -30,6 +31,7 @@ export default abstract class Item {
         this.type = ItemType.Other;
 
         if (t) {
+            this.mods = Object.assign({}, t.mods);
             this.template = t;
             this.token.char = itemChars[t.type];
             this.type = t.type;
@@ -45,6 +47,16 @@ export default abstract class Item {
         });
 
         return result;
+    }
+
+    name(flags: { article?: boolean; singular?: boolean } = {}) {
+        if (this.template.stacked && !flags.singular)
+            return `${this.count} ${this.template.name}`;
+
+        if (flags.article)
+            return `${this.template.article} ${this.template.name}`;
+
+        return this.template.name;
     }
 }
 

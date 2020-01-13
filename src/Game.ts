@@ -14,6 +14,8 @@ import Log from './Log';
 import { Actor } from './Actor';
 import { Traceline } from './Traceline';
 import { attack } from './combat';
+import UIElement from './UIElement';
+import PlayerUI from './PlayerUI';
 
 interface TileColour {
     fg: string;
@@ -35,15 +37,17 @@ export default class Game {
     input: Input;
     log: Log;
     player: Player;
+    playerUI: PlayerUI;
     rng: RNG;
     t: Trace;
+    ui: UIElement[];
 
     constructor(parent: HTMLElement) {
         this.t = new Trace();
         this.t.enter('Game.new');
         this.seed();
 
-        this.display = new Display(parent, 80, 40);
+        this.display = new Display(parent, 100, 40);
         this.display.str(0, 0, 'setting up...');
 
         this.actors = [];
@@ -52,6 +56,8 @@ export default class Game {
         this.input = new Input(this);
         this.log = new Log(this);
         this.player = new Player(this, Samurai);
+        this.playerUI = new PlayerUI(this);
+        this.ui = [this.playerUI];
 
         this.t.leave('Game.new');
     }
@@ -85,7 +91,7 @@ export default class Game {
 
             let oldmove = a.nextmove;
             a.ai();
-            if (a.nextmove === oldmove) a.nextmove = this.player.nextmove + 1;
+            if (a.nextmove === oldmove) a.nextmove = this.player.nextmove + 0.5;
         }
     }
 
@@ -94,6 +100,8 @@ export default class Game {
 
         let tdraw = this.drawTile.bind(this);
         getSightCone(this.player).forEach(tdraw);
+
+        this.ui.forEach(u => u.draw());
     }
 
     drawTile(p: XY) {
@@ -183,7 +191,7 @@ export default class Game {
         this.enter(
             this.architect.generate(
                 1,
-                this.display.width,
+                this.display.width - this.playerUI.width,
                 this.display.height,
                 200,
             ),
@@ -191,8 +199,8 @@ export default class Game {
     }
 
     debugShowAll() {
-        for (let y = 0; y < this.display.height; y++)
-            for (let x = 0; x < this.display.width; x++)
+        for (let y = 0; y < this.f.map.height; y++)
+            for (let x = 0; x < this.f.map.width; x++)
                 this.drawTile(this.f.map.ref(x, y));
     }
 }

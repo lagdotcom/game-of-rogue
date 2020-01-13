@@ -31,3 +31,7 @@ export function mid(n: number) {
 export function capf(s: string) {
     return s.substr(0, 1).toUpperCase() + s.substr(1);
 }
+
+export function bonust(n: number) {
+    return n < 0 ? `${n}` : `+${n}`;
+}

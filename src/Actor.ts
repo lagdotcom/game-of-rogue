@@ -125,9 +125,7 @@ export abstract class Actor {
 
                 if (!w.matches(wi.template.firedBy)) {
                     if (this.isPlayer)
-                        this.g.log.info(
-                            `${w.template.name} can't fire ${wi.template.name}`,
-                        );
+                        this.g.log.info(`${w.name()} can't fire ${wi.name()}`);
 
                     this.g.t.message(
                         'cannot equip ammo; wrong weapon equipped',
@@ -221,23 +219,30 @@ export abstract class Actor {
     }
 
     equipApply<T extends keyof Equipment>(i: Equipment[T], sl: T) {
-        this.g.t.todo('Actor.equipApply', this.name, i.template.name, sl);
         this.equipment[sl] = i;
         this.inventory = this.inventory.filter(x => x != i);
+
+        Object.entries(i.mods).forEach(p => {
+            this[p[0]] += p[1];
+        });
     }
 
     unequip(sl: ItemSlot) {
         if (!this.equipment[sl]) return true;
-        this.g.t.todo('Actor.unequip', this.name, sl);
+        this.g.t.message('Actor.unequip', this.name, sl);
 
+        return this.unequipApply(sl);
+    }
+
+    unequipApply(sl: ItemSlot) {
         let i = this.equipment[sl];
         this.inventory.push(i);
         delete this.equipment[sl];
-        return this.unequipApply(i);
-    }
 
-    unequipApply(i: Item) {
-        this.g.t.todo('Actor.unequipApply', this.name, i.template.name);
+        Object.entries(i.mods).forEach(p => {
+            this[p[0]] -= p[1];
+        });
+
         return true;
     }
 

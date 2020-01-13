@@ -1,4 +1,5 @@
 import { Skill } from './Skill';
+import Player from './Player';
 
 export interface Class {
     name: string;
@@ -9,4 +10,6 @@ export interface Class {
     kiGain: number;
     str: number;
     strGain: number;
+
+    init(p: Player);
 }

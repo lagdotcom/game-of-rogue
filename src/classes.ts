@@ -3,6 +3,10 @@ import { Kick } from './sk/Kick';
 import { Sweep } from './sk/Sweep';
 import { Clone } from './sk/Clone';
 import { Substitute } from './sk/Substitute';
+import Player from './Player';
+import { constructItem } from './Item';
+import { wakizashi, yumi, ya, tanto, shuriken } from './it/weapon';
+import { domaru, hachimaki } from './it/armor';
 
 export const Samurai: Class = {
     name: 'Samurai',
@@ -13,6 +17,12 @@ export const Samurai: Class = {
     str: 10,
     strGain: 1,
     skills: [Sweep],
+    init: (p: Player) => {
+        p.equip(constructItem(p.g, wakizashi));
+        p.equip(constructItem(p.g, domaru));
+        p.get(constructItem(p.g, yumi));
+        p.get(constructItem(p.g, ya));
+    },
 };
 
 export const Ninja: Class = {
@@ -24,6 +34,10 @@ export const Ninja: Class = {
     str: 4,
     strGain: 0,
     skills: [Clone, Substitute],
+    init: (p: Player) => {
+        p.equip(constructItem(p.g, tanto));
+        p.equip(constructItem(p.g, shuriken));
+    },
 };
 
 export const Monk: Class = {
@@ -35,6 +49,9 @@ export const Monk: Class = {
     str: 8,
     strGain: 0.5,
     skills: [Kick],
+    init: (p: Player) => {
+        p.equip(constructItem(p.g, hachimaki));
+    },
 };
 
 export const Mystic: Class = {
@@ -46,4 +63,7 @@ export const Mystic: Class = {
     str: 2,
     strGain: 0,
     skills: [],
+    init: (p: Player) => {
+        p.g.t.todo('Mystic.init');
+    },
 };
