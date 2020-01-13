@@ -1,7 +1,7 @@
 import Game from './Game';
 import { oneof } from './tools';
 
-const male = [
+const jpMale = [
     'Akio',
     'Akira',
     'Daichi',
@@ -77,7 +77,7 @@ const male = [
     'Yuuma',
 ];
 
-const female = [
+const jpFemale = [
     'Ai',
     'Aiko',
     'Aimi',
@@ -162,7 +162,7 @@ const female = [
     'Yuzuki',
 ];
 
-const family = [
+const jpFamily = [
     'Satō',
     'Suzuki',
     'Takahashi',
@@ -200,10 +200,68 @@ const family = [
     'Maeda',
 ];
 
-export function namegen(g: Game) {
-    const names = oneof(g.rng, [male, female]);
+function jpNamegen(g: Game) {
+    const names = oneof(g.rng, [jpMale, jpFemale]);
     const given = oneof(g.rng, names);
-    const fam = oneof(g.rng, family);
+    const fam = oneof(g.rng, jpFamily);
 
     return `${fam} ${given}`;
+}
+
+// https://en.wikipedia.org/wiki/List_of_common_Chinese_surnames
+const zhFamily = [
+    'Wáng',
+    'Lǐ',
+    'Zhāng',
+    'Liú',
+    'Chén',
+    'Yáng',
+    'Huáng',
+    'Zhào',
+    'Wú',
+    'Zhōu',
+    'Xú',
+    'Sūn',
+    'Mǎ',
+    'Zhū',
+    'Hú',
+    'Guō',
+    'Hé',
+    'Gāo',
+    'Lín',
+    'Luó',
+];
+
+const zhGiven = [
+    'Lì',
+    'Wěi',
+    'Fāng',
+    'Xiùyīng',
+    'Nà',
+    'Mǐn',
+    'Jìng',
+    'Qiáng',
+    'Lěi',
+    'Jūn',
+    'Yáng',
+    'Yǒng',
+    'Yàn',
+    'Jié',
+    'Juān',
+    'Tāo',
+    'Míng',
+    'Chāo',
+    'Xiùlán',
+    'Xiá',
+];
+
+function zhNamegen(g: Game) {
+    const given = oneof(g.rng, zhGiven);
+    const fam = oneof(g.rng, zhFamily);
+
+    return `${fam} ${given}`;
+}
+
+export function namegen(g: Game) {
+    return oneof(g.rng, [jpNamegen, zhNamegen])(g);
 }
