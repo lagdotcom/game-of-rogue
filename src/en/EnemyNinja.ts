@@ -1,3 +1,4 @@
+import { Ninja } from '../classes';
 import Enemy from '../Enemy';
 import Game from '../Game';
 import { sai, shuriken, tanto } from '../it/weapon';
@@ -11,6 +12,7 @@ export class EnemyNinja extends Enemy {
 
         this.char = 'N';
         this.name = randomName(g);
+        this.hp = this.hpMax = Ninja.hp;
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, sai));

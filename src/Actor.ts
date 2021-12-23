@@ -3,6 +3,7 @@ import Item, { Armour, Equipment, Weapon } from './Item';
 import { Dir, ItemSlot, ItemType, Tile, XY } from './types';
 
 export abstract class Actor {
+    alerted: boolean;
     armour: number;
     balance: number;
     balanceMax: number;
@@ -53,6 +54,10 @@ export abstract class Actor {
         this.turnCost = 0.5;
     }
 
+    get alive() {
+        return !this.dead;
+    }
+
     move(dest: XY, spend: boolean) {
         if (this.g.f.map.get(dest.x, dest.y) == Tile.Wall) return false;
         if (this.g.actors.filter((a) => a.pos == dest).length) return false;
@@ -82,6 +87,7 @@ export abstract class Actor {
 
     spend(t: number) {
         this.nextMove += t;
+        if (this.isPlayer) this.g.advance(t);
     }
 
     regen(t: number) {

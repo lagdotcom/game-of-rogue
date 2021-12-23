@@ -44,19 +44,33 @@ export default class Hooks {
 export interface GameEventMap {
     'architect.begin': GameEvent;
     'architect.end': FloorEvent;
+    'enemy.hit': CombatEvent;
+    'enemy.died': CombatEvent;
     'floor.enter': FloorEvent;
     'player.attack': AttackEvent;
+    'player.died': CombatEvent;
+    'player.hit': CombatEvent;
     'player.move': MoveEvent;
     'player.turn': TurnEvent;
+    'sys.advance': AdvanceEvent;
 }
 export type GameEventName = keyof GameEventMap;
 
 export interface GameEvent {}
 
+export interface AdvanceEvent extends GameEvent {
+    time: number;
+}
+
 export interface AttackEvent extends GameEvent {
     attacker: Actor;
     victim: Actor;
     weapon: Weapon;
+}
+
+export interface CombatEvent extends GameEvent {
+    attacker: Actor;
+    victim: Actor;
 }
 
 export interface FloorEvent extends GameEvent {

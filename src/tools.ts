@@ -1,4 +1,6 @@
+import { Actor } from './Actor';
 import RNG from './RNG';
+import { Dir } from './types';
 
 export function int(n: number) {
     return Math.floor(n);
@@ -33,4 +35,26 @@ export function capFirst(s: string) {
 
 export function bonusText(n: number) {
     return n < 0 ? `${n}` : `+${n}`;
+}
+
+export function getDirectionBetween(a: Actor, b: Actor) {
+    const dx = a.pos.x - b.pos.x;
+    const dy = a.pos.y - b.pos.y;
+    const ax = Math.abs(dx);
+    const ay = Math.abs(dy);
+
+    if (dx < 0 && ax >= ay) return Dir.W;
+    if (dx > 0 && ax >= ay) return Dir.E;
+    if (dy < 0) return Dir.N;
+    return Dir.S;
+}
+
+export function getAngleBetween(a: Dir, b: Dir) {
+    if (a === b) return 0;
+
+    if (a === Dir.N && b === Dir.S) return 2;
+    if (a === Dir.E && b === Dir.W) return 2;
+    if (a === Dir.S && b === Dir.N) return 2;
+    if (a === Dir.W && b === Dir.E) return 2;
+    return 1;
 }

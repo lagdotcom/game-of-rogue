@@ -40,6 +40,11 @@ export const LIGHTS_FRAGMENTS = 3;
  */
 export const TIMER_FREQUENCY = 50;
 
+/**
+ * How much strength you need to add 1 damage.
+ */
+export const STRENGTH_RATIO = 3;
+
 export const dirOffsets: { [dir: number]: { x: number; y: number } } = {
     [Dir.N]: { x: 0, y: -1 },
     [Dir.NE]: { x: 1, y: -1 },

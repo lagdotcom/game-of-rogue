@@ -60,6 +60,10 @@ export default class Game {
         this.ui = [this.playerUI];
 
         this.t.leave('Game.new');
+
+        this.hooks.on('sys.advance', ({ time }) => {
+            this.actors.forEach((a) => a.regen(time));
+        });
     }
 
     seed(s?: string) {
@@ -79,7 +83,16 @@ export default class Game {
         this.t.leave('enter');
     }
 
-    advance() {
+    remove(x: Actor) {
+        const notMe = (a: Actor) => a !== x;
+        this.actors = this.actors.filter(notMe);
+        this.f.enemies = this.f.enemies.filter(notMe);
+    }
+
+    advance(time: number) {
+        this.input.listening = false;
+        this.hooks.fire('sys.advance', { time });
+
         while (!this.input.listening) {
             this.actors.sort((a, b) => a.nextMove - b.nextMove);
 
@@ -144,8 +157,6 @@ export default class Game {
 
     playerMove(d: Dir) {
         const result = this.playerAct(d);
-        this.input.listening = false;
-        this.advance();
         return result;
     }
 
