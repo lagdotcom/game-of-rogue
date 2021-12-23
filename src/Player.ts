@@ -1,9 +1,9 @@
-import { Dir } from './types';
+import { Actor } from './Actor';
 import { Class } from './Class';
 import Game from './Game';
-import { Actor } from './Actor';
-import { humanfists } from './it/weapon';
+import { humanFists } from './it/weapon';
 import { instantiateItem, Weapon } from './Item';
+import { Dir } from './types';
 
 export default class Player extends Actor {
     isActor: true;
@@ -26,7 +26,7 @@ export default class Player extends Actor {
 
         spec.init(this);
         if (!this.natural)
-            this.natural = <Weapon>instantiateItem(g, humanfists);
+            this.natural = <Weapon>instantiateItem(g, humanFists);
     }
 
     levelUp() {

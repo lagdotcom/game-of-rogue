@@ -1,7 +1,7 @@
 import Game from './Game';
-import UIElement from './UIElement';
+import { bonusText } from './tools';
 import { ItemSlot } from './types';
-import { bonust } from './tools';
+import UIElement from './UIElement';
 
 export default class PlayerUI implements UIElement {
     g: Game;
@@ -33,15 +33,15 @@ export default class PlayerUI implements UIElement {
         const ssb = this.strBonus(true);
         this.stat(
             'Strength',
-            `${f(p.str)} ${bonust(psb)}${
-                ssb !== null ? '/' + bonust(ssb) : ''
+            `${f(p.str)} ${bonusText(psb)}${
+                ssb !== null ? '/' + bonusText(ssb) : ''
             }`,
         );
         this.stat('Armour', `${f(p.armour)}`);
 
         this.y++;
-        if (p.slotused(ItemSlot.Primary)) this.drawItem(ItemSlot.Primary);
-        else if (p.slotused(ItemSlot.BothHands))
+        if (p.slotUsed(ItemSlot.Primary)) this.drawItem(ItemSlot.Primary);
+        else if (p.slotUsed(ItemSlot.BothHands))
             this.drawItem(ItemSlot.BothHands);
         else this.y++;
 
@@ -60,7 +60,7 @@ export default class PlayerUI implements UIElement {
     }
 
     drawItem(sl: ItemSlot) {
-        if (!this.g.player.slotused(sl)) {
+        if (!this.g.player.slotUsed(sl)) {
             this.y++;
             return;
         }
@@ -75,14 +75,14 @@ export default class PlayerUI implements UIElement {
         const p = this.g.player;
 
         if (secondary) {
-            if (p.slotused(ItemSlot.Secondary))
+            if (p.slotUsed(ItemSlot.Secondary))
                 return p.equipment[ItemSlot.Secondary].template.strength;
             return null;
         }
 
-        if (p.slotused(ItemSlot.Primary))
+        if (p.slotUsed(ItemSlot.Primary))
             return p.equipment[ItemSlot.Primary].template.strength;
-        if (p.slotused(ItemSlot.BothHands))
+        if (p.slotUsed(ItemSlot.BothHands))
             return p.equipment[ItemSlot.BothHands].template.strength;
 
         // TODO: monk barehand bonus

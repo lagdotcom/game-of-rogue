@@ -76,7 +76,7 @@ export class Display {
             bg: this.defaultBackground,
             char,
         };
-        this.cells.forEach(c => c.set(tok));
+        this.cells.forEach((c) => c.set(tok));
     }
 
     at(x: number, y: number) {
@@ -84,7 +84,7 @@ export class Display {
     }
 
     str(x: number, y: number, s: string, fg?: string, bg?: string) {
-        let tok: Token = {
+        const tok: Token = {
             fg: fg ? fg : this.defaultForeground,
             bg: bg ? bg : this.defaultBackground,
             char: '',
@@ -113,7 +113,7 @@ export class Display {
     }
 
     private gtc() {
-        let cols = [];
+        const cols = [];
 
         for (let x = 0; x < this.width; x++) cols.push('1fr');
 

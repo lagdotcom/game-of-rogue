@@ -1,5 +1,5 @@
-import { XY } from './types';
 import { Actor } from './Actor';
+import { XY } from './types';
 
 export interface Traceline {
     start: XY;

@@ -84,7 +84,7 @@ export default class Input {
 
             // TEMP
             case '1':
-                let sk = this.g.player.class.skills[0];
+                const sk = this.g.player.class.skills[0];
                 if (sk && sk.fn) sk.fn(this.g.player);
                 return;
 

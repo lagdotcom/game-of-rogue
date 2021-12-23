@@ -1,17 +1,17 @@
 import Enemy from '../Enemy';
 import Game from '../Game';
-import { rnd } from '../tools';
-import { constructItem } from '../Item';
-import { katana, yumi, ya, wakizashi } from '../it/weapon';
 import { domaru, sujibachi } from '../it/armor';
-import { namegen } from '../names';
+import { katana, wakizashi, ya, yumi } from '../it/weapon';
+import { constructItem } from '../Item';
+import { randomName } from '../names';
+import { rnd } from '../tools';
 
 export class EnemySamurai extends Enemy {
     constructor(g: Game) {
         super(g);
 
         this.char = 'S';
-        this.name = namegen(g);
+        this.name = randomName(g);
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, katana));

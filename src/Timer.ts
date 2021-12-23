@@ -1,4 +1,4 @@
-import { TIMER_FREQUENCY } from './consts';
+import { TIMER_FREQUENCY } from './constants';
 
 export default class Timer {
     active: boolean;

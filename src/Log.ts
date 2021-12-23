@@ -1,6 +1,6 @@
-import Game from './Game';
 import { Actor } from './Actor';
-import { capf } from './tools';
+import Game from './Game';
+import { capFirst } from './tools';
 
 const argLookup = {
     a: 0,
@@ -29,8 +29,8 @@ export default class Log {
     }
 
     format(msg: string, ...args: any[]) {
-        return capf(
-            msg.replace(/%../g, pat => {
+        return capFirst(
+            msg.replace(/%../g, (pat) => {
                 const arg = args[argLookup[pat[1]]];
                 const a = <Actor>arg;
                 let sub = pat;

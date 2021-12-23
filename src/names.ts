@@ -1,5 +1,5 @@
 import Game from './Game';
-import { oneof } from './tools';
+import { oneOf } from './tools';
 
 const jpMale = [
     'Akio',
@@ -201,9 +201,9 @@ const jpFamily = [
 ];
 
 function jpNamegen(g: Game) {
-    const names = oneof(g.rng, [jpMale, jpFemale]);
-    const given = oneof(g.rng, names);
-    const fam = oneof(g.rng, jpFamily);
+    const names = oneOf(g.rng, [jpMale, jpFemale]);
+    const given = oneOf(g.rng, names);
+    const fam = oneOf(g.rng, jpFamily);
 
     return `${fam} ${given}`;
 }
@@ -253,15 +253,17 @@ const zhGiven = [
     'Chāo',
     'Xiùlán',
     'Xiá',
+    'Píng',
+    'Gāng',
 ];
 
 function zhNamegen(g: Game) {
-    const given = oneof(g.rng, zhGiven);
-    const fam = oneof(g.rng, zhFamily);
+    const given = oneOf(g.rng, zhGiven);
+    const fam = oneOf(g.rng, zhFamily);
 
     return `${fam} ${given}`;
 }
 
-export function namegen(g: Game) {
-    return oneof(g.rng, [jpNamegen, zhNamegen])(g);
+export function randomName(g: Game) {
+    return oneOf(g.rng, [jpNamegen, zhNamegen])(g);
 }

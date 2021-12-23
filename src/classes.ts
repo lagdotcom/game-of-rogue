@@ -1,12 +1,12 @@
 import { Class } from './Class';
-import { Kick } from './sk/Kick';
-import { Sweep } from './sk/Sweep';
-import { Clone } from './sk/Clone';
-import { Substitute } from './sk/Substitute';
-import Player from './Player';
-import { constructItem } from './Item';
-import { wakizashi, yumi, ya, tanto, shuriken } from './it/weapon';
 import { domaru, hachimaki } from './it/armor';
+import { shuriken, tanto, wakizashi, ya, yumi } from './it/weapon';
+import { constructItem } from './Item';
+import Player from './Player';
+import { Clone } from './sk/Clone';
+import { Kick } from './sk/Kick';
+import { Substitute } from './sk/Substitute';
+import { Sweep } from './sk/Sweep';
 
 export const Samurai: Class = {
     name: 'Samurai',

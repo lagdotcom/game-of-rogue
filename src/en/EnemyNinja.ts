@@ -1,16 +1,16 @@
 import Enemy from '../Enemy';
 import Game from '../Game';
-import { rnd } from '../tools';
+import { sai, shuriken, tanto } from '../it/weapon';
 import { constructItem } from '../Item';
-import { sai, tanto, shuriken } from '../it/weapon';
-import { namegen } from '../names';
+import { randomName } from '../names';
+import { rnd } from '../tools';
 
 export class EnemyNinja extends Enemy {
     constructor(g: Game) {
         super(g);
 
         this.char = 'N';
-        this.name = namegen(g);
+        this.name = randomName(g);
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, sai));

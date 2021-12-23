@@ -1,18 +1,18 @@
-import Game from './Game';
-import { rooms } from './rooms';
-import { oneof, int, rnd, any } from './tools';
-import { Grid } from './Grid';
 import {
-    ROOMGEN_ATTEMPTS,
-    ROOMGEN_MINROOMS,
-    ROOMGEN_MINENEMIES,
-    dirOffsets,
-} from './consts';
-import { Tile, XY } from './types';
-import { Floor } from './Floor';
-import { randomItem } from './Item';
+  dirOffsets,
+  ROOMGEN_ATTEMPTS,
+  ROOMGEN_MINENEMIES,
+  ROOMGEN_MINROOMS,
+} from './constants';
 import { EnemyNinja } from './en/EnemyNinja';
 import { EnemySamurai } from './en/EnemySamurai';
+import { Floor } from './Floor';
+import Game from './Game';
+import { Grid } from './Grid';
+import { randomItem } from './Item';
+import { rooms } from './rooms';
+import { any, int, oneOf, rnd } from './tools';
+import { Tile, XY } from './types';
 
 const debugCleanup = true;
 const debugFits = false;
@@ -30,7 +30,7 @@ export default class Architect {
         floor: number,
         width: number,
         height: number,
-        maxparts: number,
+        maxParts: number,
         recurse: boolean = false,
     ): Floor {
         if (!recurse) {
@@ -38,25 +38,25 @@ export default class Architect {
                 'Architect.generate',
                 width,
                 height,
-                maxparts,
+                maxParts,
                 this.g.rng.getSeed(),
             );
             this.g.hooks.fire('architect.begin', {});
         }
 
-        let f = new Floor(`Floor${floor}`, width, height);
-        let centre = this.randomRoom();
-        let cx = int((width - centre.width) / 2);
-        let cy = int((height - centre.height) / 2);
+        const f = new Floor(`Floor${floor}`, width, height);
+        const centre = this.randomRoom();
+        const cx = int((width - centre.width) / 2);
+        const cy = int((height - centre.height) / 2);
         this.g.t.message(`pasted ${centre.name} @${cx},${cy}`);
         f.map.paste(cx, cy, centre, ' ');
 
         let attempts = 0;
         let parts = 1;
-        let taken = new Set<XY>();
-        while (parts < maxparts) {
-            let room = this.randomRoom();
-            let pos = this.pickPastePoint(f.map, room, '#', 'd');
+        const taken = new Set<XY>();
+        while (parts < maxParts) {
+            const room = this.randomRoom();
+            const pos = this.pickPastePoint(f.map, room, '#', 'd');
 
             if (pos && this.fits(f.map, room, pos) && !taken.has(pos)) {
                 this.g.t.message(`pasted ${room.name} @${pos.x},${pos.y}`);
@@ -74,7 +74,7 @@ export default class Architect {
 
         if (parts < ROOMGEN_MINROOMS) {
             this.g.t.message("didn't generate enough rooms, retrying");
-            return this.generate(floor, width, height, maxparts, true);
+            return this.generate(floor, width, height, maxParts, true);
         }
 
         this.cleanup(f.map);
@@ -88,12 +88,12 @@ export default class Architect {
     }
 
     randomRoom() {
-        let room = oneof(this.g.rng, rooms);
+        const room = oneOf(this.g.rng, rooms);
         return room.rotate(rnd(this.g.rng, 4));
     }
 
     pickPastePoint(g: Grid, r: Grid, ...t: string[]): XY {
-        let w = oneof(this.g.rng, g.find(...t));
+        const w = oneOf(this.g.rng, g.find(...t));
         if (!w) return null;
 
         return {
@@ -109,11 +109,11 @@ export default class Architect {
         if (p.y + r.height >= m.height) return false;
 
         if (debugFits) this.g.t.enter('fits', r.name, p);
-        let newdoor = false;
+        let newDoor = false;
         for (let cx = p.x; cx < p.x + r.width; cx++) {
             for (let cy = p.y; cy < p.y + r.height; cy++) {
-                let dt = m.get(cx, cy);
-                let st = r.get(cx - p.x, cy - p.y);
+                const dt = m.get(cx, cy);
+                const st = r.get(cx - p.x, cy - p.y);
 
                 if (st == Tile.Empty || dt == Tile.Empty) continue;
 
@@ -132,22 +132,22 @@ export default class Architect {
 
                 if (dt == Tile.NotDoor && st == Tile.Door) {
                     if (debugFits) {
-                        this.g.t.message('notdoor', cx, cy, dt, st);
+                        this.g.t.message('notDoor', cx, cy, dt, st);
                         this.g.t.leave('fits');
                     }
                     return false;
                 }
 
                 if ((dt == Tile.Wall || dt == Tile.Door) && st == Tile.Door)
-                    newdoor = true;
+                    newDoor = true;
             }
         }
 
         if (debugFits) {
-            this.g.t.message('door found?', newdoor);
+            this.g.t.message('door found?', newDoor);
             this.g.t.leave('fits');
         }
-        return newdoor;
+        return newDoor;
     }
 
     cleanup(m: Grid) {
@@ -158,7 +158,7 @@ export default class Architect {
 
             for (let y = 0; y < m.height; y++) {
                 for (let x = 0; x < m.width; x++) {
-                    let tc = m.get(x, y);
+                    const tc = m.get(x, y);
 
                     if (tc == Tile.NotDoor) {
                         m.set(x, y, Tile.Wall);
@@ -167,10 +167,10 @@ export default class Architect {
 
                     if (tc != Tile.Door) continue;
 
-                    let tu = m.get(x, y - 1);
-                    let tl = m.get(x - 1, y);
-                    let tr = m.get(x + 1, y);
-                    let td = m.get(x, y + 1);
+                    const tu = m.get(x, y - 1);
+                    const tl = m.get(x - 1, y);
+                    const tr = m.get(x + 1, y);
+                    const td = m.get(x, y + 1);
 
                     // don't allow doors on the border
                     if (
@@ -266,9 +266,12 @@ export default class Architect {
             }
         }
 
-        m.find(Tile.Space, Tile.Door).forEach(p => {
+        m.find(Tile.Space, Tile.Door).forEach((p) => {
             if (
-                any(surrounds, s => m.get(p.x + s.x, p.y + s.y) === Tile.Empty)
+                any(
+                    surrounds,
+                    (s) => m.get(p.x + s.x, p.y + s.y) === Tile.Empty,
+                )
             ) {
                 if (debugCleanup)
                     this.g.t.message('leak plugged', m.get(p.x, p.y), p);
@@ -283,8 +286,8 @@ export default class Architect {
     addEnemies(f: Floor) {
         this.g.t.enter('Architect.addEnemies');
 
-        f.map.find(Tile.Enemy).forEach(p => {
-            let enemy = randomEnemy(this.g);
+        f.map.find(Tile.Enemy).forEach((p) => {
+            const enemy = randomEnemy(this.g);
             f.map.set(p.x, p.y, Tile.Space);
 
             enemy.pos = p;
@@ -292,8 +295,8 @@ export default class Architect {
         });
 
         while (f.enemies.length < ROOMGEN_MINENEMIES) {
-            let enemy = randomEnemy(this.g);
-            let p = oneof(this.g.rng, f.map.find(Tile.Space));
+            const enemy = randomEnemy(this.g);
+            const p = oneOf(this.g.rng, f.map.find(Tile.Space));
 
             if (!f.enemyAt(p)) {
                 enemy.pos = p;
@@ -307,8 +310,8 @@ export default class Architect {
     addTreasure(f: Floor) {
         this.g.t.enter('Architect.addTreasure');
 
-        f.map.find(Tile.Treasure).forEach(p => {
-            let item = randomItem(this.g);
+        f.map.find(Tile.Treasure).forEach((p) => {
+            const item = randomItem(this.g);
             f.map.set(p.x, p.y, Tile.Space);
 
             item.pos = p;
@@ -322,7 +325,7 @@ export default class Architect {
         this.g.t.enter('Architect.placePlayer');
 
         while (true) {
-            let p = oneof(this.g.rng, f.map.find(Tile.Space));
+            const p = oneOf(this.g.rng, f.map.find(Tile.Space));
 
             if (f.enemyAt(p) || f.itemAt(p)) continue;
             f.player = p;
@@ -336,10 +339,10 @@ export default class Architect {
 const enemies = [EnemyNinja, EnemySamurai];
 
 export function randomEnemy(g: Game) {
-    const eclass = oneof(g.rng, enemies);
-    g.t.enter('randomEnemy', eclass.name);
+    const enemyClass = oneOf(g.rng, enemies);
+    g.t.enter('randomEnemy', enemyClass.name);
 
-    const e = new eclass(g);
+    const e = new enemyClass(g);
     g.t.leave('randomEnemy');
     return e;
 }

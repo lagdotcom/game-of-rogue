@@ -1,6 +1,6 @@
-import { Dir } from './types';
-import Game from './Game';
 import { Actor } from './Actor';
+import Game from './Game';
+import { Dir } from './types';
 
 export default class Enemy extends Actor {
     isActor: true;

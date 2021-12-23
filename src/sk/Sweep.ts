@@ -1,9 +1,8 @@
-import { Dir } from '../types';
-import { dirOffsets } from '../consts';
-import Player from '../Player';
-import { attack } from '../combat';
-import { Skill } from '../Skill';
 import { Actor } from '../Actor';
+import { attack } from '../combat';
+import { dirOffsets } from '../constants';
+import { Skill } from '../Skill';
+import { Dir } from '../types';
 
 const clockwise = {
     [Dir.N]: [Dir.NE, Dir.E, Dir.SE, Dir.S],
@@ -22,7 +21,7 @@ function getSweepDir(from: Dir, to: Dir) {
 
 function sweepAttack(a: Actor, ox: number, oy: number) {
     const p = a.g.f.map.ref(ox + a.pos.x, oy + a.pos.y);
-    a.g.blockers(p).forEach(v => {
+    a.g.blockers(p).forEach((v) => {
         attack(a, v);
     });
 }
@@ -31,10 +30,10 @@ export const Sweep: Skill = {
     name: 'Skill',
     balance: 0,
     ki: 2,
-    movetimer: 1.5,
-    fn: a => {
+    moveTimer: 1.5,
+    fn: (a) => {
         // TODO: AI
-        a.g.input.getDirection('Turn to which direction?', dir => {
+        a.g.input.getDirection('Turn to which direction?', (dir) => {
             if (a.facing === dir) {
                 a.g.log.error("You're already facing that way!");
                 return;
@@ -43,16 +42,16 @@ export const Sweep: Skill = {
             a.ki -= Sweep.ki;
             const from = a.facing;
             let facing = from;
-            let sweep = getSweepDir(a.facing, dir);
-            let weaponname = 'weapon';
-            a.g.log.info('%an sweep%as %ar %b#!', a, weaponname);
+            const sweep = getSweepDir(a.facing, dir);
+            const weaponName = 'weapon';
+            a.g.log.info('%an sweep%as %ar %b#!', a, weaponName);
 
             while (facing !== dir) {
                 facing += sweep;
                 if (facing < 0) facing += 8;
                 if (facing > 7) facing -= 8;
 
-                let n = dirOffsets[facing];
+                const n = dirOffsets[facing];
                 sweepAttack(a, n.x, n.y);
 
                 a.balance -= Sweep.balance;
@@ -64,7 +63,7 @@ export const Sweep: Skill = {
                 a.g.redraw();
             }
 
-            a.spend(Sweep.movetimer);
+            a.spend(Sweep.moveTimer);
         });
 
         return true;

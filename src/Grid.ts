@@ -1,5 +1,5 @@
-import { XY } from './types';
 import { int } from './tools';
+import { XY } from './types';
 
 interface GridRef extends XY {
     g: Grid;
@@ -30,15 +30,15 @@ export class Grid {
         this.oob = { x: -1, y: -1, g: this, s: Symbol(`${name}@oob`) };
         this.refs = [];
         for (let y = 0; y < height; y++) {
-            let row = [];
-            let rrow = [];
+            const row: string[] = [];
+            const refRow: GridRef[] = [];
             for (let x = 0; x < width; x++) {
                 row.push(init);
-                rrow.push({ x, y, g: this, s: Symbol(`${name}@${x},${y}`) });
+                refRow.push({ x, y, g: this, s: Symbol(`${name}@${x},${y}`) });
             }
 
             this.contents.push(row);
-            this.refs.push(rrow);
+            this.refs.push(refRow);
         }
     }
 
@@ -47,19 +47,19 @@ export class Grid {
     }
 
     ref(x: number, y: number) {
-        let rx = int(x),
+        const rx = int(x),
             ry = int(y);
         return this.contains(rx, ry) ? this.refs[ry][rx] : this.oob;
     }
 
     get(x: number, y: number) {
-        let rx = int(x),
+        const rx = int(x),
             ry = int(y);
         return this.contains(rx, ry) ? this.contents[ry][rx] : this.default;
     }
 
     set(x: number, y: number, value: string) {
-        let rx = int(x),
+        const rx = int(x),
             ry = int(y);
         this.contents[ry][rx] = value;
     }
@@ -70,7 +70,7 @@ export class Grid {
 
             for (let x = 0; x < g.width; x++) {
                 if (sx + x >= this.width) continue;
-                let t = g.get(x, y);
+                const t = g.get(x, y);
 
                 if (t !== ignore) this.set(sx + x, sy + y, g.get(x, y));
             }
@@ -78,7 +78,7 @@ export class Grid {
     }
 
     find(...values: string[]) {
-        let points: GridRef[] = [];
+        const points: GridRef[] = [];
         for (let y = 0; y < this.height; y++)
             for (let x = 0; x < this.width; x++)
                 if (values.includes(this.get(x, y)))
@@ -87,11 +87,11 @@ export class Grid {
     }
 
     rotate(turns: number) {
-        let { width, height } = this;
+        const { width, height } = this;
         let r: Grid;
         if (!turns) return this;
 
-        let name = `${this.name}/${turns}`;
+        const name = `${this.name}/${turns}`;
         if (turns == 2) r = new Grid(name, width, height);
         else r = new Grid(name, height, width);
 
@@ -129,6 +129,6 @@ export class Grid {
     }
 
     toString() {
-        return this.contents.map(x => x.join('')).join('\n');
+        return this.contents.map((x) => x.join('')).join('\n');
     }
 }

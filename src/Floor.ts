@@ -1,5 +1,5 @@
-import { Grid } from './Grid';
 import Enemy from './Enemy';
+import { Grid } from './Grid';
 import Item from './Item';
 import { Tile, XY } from './types';
 
@@ -17,12 +17,12 @@ export class Floor {
     }
 
     enemyAt(p: XY) {
-        let enemies = this.enemies.filter(e => e.pos == p);
+        const enemies = this.enemies.filter((e) => e.pos == p);
         return enemies.length ? enemies[0] : null;
     }
 
     itemAt(p: XY) {
-        let items = this.items.filter(i => i.pos == p);
+        const items = this.items.filter((i) => i.pos == p);
         return items.length ? items[0] : null;
     }
 }

@@ -1,5 +1,4 @@
 import RNG from './RNG';
-import { XY } from './types';
 
 export function int(n: number) {
     return Math.floor(n);
@@ -9,7 +8,7 @@ export function rnd(rng: RNG, max: number) {
     return int(rng.next() * max);
 }
 
-export function oneof<T>(rng: RNG, list: T[]) {
+export function oneOf<T>(rng: RNG, list: T[]) {
     return list.length ? list[rnd(rng, list.length)] : null;
 }
 
@@ -28,10 +27,10 @@ export function mid(n: number) {
     return Math.round(n) + 0.499;
 }
 
-export function capf(s: string) {
-    return s.substr(0, 1).toUpperCase() + s.substr(1);
+export function capFirst(s: string) {
+    return s.slice(0, 1).toUpperCase() + s.slice(1);
 }
 
-export function bonust(n: number) {
+export function bonusText(n: number) {
     return n < 0 ? `${n}` : `+${n}`;
 }

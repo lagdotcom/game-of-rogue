@@ -1,5 +1,5 @@
-import { ItemType, ItemSlot, Mods, ItemTraits } from '../types';
 import { ArmourTemplate } from '../Item';
+import { ItemSlot, ItemTraits, ItemType, Mods } from '../types';
 
 function a(i: {
     article?: string;

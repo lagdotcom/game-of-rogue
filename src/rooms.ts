@@ -11,8 +11,8 @@ import yard from '../res/room/yard.txt';
 import { Grid } from './Grid';
 
 function room(name: string, s: string) {
-    let lines = s.replace('\r', '').split('\n');
-    let g = new Grid(name, lines[0].length, lines.length);
+    const lines = s.replace('\r', '').split('\n');
+    const g = new Grid(name, lines[0].length, lines.length);
 
     for (let y = 0; y < g.height; y++)
         for (let x = 0; x < g.width; x++) g.set(x, y, lines[y][x]);
@@ -31,4 +31,4 @@ export const rooms = [
     ['t-junction', tJunction],
     ['tiny-pillar-hall', tinyPillarHall],
     ['yard', yard],
-].map(a => room(a[0], a[1]));
+].map((a) => room(a[0], a[1]));

@@ -1,5 +1,5 @@
-import { ItemType } from '../types';
 import { WeaponTemplate } from '../Item';
+import { ItemType } from '../types';
 
 export const kusanagi: WeaponTemplate = {
     name: 'Kusanagi-no-Tsurugi',
@@ -10,14 +10,14 @@ export const kusanagi: WeaponTemplate = {
     strength: 8,
     weight: 4,
     traits: { handle: true, blade: true, sword: true, legendary: true },
-    movetimer: 1,
+    moveTimer: 1,
     missile: false,
     thrown: false,
     ammo: false,
     stacked: false,
     mods: {},
     listeners: {
-        'player.attack': e => {
+        'player.attack': (e) => {
             // TODO
         },
     },

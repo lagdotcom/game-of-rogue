@@ -1,21 +1,21 @@
-import { Display } from './Display';
-import Hooks from './Hooks';
+import { Actor } from './Actor';
 import Architect from './Architect';
-import Trace from './Trace';
+import { Samurai } from './classes';
+import { attack } from './combat';
+import { dirOffsets } from './constants';
+import { Display } from './Display';
 import { Floor } from './Floor';
-import RNG, { tychei } from './RNG';
-import { Tile, Token, Dir, XY } from './types';
-import Player from './Player';
+import Hooks from './Hooks';
 import Input from './Input';
 import { getSightCone } from './lights';
-import { dirOffsets } from './consts';
-import { Samurai } from './classes';
 import Log from './Log';
-import { Actor } from './Actor';
-import { Traceline } from './Traceline';
-import { attack } from './combat';
-import UIElement from './UIElement';
+import Player from './Player';
 import PlayerUI from './PlayerUI';
+import RNG, { tychei } from './RNG';
+import Trace from './Trace';
+import { Traceline } from './Traceline';
+import { Dir, Tile, Token, XY } from './types';
+import UIElement from './UIElement';
 
 interface TileColour {
     fg: string;
@@ -81,32 +81,32 @@ export default class Game {
 
     advance() {
         while (!this.input.listening) {
-            this.actors.sort((a, b) => a.nextmove - b.nextmove);
+            this.actors.sort((a, b) => a.nextMove - b.nextMove);
 
-            let a = this.actors[0];
+            const a = this.actors[0];
             if (a.isPlayer) {
                 this.input.listening = true;
                 return;
             }
 
-            let oldmove = a.nextmove;
+            const oldMove = a.nextMove;
             a.ai();
-            if (a.nextmove === oldmove) a.nextmove = this.player.nextmove + 0.5;
+            if (a.nextMove === oldMove) a.nextMove = this.player.nextMove + 0.5;
         }
     }
 
     redraw() {
         this.display.fill(' ');
 
-        let tdraw = this.drawTile.bind(this);
-        getSightCone(this.player).forEach(tdraw);
+        const draw = this.drawTile.bind(this);
+        getSightCone(this.player).forEach(draw);
 
-        this.ui.forEach(u => u.draw());
+        this.ui.forEach((u) => u.draw());
     }
 
     drawTile(p: XY) {
-        let enemy = this.f.enemyAt(p);
-        let item = this.f.itemAt(p);
+        const enemy = this.f.enemyAt(p);
+        const item = this.f.itemAt(p);
         let tok: Token;
 
         if (this.player.pos == p) {
@@ -116,7 +116,7 @@ export default class Game {
         } else if (item) {
             tok = item.token;
         } else {
-            let char = this.f.map.get(p.x, p.y);
+            const char = this.f.map.get(p.x, p.y);
             if (!colours[char]) return;
             tok = { ...colours[char], char };
         }
@@ -125,7 +125,7 @@ export default class Game {
     }
 
     blockers(p: XY) {
-        return this.actors.filter(a => a.pos == p);
+        return this.actors.filter((a) => a.pos == p);
     }
 
     playerAct(d: Dir) {
@@ -157,7 +157,7 @@ export default class Game {
         steps: number,
         cb: (p: XY) => boolean,
     ): Traceline {
-        let tl: Traceline = {
+        const tl: Traceline = {
             start: this.f.map.ref(sx, sy),
             projected: this.f.map.ref(ex, ey),
             visited: new Set<XY>(),
@@ -166,11 +166,11 @@ export default class Game {
 
         let tx = sx;
         let ty = sy;
-        let dx = (ex - sx) / steps;
-        let dy = (ey - sy) / steps;
+        const dx = (ex - sx) / steps;
+        const dy = (ey - sy) / steps;
 
         for (let s = 0; s <= steps; s++) {
-            let p = this.f.map.ref(tx, ty);
+            const p = this.f.map.ref(tx, ty);
             if (!tl.visited.has(p)) {
                 tl.visited.add(p);
 

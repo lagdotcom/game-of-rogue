@@ -1,7 +1,7 @@
-import { ItemType, Mods, ItemTraits } from '../types';
 import Game from '../Game';
-import { rnd } from '../tools';
 import { WeaponTemplate } from '../Item';
+import { rnd } from '../tools';
+import { ItemTraits, ItemType, Mods } from '../types';
 
 function w(i: {
     article?: string;
@@ -30,11 +30,11 @@ function w(i: {
         traits: i.traits || {},
         rarity: i.rarity || 1,
         stacked: i.stacked || false,
-        findamt: i.findamt,
+        getStackAmount: i.findamt,
         hands: i.hands || (i.ammo ? 0 : 1),
         offhand: i.offhand || false,
         strength: i.strength,
-        movetimer: i.movetimer || 1,
+        moveTimer: i.movetimer || 1,
         thrown: i.thrown || false,
         ammo: i.ammo || false,
         firedBy: i.firedBy,
@@ -121,7 +121,7 @@ export const yumi = w({
     traits: { bow: true, wood: true },
 });
 
-export const humanfists = w({
+export const humanFists = w({
     name: 'fists',
     article: 'your',
     hands: 2,

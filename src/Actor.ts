@@ -1,6 +1,6 @@
-import { Dir, XY, Tile, ItemType, ItemSlot } from './types';
 import Game from './Game';
-import Item, { Equipment, Weapon, Armour } from './Item';
+import Item, { Armour, Equipment, Weapon } from './Item';
+import { Dir, ItemSlot, ItemType, Tile, XY } from './types';
 
 export abstract class Actor {
     armour: number;
@@ -28,7 +28,7 @@ export abstract class Actor {
     name: string;
     natural?: Weapon;
     natural2?: Weapon;
-    nextmove: number;
+    nextMove: number;
     pos: XY;
     sightFov: number;
     sightRange: number;
@@ -46,7 +46,7 @@ export abstract class Actor {
         this.inventory = [];
         this.kiRegen = 0.1;
         this.name = name;
-        this.nextmove = 0;
+        this.nextMove = 0;
         this.moveCost = 1;
         this.sightFov = 160;
         this.sightRange = 5;
@@ -55,7 +55,7 @@ export abstract class Actor {
 
     move(dest: XY, spend: boolean) {
         if (this.g.f.map.get(dest.x, dest.y) == Tile.Wall) return false;
-        if (this.g.actors.filter(a => a.pos == dest).length) return false;
+        if (this.g.actors.filter((a) => a.pos == dest).length) return false;
 
         const from = this.pos;
         this.pos = dest;
@@ -81,7 +81,7 @@ export abstract class Actor {
     }
 
     spend(t: number) {
-        this.nextmove += t;
+        this.nextMove += t;
     }
 
     regen(t: number) {
@@ -110,8 +110,8 @@ export abstract class Actor {
             if (wi.template.hands == 0 && wi.template.ammo) {
                 let w: Weapon;
 
-                if (!this.slotused(ItemSlot.BothHands)) {
-                    if (!this.slotused(ItemSlot.Primary)) {
+                if (!this.slotUsed(ItemSlot.BothHands)) {
+                    if (!this.slotUsed(ItemSlot.Primary)) {
                         if (this.isPlayer)
                             this.g.log.info('Equip the weapon first.');
 
@@ -142,8 +142,8 @@ export abstract class Actor {
             }
 
             if (wi.template.hands == 2) {
-                if (this.slotused(ItemSlot.BothHands)) {
-                    if (!this.unequip(ItemSlot.BothHands)) {
+                if (this.slotUsed(ItemSlot.BothHands)) {
+                    if (!this.unEquip(ItemSlot.BothHands)) {
                         this.g.t.message('cannot remove BothHand');
                         this.g.t.leave('Actor.equip');
 
@@ -151,16 +151,16 @@ export abstract class Actor {
                     }
                 }
 
-                if (this.slotused(ItemSlot.Secondary)) {
-                    if (!this.unequip(ItemSlot.Secondary)) {
+                if (this.slotUsed(ItemSlot.Secondary)) {
+                    if (!this.unEquip(ItemSlot.Secondary)) {
                         this.g.t.message('cannot remove Secondary');
                         this.g.t.leave('Actor.equip');
                         return false;
                     }
                 }
 
-                if (this.slotused(ItemSlot.Primary)) {
-                    if (!this.unequip(ItemSlot.Primary)) {
+                if (this.slotUsed(ItemSlot.Primary)) {
+                    if (!this.unEquip(ItemSlot.Primary)) {
                         this.g.t.message('cannot remove Primary');
                         this.g.t.leave('Actor.equip');
                         return false;
@@ -172,8 +172,8 @@ export abstract class Actor {
                 return result;
             }
 
-            if (this.slotused(ItemSlot.BothHands)) {
-                if (!this.unequip(ItemSlot.BothHands)) {
+            if (this.slotUsed(ItemSlot.BothHands)) {
+                if (!this.unEquip(ItemSlot.BothHands)) {
                     this.g.t.message('cannot remove BothHands');
                     this.g.t.leave('Actor.equip');
                     return false;
@@ -181,9 +181,9 @@ export abstract class Actor {
             }
 
             if (wi.template.offhand) {
-                if (this.slotused(ItemSlot.Primary)) {
-                    if (this.slotused(ItemSlot.Secondary)) {
-                        if (!this.unequip(ItemSlot.Secondary)) {
+                if (this.slotUsed(ItemSlot.Primary)) {
+                    if (this.slotUsed(ItemSlot.Secondary)) {
+                        if (!this.unEquip(ItemSlot.Secondary)) {
                             this.g.t.message('cannot remove Secondary');
                             this.g.t.leave('Actor.equip');
                             return false;
@@ -198,7 +198,7 @@ export abstract class Actor {
                 // fall through to non-offhand weapon
             }
 
-            if (!this.unequip(ItemSlot.Primary)) {
+            if (!this.unEquip(ItemSlot.Primary)) {
                 this.g.t.message('cannot remove Primary');
                 this.g.t.leave('Actor.equip');
                 return false;
@@ -209,7 +209,7 @@ export abstract class Actor {
             return result;
         }
 
-        if (!this.unequip(i.template.slot)) {
+        if (!this.unEquip(i.template.slot)) {
             this.g.t.message('cannot remove', i.template.slot);
             this.g.t.leave('Actor.equip');
             return false;
@@ -222,33 +222,33 @@ export abstract class Actor {
 
     equipApply<T extends keyof Equipment>(i: Equipment[T], sl: T) {
         this.equipment[sl] = i;
-        this.inventory = this.inventory.filter(x => x != i);
+        this.inventory = this.inventory.filter((x) => x != i);
 
-        Object.entries(i.mods).forEach(p => {
+        Object.entries(i.mods).forEach((p) => {
             this[p[0]] += p[1];
         });
     }
 
-    unequip(sl: ItemSlot) {
+    unEquip(sl: ItemSlot) {
         if (!this.equipment[sl]) return true;
-        this.g.t.message('Actor.unequip', this.name, sl);
+        this.g.t.message('Actor.unEquip', this.name, sl);
 
-        return this.unequipApply(sl);
+        return this.unEquipApply(sl);
     }
 
-    unequipApply(sl: ItemSlot) {
-        let i = this.equipment[sl];
+    unEquipApply(sl: ItemSlot) {
+        const i = this.equipment[sl];
         this.inventory.push(i);
         delete this.equipment[sl];
 
-        Object.entries(i.mods).forEach(p => {
+        Object.entries(i.mods).forEach((p) => {
             this[p[0]] -= p[1];
         });
 
         return true;
     }
 
-    slotused(sl: ItemSlot) {
+    slotUsed(sl: ItemSlot) {
         return !!this.equipment[sl];
     }
 
@@ -258,17 +258,17 @@ export abstract class Actor {
     }
 
     getPrimaryWeapon() {
-        if (this.slotused(ItemSlot.BothHands))
+        if (this.slotUsed(ItemSlot.BothHands))
             return this.equipment[ItemSlot.BothHands];
 
-        if (this.slotused(ItemSlot.Primary))
+        if (this.slotUsed(ItemSlot.Primary))
             return this.equipment[ItemSlot.Primary];
 
         return this.natural;
     }
 
     getSecondaryWeapon() {
-        if (this.slotused(ItemSlot.Secondary))
+        if (this.slotUsed(ItemSlot.Secondary))
             return this.equipment[ItemSlot.Secondary];
 
         return this.natural2;

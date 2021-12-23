@@ -1,4 +1,4 @@
-import seedrandom, { prng } from 'seedrandom';
+import seedrandom from 'seedrandom';
 
 export default interface RNG {
     name: string;
@@ -7,7 +7,8 @@ export default interface RNG {
     setSeed(seed: string): void;
 }
 
-type prng_maker = (seed: string, options: seedrandom.seedRandomOptions) => prng;
+type prng = ReturnType<typeof seedrandom.tychei>;
+type prng_maker = (seed: string, options: seedrandom.Options) => prng;
 
 abstract class AbstractRNG {
     gen: prng_maker;
@@ -52,7 +53,7 @@ export class tychei extends AbstractRNG implements RNG {
     }
 
     parseSeed(seed: string): TycheiState {
-        let parts = seed.split('.');
+        const parts = seed.split('.');
         return {
             a: decode(parts[0]),
             b: decode(parts[1]),
@@ -62,7 +63,7 @@ export class tychei extends AbstractRNG implements RNG {
     }
 
     randomState() {
-        let temp = this.gen(Math.random().toString(), { state: true });
+        const temp = this.gen(Math.random().toString(), { state: true });
         return temp.state();
     }
 }

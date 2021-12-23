@@ -1,20 +1,25 @@
-import { Token, XY, ItemType, ItemTraits, ItemSlot, Mods } from './types';
+import { ARTIFACT_CHANCE, MAGIC_CHANCE } from './constants';
 import Game from './Game';
+import {
+  GameEventHandler,
+  GameEventListeners,
+  GameEventMap,
+  GameEventName,
+} from './Hooks';
+import { domaru, hachimaki, sujibachi } from './it/armor';
 import { kusanagi } from './it/artifact';
 import {
-    katana,
-    sai,
-    shuriken,
-    tanto,
-    tekko,
-    wakizashi,
-    ya,
-    yumi,
+  katana,
+  sai,
+  shuriken,
+  tanto,
+  tekko,
+  wakizashi,
+  ya,
+  yumi,
 } from './it/weapon';
-import { domaru, hachimaki, sujibachi } from './it/armor';
-import { rnd, oneof } from './tools';
-import { ARTIFACT_CHANCE, MAGIC_CHANCE } from './consts';
-import { GameEventMap } from './Hooks';
+import { oneOf, rnd } from './tools';
+import { ItemSlot, ItemTraits, ItemType, Mods, Token, XY } from './types';
 
 export default abstract class Item {
     count?: number;
@@ -36,14 +41,14 @@ export default abstract class Item {
             this.token.char = itemChars[t.type];
             this.type = t.type;
 
-            if (t.findamt) this.count = t.findamt(g);
+            if (t.getStackAmount) this.count = t.getStackAmount(g);
         }
     }
 
     matches(tr: ItemTraits) {
         let result = true;
         Object.values(tr).forEach((p: [string, boolean]) => {
-            if (this.template.traits[p[0]] != p[1]) result = false;
+            if (this.template.traits[p[0]] !== p[1]) result = false;
         });
 
         return result;
@@ -68,11 +73,11 @@ export interface ItemTemplate {
     weight?: number;
     rarity: number;
     stacked: boolean;
-    findamt?: (g: Game) => number;
+    getStackAmount?: (g: Game) => number;
     traits: ItemTraits;
     mods: Mods;
     listeners?: {
-        [type in keyof GameEventMap]?: (e: GameEventMap[type]) => void;
+        [T in GameEventName]?: GameEventHandler<T>;
     };
 }
 
@@ -84,7 +89,7 @@ export interface WeaponTemplate extends ItemTemplate {
     type: ItemType.Weapon;
     hands: number;
     offhand: boolean;
-    movetimer: number;
+    moveTimer: number;
     strength: number;
     thrown: boolean;
     ammo: boolean;
@@ -135,9 +140,9 @@ const itemChars = {
 
 function randomItemTemplate(g: Game) {
     while (true) {
-        if (rnd(g.rng, 100) < ARTIFACT_CHANCE) return oneof(g.rng, artifacts);
+        if (rnd(g.rng, 100) < ARTIFACT_CHANCE) return oneOf(g.rng, artifacts);
 
-        const item = oneof(g.rng, items);
+        const item = oneOf(g.rng, items);
         if (rnd(g.rng, 100) >= item.rarity) return item;
     }
 }

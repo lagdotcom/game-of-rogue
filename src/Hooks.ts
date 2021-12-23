@@ -1,37 +1,42 @@
-import Game from './Game';
-import { Floor } from './Floor';
 import { Actor } from './Actor';
+import { Floor } from './Floor';
+import Game from './Game';
 import { Weapon } from './Item';
 import { Dir, XY } from './types';
 
-// TODO: type Handler<T extends keyof GameEventMap> = (e: GameEventMap[T]) => any;
-type Handler = (e: GameEvent) => any;
+export type GameEventHandler<T extends GameEventName> = (
+    e: GameEventMap[T],
+) => any;
+export type GameEventListeners = {
+    [T in GameEventName]?: GameEventHandler<T>[];
+};
 
 export default class Hooks {
     g: Game;
-    listeners: {
-        [type in keyof GameEventMap]?: Handler[];
-    };
+    listeners: GameEventListeners;
 
     constructor(g: Game) {
         this.g = g;
         this.listeners = {};
     }
 
-    on<T extends keyof GameEventMap>(type: T, fn: Handler) {
+    on<T extends GameEventName>(type: T, fn: GameEventHandler<T>) {
         if (!this.listeners[type]) this.listeners[type] = [];
 
+        //@ts-ignore
         this.listeners[type].push(fn);
     }
 
-    off<T extends keyof GameEventMap>(type: T, fn: Handler) {
-        if (this.listeners[type])
-            this.listeners[type] = this.listeners[type].filter(c => c !== fn);
+    off<T extends GameEventName>(type: T, fn: GameEventHandler<T>) {
+        if (this.listeners[type]) {
+            //@ts-ignore
+            this.listeners[type] = this.listeners[type].filter((c) => c !== fn);
+        }
     }
 
-    fire<T extends keyof GameEventMap>(type: T, e: GameEventMap[T]) {
+    fire<T extends GameEventName>(type: T, e: GameEventMap[T]) {
         this.g.t.enter('Hooks.fire', type, e);
-        if (this.listeners[type]) this.listeners[type].forEach(h => h(e));
+        if (this.listeners[type]) this.listeners[type].forEach((h) => h(e));
         this.g.t.leave('Hooks.fire');
     }
 }
@@ -44,6 +49,7 @@ export interface GameEventMap {
     'player.move': MoveEvent;
     'player.turn': TurnEvent;
 }
+export type GameEventName = keyof GameEventMap;
 
 export interface GameEvent {}
 
