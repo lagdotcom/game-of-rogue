@@ -32,7 +32,7 @@ export function getSightCone(a: Actor) {
             a.sightRange * LIGHTS_FRAGMENTS,
             (p) => {
                 // can always see own tile
-                if (p == a.pos) return true;
+                if (p === a.pos) return true;
 
                 const tile = a.g.f.map.get(p.x, p.y);
                 return tile === Tile.Space;

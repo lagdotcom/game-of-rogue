@@ -4,30 +4,28 @@ import { GameEventHandler, GameEventName } from './Hooks';
 import { domaru, hachimaki, sujibachi } from './it/armor';
 import { kusanagi } from './it/artifact';
 import {
-  katana,
-  sai,
-  shuriken,
-  tanto,
-  tekko,
-  wakizashi,
-  ya,
-  yumi,
+    katana,
+    sai,
+    shuriken,
+    tanto,
+    tekko,
+    wakizashi,
+    ya,
+    yumi,
 } from './it/weapon';
 import { oneOf, rnd } from './tools';
 import { ItemSlot, ItemTraits, ItemType, Mods, Token, XY } from './types';
 
 export default abstract class Item {
     count?: number;
-    g: Game;
     mods: Mods;
     pos: XY;
     template: ItemTemplate;
     token: Token;
     type: ItemType;
 
-    constructor(g: Game, t?: ItemTemplate) {
+    constructor(public g: Game, t?: ItemTemplate) {
         this.token = { bg: '#202000', char: '$', fg: 'yellow' };
-        this.g = g;
         this.type = ItemType.Other;
 
         if (t) {

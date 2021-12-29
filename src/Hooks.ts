@@ -12,11 +12,9 @@ export type GameEventListeners = {
 };
 
 export default class Hooks {
-    g: Game;
     listeners: GameEventListeners;
 
-    constructor(g: Game) {
-        this.g = g;
+    constructor(public g: Game) {
         this.listeners = {};
     }
 

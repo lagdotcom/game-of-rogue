@@ -4,12 +4,10 @@ import { Dir } from './types';
 type InputHandler = (code: string, shift: boolean, ctrl: boolean) => boolean;
 
 export default class Input {
-    g: Game;
     handler: InputHandler;
     listening: boolean;
 
-    constructor(g: Game) {
-        this.g = g;
+    constructor(public g: Game) {
         this.listening = false;
         document.addEventListener('keydown', this.keydown.bind(this));
     }

@@ -33,7 +33,7 @@ export class DisplayCell {
     }
 
     fg(colour?: string) {
-        if (colour !== undefined && this.f != colour) {
+        if (colour !== undefined && this.f !== colour) {
             this.dirty = true;
             this.f = colour;
         }
@@ -41,7 +41,7 @@ export class DisplayCell {
     }
 
     bg(colour?: string) {
-        if (colour !== undefined && this.b != colour) {
+        if (colour !== undefined && this.b !== colour) {
             this.dirty = true;
             this.b = colour;
         }
@@ -49,7 +49,7 @@ export class DisplayCell {
     }
 
     border(colour?: string) {
-        if (colour !== undefined && this.bo != colour) {
+        if (colour !== undefined && this.bo !== colour) {
             this.dirty = true;
             this.bo = colour;
         }

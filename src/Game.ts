@@ -159,7 +159,7 @@ export default class Game {
         const item = this.f.itemAt(p);
         let tok: Token;
 
-        if (this.player.pos == p) {
+        if (this.player.pos === p) {
             tok = this.player;
         } else if (enemy) {
             tok = enemy;
@@ -184,7 +184,7 @@ export default class Game {
         const item = this.f.itemAt(p);
         const tok: Token = { char: '?', fg: '#222', bg: 'black' };
 
-        if (this.player.pos == p) {
+        if (this.player.pos === p) {
             tok.char = this.player.char;
         } else if (item) {
             tok.char = item.token.char;
@@ -197,11 +197,11 @@ export default class Game {
     }
 
     blockers(p: XY) {
-        return this.actors.filter((a) => a.pos == p);
+        return this.actors.filter((a) => a.pos === p);
     }
 
     playerAct(d: Dir) {
-        if (this.player.facing != d) return this.player.turn(d, true);
+        if (this.player.facing !== d) return this.player.turn(d, true);
 
         const o = dirOffsets[d];
         const dest = this.f.map.ref(

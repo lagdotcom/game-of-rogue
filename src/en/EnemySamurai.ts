@@ -16,20 +16,20 @@ export class EnemySamurai extends Enemy {
         this.apply(Samurai);
         this.investigatesNoises = true;
 
-        if (rnd(g.rng, 4) == 0) {
+        if (rnd(g.rng, 4) === 0) {
             this.equip(constructItem(g, katana));
-        } else if (rnd(g.rng, 3) == 0) {
+        } else if (rnd(g.rng, 3) === 0) {
             this.equip(constructItem(g, yumi));
             this.equip(constructItem(g, ya));
         } else {
             this.equip(constructItem(g, wakizashi));
         }
 
-        if (rnd(g.rng, 3) == 0) {
+        if (rnd(g.rng, 3) === 0) {
             this.equip(constructItem(g, domaru));
         }
 
-        if (rnd(g.rng, 3) == 0) {
+        if (rnd(g.rng, 3) === 0) {
             this.equip(constructItem(g, sujibachi));
         }
     }

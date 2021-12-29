@@ -15,7 +15,7 @@ export class EnemyNinja extends Enemy {
         this.apply(Ninja);
         this.investigatesNoises = true;
 
-        if (rnd(g.rng, 4) == 0) {
+        if (rnd(g.rng, 4) === 0) {
             this.equip(constructItem(g, sai));
             this.equip(constructItem(g, sai));
         } else {

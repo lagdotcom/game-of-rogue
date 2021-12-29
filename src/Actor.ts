@@ -71,8 +71,8 @@ export abstract class Actor {
     }
 
     move(dest: XY, spend: boolean) {
-        if (this.g.f.map.get(dest.x, dest.y) == Tile.Wall) return false;
-        if (this.g.actors.filter((a) => a.pos == dest).length) return false;
+        if (this.g.f.map.get(dest.x, dest.y) === Tile.Wall) return false;
+        if (this.g.actors.filter((a) => a.pos === dest).length) return false;
 
         const from = this.pos;
         this.pos = dest;
@@ -85,7 +85,7 @@ export abstract class Actor {
     }
 
     turn(d: Dir, spend: boolean) {
-        if (this.facing == d) return false;
+        if (this.facing === d) return false;
 
         const from = this.facing;
         this.facing = d;
@@ -120,12 +120,12 @@ export abstract class Actor {
     }
 
     equip(i: Item) {
-        if (i.type == ItemType.Other) return false;
+        if (i.type === ItemType.Other) return false;
         this.g.t.enter('Actor.equip', this.name, i.template.name);
 
-        if (i.type == ItemType.Weapon) {
+        if (i.type === ItemType.Weapon) {
             const wi = <Weapon>i;
-            if (wi.template.hands == 0 && wi.template.ammo) {
+            if (wi.template.hands === 0 && wi.template.ammo) {
                 let w: Weapon;
 
                 if (!this.slotUsed(ItemSlot.BothHands)) {
@@ -159,7 +159,7 @@ export abstract class Actor {
                 return result;
             }
 
-            if (wi.template.hands == 2) {
+            if (wi.template.hands === 2) {
                 if (this.slotUsed(ItemSlot.BothHands)) {
                     if (!this.unEquip(ItemSlot.BothHands)) {
                         this.g.t.message('cannot remove BothHand');
@@ -240,7 +240,7 @@ export abstract class Actor {
 
     equipApply<T extends keyof Equipment>(i: Equipment[T], sl: T) {
         this.equipment[sl] = i;
-        this.inventory = this.inventory.filter((x) => x != i);
+        this.inventory = this.inventory.filter((x) => x !== i);
 
         Object.entries(i.mods).forEach((p) => {
             this[p[0]] += p[1];

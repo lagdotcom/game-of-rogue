@@ -83,7 +83,7 @@ export class Grid<T = string> {
         if (!turns) return this;
 
         const name = `${this.name}/${turns}`;
-        if (turns == 2) r = new Grid(name, width, height, this.init);
+        if (turns === 2) r = new Grid(name, width, height, this.init);
         else r = new Grid(name, height, width, this.init);
 
         for (let y = 0; y < height; y++)
@@ -116,7 +116,7 @@ export class Grid<T = string> {
     replace(f: T, t: T) {
         for (let y = 0; y < this.height; y++)
             for (let x = 0; x < this.width; x++)
-                if (this.get(x, y) == f) this.set(x, y, t);
+                if (this.get(x, y) === f) this.set(x, y, t);
     }
 
     toString() {

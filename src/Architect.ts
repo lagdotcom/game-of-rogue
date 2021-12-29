@@ -1,8 +1,8 @@
 import {
-  dirOffsets,
-  ROOMGEN_ATTEMPTS,
-  ROOMGEN_MINENEMIES,
-  ROOMGEN_MINROOMS,
+    dirOffsets,
+    ROOMGEN_ATTEMPTS,
+    ROOMGEN_MINENEMIES,
+    ROOMGEN_MINROOMS,
 } from './constants';
 import { EnemyNinja } from './en/EnemyNinja';
 import { EnemySamurai } from './en/EnemySamurai';
@@ -111,13 +111,13 @@ export default class Architect {
                 const dt = m.get(cx, cy);
                 const st = r.get(cx - p.x, cy - p.y);
 
-                if (st == Tile.Empty || dt == Tile.Empty) continue;
+                if (st === Tile.Empty || dt === Tile.Empty) continue;
 
                 if (
-                    dt != Tile.Wall &&
-                    dt != Tile.NotDoor &&
-                    dt != Tile.Empty &&
-                    dt != st
+                    dt !== Tile.Wall &&
+                    dt !== Tile.NotDoor &&
+                    dt !== Tile.Empty &&
+                    dt !== st
                 ) {
                     if (debugFits) {
                         this.g.t.message('conflict', cx, cy, dt, st);
@@ -126,7 +126,7 @@ export default class Architect {
                     return false;
                 }
 
-                if (dt == Tile.NotDoor && st == Tile.Door) {
+                if (dt === Tile.NotDoor && st === Tile.Door) {
                     if (debugFits) {
                         this.g.t.message('notDoor', cx, cy, dt, st);
                         this.g.t.leave('fits');
@@ -134,7 +134,7 @@ export default class Architect {
                     return false;
                 }
 
-                if ((dt == Tile.Wall || dt == Tile.Door) && st == Tile.Door)
+                if ((dt === Tile.Wall || dt === Tile.Door) && st === Tile.Door)
                     newDoor = true;
             }
         }
@@ -156,12 +156,12 @@ export default class Architect {
                 for (let x = 0; x < m.width; x++) {
                     const tc = m.get(x, y);
 
-                    if (tc == Tile.NotDoor) {
+                    if (tc === Tile.NotDoor) {
                         m.set(x, y, Tile.Wall);
                         continue;
                     }
 
-                    if (tc != Tile.Door) continue;
+                    if (tc !== Tile.Door) continue;
 
                     const tu = m.get(x, y - 1);
                     const tl = m.get(x - 1, y);
@@ -170,35 +170,35 @@ export default class Architect {
 
                     // don't allow doors on the border
                     if (
-                        x == 0 ||
-                        x == m.width - 1 ||
-                        y == 0 ||
-                        y == m.height - 1
+                        x === 0 ||
+                        x === m.width - 1 ||
+                        y === 0 ||
+                        y === m.height - 1
                     ) {
                         m.set(x, y, Tile.Wall);
                         continue;
                     }
 
                     // door to wall? carve it out
-                    if (tl == Tile.Space && tr == Tile.Wall) {
+                    if (tl === Tile.Space && tr === Tile.Wall) {
                         if (debugCleanup) this.g.t.message('carve right', x, y);
                         cleanup = true;
                         m.set(x + 1, y, Tile.Space);
                         continue;
                     }
-                    if (tr == Tile.Space && tl == Tile.Wall) {
+                    if (tr === Tile.Space && tl === Tile.Wall) {
                         if (debugCleanup) this.g.t.message('carve left', x, y);
                         cleanup = true;
                         m.set(x - 1, y, Tile.Space);
                         continue;
                     }
-                    if (tu == Tile.Space && td == Tile.Wall) {
+                    if (tu === Tile.Space && td === Tile.Wall) {
                         if (debugCleanup) this.g.t.message('carve down', x, y);
                         cleanup = true;
                         m.set(x, y + 1, Tile.Space);
                         continue;
                     }
-                    if (td == Tile.Space && tu == Tile.Wall) {
+                    if (td === Tile.Space && tu === Tile.Wall) {
                         if (debugCleanup) this.g.t.message('carve up', x, y);
                         cleanup = true;
                         m.set(x, y - 1, Tile.Space);
@@ -207,10 +207,10 @@ export default class Architect {
 
                     // wrong walls?
                     if (
-                        (tl == Tile.Wall && tr != Tile.Wall) ||
-                        (tr == Tile.Wall && tl != Tile.Wall) ||
-                        (tu == Tile.Wall && td != Tile.Wall) ||
-                        (td == Tile.Wall && tu != Tile.Wall)
+                        (tl === Tile.Wall && tr !== Tile.Wall) ||
+                        (tr === Tile.Wall && tl !== Tile.Wall) ||
+                        (tu === Tile.Wall && td !== Tile.Wall) ||
+                        (td === Tile.Wall && tu !== Tile.Wall)
                     ) {
                         cleanup = true;
                         m.set(x, y, Tile.Space);
@@ -219,10 +219,10 @@ export default class Architect {
 
                     // too many spaces
                     let spaces = 0;
-                    if (tl == Tile.Space) spaces++;
-                    if (tr == Tile.Space) spaces++;
-                    if (tu == Tile.Space) spaces++;
-                    if (td == Tile.Space) spaces++;
+                    if (tl === Tile.Space) spaces++;
+                    if (tr === Tile.Space) spaces++;
+                    if (tu === Tile.Space) spaces++;
+                    if (td === Tile.Space) spaces++;
                     if (spaces > 2) {
                         if (debugCleanup)
                             this.g.t.message('too many spaces', x, y);
@@ -233,10 +233,10 @@ export default class Architect {
 
                     // too many doors
                     if (
-                        (tl == Tile.Space && tr == Tile.Door) ||
-                        (tr == Tile.Space && tl == Tile.Door) ||
-                        (tu == Tile.Space && td == Tile.Door) ||
-                        (td == Tile.Space && tu == Tile.Door)
+                        (tl === Tile.Space && tr === Tile.Door) ||
+                        (tr === Tile.Space && tl === Tile.Door) ||
+                        (tu === Tile.Space && td === Tile.Door) ||
+                        (td === Tile.Space && tu === Tile.Door)
                     ) {
                         if (debugCleanup)
                             this.g.t.message('too many doors', x, y);
@@ -247,10 +247,10 @@ export default class Architect {
 
                     // door to nowhere
                     if (
-                        (tl == Tile.Empty && tr == Tile.Space) ||
-                        (tr == Tile.Empty && tl == Tile.Space) ||
-                        (tu == Tile.Empty && td == Tile.Space) ||
-                        (td == Tile.Empty && tu == Tile.Space)
+                        (tl === Tile.Empty && tr === Tile.Space) ||
+                        (tr === Tile.Empty && tl === Tile.Space) ||
+                        (tu === Tile.Empty && td === Tile.Space) ||
+                        (td === Tile.Empty && tu === Tile.Space)
                     ) {
                         if (debugCleanup)
                             this.g.t.message('door to nowhere', x, y);

@@ -6,7 +6,7 @@
             "type": "newLineEachExpressionAfterCountLimit"
         },
         "removeUnusedImports": true,
-        "tabSize": 2,
+        "tabSize": 4,
         "trailingComma": "multiLine"
     }
 }
