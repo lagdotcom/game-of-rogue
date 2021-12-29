@@ -1,6 +1,8 @@
+import { aiMove, aiStand, clearDeadTarget } from './AI';
+import { Class } from './Class';
 import Game from './Game';
 import Item, { Armour, Equipment, Weapon } from './Item';
-import { Dir, ItemSlot, ItemType, Tile, XY } from './types';
+import { Dir, ItemSlot, ItemType, Side, Tile, XY } from './types';
 
 export abstract class Actor {
     alerted: boolean;
@@ -15,18 +17,19 @@ export abstract class Actor {
     equipment: Equipment;
     facing: Dir;
     fg: string;
-    g: Game;
     hp: number;
     hpMax: number;
     hpRegen: number;
     inventory: Item[];
+    investigate?: true;
+    investigating?: Actor;
+    investigationTimer: number;
     isEnemy?: true;
     isPlayer?: true;
     ki: number;
     kiMax: number;
     kiRegen: number;
     moveCost: number;
-    name: string;
     natural?: Weapon;
     natural2?: Weapon;
     nextMove: number;
@@ -34,9 +37,10 @@ export abstract class Actor {
     sightFov: number;
     sightRange: number;
     str: number;
+    target?: Actor;
     turnCost: number;
 
-    constructor(g: Game, name: string) {
+    constructor(public g: Game, public name: string, public side: Side) {
         this.g = g;
         this.armour = 0;
         this.balance = this.balanceMax = 100;
@@ -56,6 +60,12 @@ export abstract class Actor {
 
     get alive() {
         return !this.dead;
+    }
+
+    apply(cl: Class) {
+        this.hp = this.hpMax = cl.hp;
+        this.ki = this.kiMax = cl.ki;
+        this.str = cl.str;
     }
 
     move(dest: XY, spend: boolean) {
@@ -259,8 +269,16 @@ export abstract class Actor {
     }
 
     ai() {
-        this.g.t.todo('Actor.ai', this.name);
-        return false;
+        clearDeadTarget(this);
+
+        if (!this.alerted) {
+            const result = aiStand(this);
+            if (result) return false;
+        }
+
+        if (this.alerted) {
+            aiMove(this, this.target);
+        }
     }
 
     getPrimaryWeapon() {

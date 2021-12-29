@@ -48,7 +48,7 @@ function damage(attacker: Actor, victim: Actor, dmg: number) {
 }
 
 function applyArmour(a: Actor, v: Actor, dmg: number) {
-    const dir = getDirectionBetween(v, a);
+    const dir = getDirectionBetween(v.pos, a.pos);
     const ang = getAngleBetween(dir, v.facing);
 
     let absorb = v.armour;
@@ -75,7 +75,7 @@ function strike(a: Actor, v: Actor, w: Weapon): number {
 }
 
 export function attack(a: Actor, v: Actor): boolean {
-    a.g.t.todo('attack', a, v);
+    // a.g.t.todo('attack', a, v);
 
     let totalDamage = 0;
     let balanceCost = 0;
@@ -103,8 +103,15 @@ export function attack(a: Actor, v: Actor): boolean {
 
     a.balance -= balanceCost;
 
-    // combatAlert(a, v);
+    combatAlert(a, v);
     a.spend(timerCost);
     a.g.redraw();
     return true;
+}
+
+export function combatAlert(a: Actor, v: Actor) {
+    if (v.alive && !v.alerted) {
+        v.alerted = true;
+        v.target = a;
+    }
 }

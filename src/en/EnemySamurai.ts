@@ -13,7 +13,7 @@ export class EnemySamurai extends Enemy {
 
         this.char = 'S';
         this.name = randomName(g);
-        this.hp = this.hpMax = Samurai.hp;
+        this.apply(Samurai);
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, katana));

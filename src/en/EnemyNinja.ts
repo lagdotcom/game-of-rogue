@@ -12,7 +12,7 @@ export class EnemyNinja extends Enemy {
 
         this.char = 'N';
         this.name = randomName(g);
-        this.hp = this.hpMax = Ninja.hp;
+        this.apply(Ninja);
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, sai));

@@ -13,6 +13,7 @@ import Player from './Player';
 import PlayerUI from './PlayerUI';
 import Prompt from './Prompt';
 import RNG, { tychei } from './RNG';
+import { getDistanceBetween } from './tools';
 import Trace from './Trace';
 import { Traceline } from './Traceline';
 import { Dir, Tile, Token, XY } from './types';
@@ -42,6 +43,7 @@ export default class Game {
     prompt: Prompt;
     rng: RNG;
     t: Trace;
+    timer: number;
     ui: UIElement[];
 
     constructor(parent: HTMLElement) {
@@ -60,11 +62,13 @@ export default class Game {
         this.player = new Player(this, Samurai);
         this.playerUI = new PlayerUI(this);
         this.prompt = new Prompt(this);
+        this.timer = 0;
         this.ui = [this.playerUI, this.log, this.prompt];
 
         this.t.leave('Game.new');
 
         this.hooks.on('sys.advance', ({ time }) => {
+            this.timer += time;
             this.actors.forEach((a) => a.regen(time));
         });
     }
@@ -97,6 +101,9 @@ export default class Game {
         this.hooks.fire('sys.advance', { time });
 
         while (!this.input.listening) {
+            // TODO what
+            if (this.player.dead) break;
+
             this.actors.sort((a, b) => a.nextMove - b.nextMove);
 
             const a = this.actors[0];
@@ -199,6 +206,23 @@ export default class Game {
         }
 
         return tl;
+    }
+
+    getNearestEnemy(a: Actor) {
+        let best: Actor | undefined = undefined;
+        let bestDistance = Infinity;
+
+        this.actors.forEach((v) => {
+            if (v.side === a.side) return;
+
+            const dist = getDistanceBetween(a.pos, v.pos);
+            if (dist < bestDistance) {
+                bestDistance = dist;
+                best = v;
+            }
+        });
+
+        return best;
     }
 
     debugNewFloor() {

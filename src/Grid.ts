@@ -1,37 +1,28 @@
 import { int } from './tools';
 import { XY } from './types';
 
-interface GridRef extends XY {
-    g: Grid;
+interface GridRef<T> extends XY {
+    g: Grid<T>;
     s: Symbol;
 }
 
-export class Grid {
-    contents: string[][];
-    default: string;
-    name?: string;
-    height: number;
-    oob: GridRef;
-    refs: GridRef[][];
-    width: number;
+export class Grid<T = string> {
+    contents: T[][];
+    oob: GridRef<T>;
+    refs: GridRef<T>[][];
 
     constructor(
-        name: string,
-        width: number,
-        height: number,
-        init: string = '',
+        public name: string,
+        public width: number,
+        public height: number,
+        public init: T,
     ) {
-        this.name = name;
-        this.height = height;
-        this.width = width;
-        this.default = init;
-
         this.contents = [];
         this.oob = { x: -1, y: -1, g: this, s: Symbol(`${name}@oob`) };
         this.refs = [];
         for (let y = 0; y < height; y++) {
-            const row: string[] = [];
-            const refRow: GridRef[] = [];
+            const row: T[] = [];
+            const refRow: GridRef<T>[] = [];
             for (let x = 0; x < width; x++) {
                 row.push(init);
                 refRow.push({ x, y, g: this, s: Symbol(`${name}@${x},${y}`) });
@@ -55,16 +46,16 @@ export class Grid {
     get(x: number, y: number) {
         const rx = int(x),
             ry = int(y);
-        return this.contains(rx, ry) ? this.contents[ry][rx] : this.default;
+        return this.contains(rx, ry) ? this.contents[ry][rx] : this.init;
     }
 
-    set(x: number, y: number, value: string) {
+    set(x: number, y: number, value: T) {
         const rx = int(x),
             ry = int(y);
         this.contents[ry][rx] = value;
     }
 
-    paste(sx: number, sy: number, g: Grid, ignore: string = '') {
+    paste(sx: number, sy: number, g: Grid<T>, ignore: T) {
         for (let y = 0; y < g.height; y++) {
             if (sy + y >= this.height) continue;
 
@@ -77,8 +68,8 @@ export class Grid {
         }
     }
 
-    find(...values: string[]) {
-        const points: GridRef[] = [];
+    find(...values: T[]) {
+        const points: GridRef<T>[] = [];
         for (let y = 0; y < this.height; y++)
             for (let x = 0; x < this.width; x++)
                 if (values.includes(this.get(x, y)))
@@ -87,13 +78,13 @@ export class Grid {
     }
 
     rotate(turns: number) {
-        const { width, height } = this;
-        let r: Grid;
+        const { width, height, init } = this;
+        let r: Grid<T>;
         if (!turns) return this;
 
         const name = `${this.name}/${turns}`;
-        if (turns == 2) r = new Grid(name, width, height);
-        else r = new Grid(name, height, width);
+        if (turns == 2) r = new Grid(name, width, height, this.init);
+        else r = new Grid(name, height, width, this.init);
 
         for (let y = 0; y < height; y++)
             for (let x = 0; x < width; x++) {
@@ -122,7 +113,7 @@ export class Grid {
         return r;
     }
 
-    replace(f: string, t: string) {
+    replace(f: T, t: T) {
         for (let y = 0; y < this.height; y++)
             for (let x = 0; x < this.width; x++)
                 if (this.get(x, y) == f) this.set(x, y, t);

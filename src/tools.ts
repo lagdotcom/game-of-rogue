@@ -1,6 +1,6 @@
 import { Actor } from './Actor';
 import RNG from './RNG';
-import { Dir } from './types';
+import { Dir, XY } from './types';
 
 export function int(n: number) {
     return Math.floor(n);
@@ -37,9 +37,9 @@ export function bonusText(n: number) {
     return n < 0 ? `${n}` : `+${n}`;
 }
 
-export function getDirectionBetween(a: Actor, b: Actor) {
-    const dx = a.pos.x - b.pos.x;
-    const dy = a.pos.y - b.pos.y;
+export function getDirectionBetween(a: XY, b: XY) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
     const ax = Math.abs(dx);
     const ay = Math.abs(dy);
 
@@ -57,4 +57,8 @@ export function getAngleBetween(a: Dir, b: Dir) {
     if (a === Dir.S && b === Dir.N) return 2;
     if (a === Dir.W && b === Dir.E) return 2;
     return 1;
+}
+
+export function getDistanceBetween(a: XY, b: XY) {
+    return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }

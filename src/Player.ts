@@ -3,7 +3,7 @@ import { Class } from './Class';
 import Game from './Game';
 import { humanFists } from './it/weapon';
 import { instantiateItem, Weapon } from './Item';
-import { Dir } from './types';
+import { Dir, Side } from './types';
 
 export default class Player extends Actor {
     isActor: true;
@@ -12,19 +12,18 @@ export default class Player extends Actor {
     level: number;
 
     constructor(g: Game, spec: Class) {
-        super(g, 'Player');
+        super(g, 'Player', Side.Player);
         this.isPlayer = true;
         this.bg = '#202020';
-        this.class = spec;
         this.char = '@';
         this.facing = Dir.N;
         this.fg = 'white';
-        this.hp = this.hpMax = spec.hp;
-        this.ki = this.kiMax = spec.ki;
         this.level = 1;
-        this.str = spec.str;
 
+        this.class = spec;
+        this.apply(spec);
         spec.init(this);
+
         if (!this.natural)
             this.natural = <Weapon>instantiateItem(g, humanFists);
     }

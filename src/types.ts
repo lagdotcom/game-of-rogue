@@ -65,3 +65,8 @@ export interface ItemTraits {
     sword?: boolean;
     wood?: boolean;
 }
+
+export enum Side {
+    Player,
+    Enemy,
+}

@@ -33,7 +33,7 @@ const actorFormatters: FormatterMatrix<Actor> = {
     o: (a) => {
         if (a.isPlayer) return 'your';
         if (a.cloneOf === a.g.player) return "your clone's";
-        return a.name + 's';
+        return a.name + "'s";
     },
     r: (a) => {
         if (a.isPlayer) return 'your';
@@ -95,7 +95,7 @@ export default class Log implements UIElement {
                     case 'actor':
                         return actorFormatters[ch](<Actor>arg);
                     case 'item':
-                        return (<Item>arg).name();
+                        return (<Item>arg).name({ singular: true });
                     case 'string':
                         return <string>arg;
                     case 'number':
