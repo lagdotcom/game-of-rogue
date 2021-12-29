@@ -34,6 +34,7 @@ export default class Game {
     actors: Actor[];
     architect: Architect;
     display: Display;
+    drawTimeout: number;
     f: Floor;
     hooks: Hooks;
     input: Input;
@@ -50,6 +51,7 @@ export default class Game {
         this.t = new Trace();
         this.t.enter('Game.new');
         this.seed();
+        this.draw = this.draw.bind(this);
 
         this.display = new Display(parent, 100, 40);
         this.display.str(0, 0, 'setting up...');
@@ -119,6 +121,12 @@ export default class Game {
     }
 
     redraw() {
+        if (!this.drawTimeout)
+            this.drawTimeout = requestAnimationFrame(this.draw);
+    }
+
+    draw() {
+        this.drawTimeout = 0;
         this.display.fill(' ');
 
         const draw = this.drawTile.bind(this);
