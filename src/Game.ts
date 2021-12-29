@@ -135,7 +135,7 @@ export default class Game {
 
     draw() {
         this.drawTimeout = 0;
-        this.display.fill(' ');
+        this.display.clear();
 
         this.view = getSightCone(this.player);
         this.view.forEach((pos) => this.seen.add(pos));
@@ -147,9 +147,11 @@ export default class Game {
 
         this.ui.forEach((u) => u.draw());
         this.display.update();
+        this.display.clearBorders();
     }
 
     drawTile(p: XY) {
+        const cell = this.display.at(p.x, p.y);
         const enemy = this.f.enemyAt(p);
         const item = this.f.itemAt(p);
         let tok: Token;
@@ -158,6 +160,12 @@ export default class Game {
             tok = this.player;
         } else if (enemy) {
             tok = enemy;
+            if (enemy.alerted) {
+                if (enemy.target === this.player) cell.border('red');
+                else cell.border('orange');
+            } else if (enemy.investigating) {
+                cell.border('yellow');
+            }
         } else if (item) {
             tok = item.token;
         } else {
@@ -166,7 +174,7 @@ export default class Game {
             tok = { ...colours[char], char };
         }
 
-        this.display.at(p.x, p.y).set(tok);
+        cell.set(tok);
     }
 
     drawSeenTile(p: XY) {

@@ -29,7 +29,7 @@ export class DisplayCell {
         this.fg(tok.fg);
         this.bg(tok.bg);
         this.text(tok.char);
-        this.border('transparent');
+        // this.border('transparent');
     }
 
     fg(colour?: string) {
@@ -76,7 +76,7 @@ export class DisplayCell {
 
             if (this.bo !== 'transparent') {
                 ctx.strokeStyle = this.bo;
-                ctx.rect(this.x, this.y, this.w, this.h);
+                ctx.strokeRect(this.x, this.y, this.w, this.h);
             }
         }
     }
@@ -141,6 +141,15 @@ export class Display {
             char,
         };
         this.cells.forEach((c) => c.set(tok));
+    }
+
+    clear() {
+        this.ctx.fillStyle = 'black';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    clearBorders() {
+        this.cells.forEach((c) => c.border('transparent'));
     }
 
     at(x: number, y: number) {
