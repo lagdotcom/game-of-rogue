@@ -17,12 +17,13 @@ export abstract class Actor {
     equipment: Equipment;
     facing: Dir;
     fg: string;
+    hearingRange: number;
     hp: number;
     hpMax: number;
     hpRegen: number;
     inventory: Item[];
-    investigate?: true;
-    investigating?: Actor;
+    investigatesNoises?: true;
+    investigating?: XY;
     investigationTimer: number;
     isEnemy?: true;
     isPlayer?: true;
@@ -47,6 +48,7 @@ export abstract class Actor {
         this.balanceRegen = 1;
         this.dead = false;
         this.equipment = {};
+        this.hearingRange = 10;
         this.hpRegen = 0.01;
         this.inventory = [];
         this.kiRegen = 0.1;
@@ -277,7 +279,7 @@ export abstract class Actor {
         }
 
         if (this.alerted) {
-            aiMove(this, this.target);
+            aiMove(this, this.target.pos);
         }
     }
 

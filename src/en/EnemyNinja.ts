@@ -13,6 +13,7 @@ export class EnemyNinja extends Enemy {
         this.char = 'N';
         this.name = randomName(g);
         this.apply(Ninja);
+        this.investigatesNoises = true;
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, sai));

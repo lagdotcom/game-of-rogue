@@ -20,11 +20,7 @@ const debugFits = false;
 const surrounds = Object.values(dirOffsets);
 
 export default class Architect {
-    g: Game;
-
-    constructor(g: Game) {
-        this.g = g;
-    }
+    constructor(public g: Game) {}
 
     generate(
         floor: number,

@@ -9,6 +9,7 @@ import Hooks from './Hooks';
 import Input from './Input';
 import { getSightCone } from './lights';
 import Log from './Log';
+import Noises from './Noises';
 import Player from './Player';
 import PlayerUI from './PlayerUI';
 import Prompt from './Prompt';
@@ -39,6 +40,7 @@ export default class Game {
     hooks: Hooks;
     input: Input;
     log: Log;
+    noise: Noises;
     player: Player;
     playerUI: PlayerUI;
     prompt: Prompt;
@@ -68,6 +70,7 @@ export default class Game {
         this.hooks = new Hooks(this);
         this.input = new Input(this);
         this.log = new Log(this);
+        this.noise = new Noises(this);
         this.player = new Player(this, Samurai);
         this.playerUI = new PlayerUI(this);
         this.prompt = new Prompt(this);

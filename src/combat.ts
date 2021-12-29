@@ -6,18 +6,19 @@ import { getAngleBetween, getDirectionBetween } from './tools';
 const StrikeWasSubstituted = -100;
 
 function kill(attacker: Actor, victim: Actor) {
+    const g = attacker.g;
     victim.dead = true;
 
     if (victim.isPlayer) {
-        attacker.g.log.info('You died!');
-        attacker.g.hooks.fire('player.died', { attacker, victim });
+        g.log.info('You died!');
+        g.hooks.fire('player.died', { attacker, victim });
     } else {
         if (victim.cloneOf) {
-            attacker.g.log.info('%an vanishes with a puff of smoke!', victim);
+            g.log.info('%an vanishes with a puff of smoke!', victim);
         } else {
             if (victim.alerted) {
-                attacker.g.log.info('%an screams as they die!', victim);
-                // TODO: noise
+                g.log.info('%an screams as they die!', victim);
+                g.noise.add(victim.pos, 8, victim, 2);
             } else {
                 attacker.g.log.info('%an falls to the ground, dead!', victim);
             }
@@ -27,7 +28,7 @@ function kill(attacker: Actor, victim: Actor) {
     }
 
     // TOOD: drop items
-    attacker.g.remove(victim);
+    g.remove(victim);
 }
 
 function damage(attacker: Actor, victim: Actor, dmg: number) {

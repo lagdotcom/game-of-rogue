@@ -32,6 +32,8 @@ export function makePath(f: Floor, start: XY, goal: XY) {
             fScore.set(n, tentative + getDistanceBetween(n, goal));
         });
     }
+
+    // TODO return closest path?
 }
 
 function pathLowest(positions: Set<XY>, scores: Map<XY, number>) {
@@ -39,7 +41,7 @@ function pathLowest(positions: Set<XY>, scores: Map<XY, number>) {
     let bestScore = Infinity;
 
     for (const pos of positions) {
-        const score = scores.has(pos) ? scores.get(pos) : Infinity;
+        const score = scores.get(pos);
         if (score < bestScore) {
             best = pos;
             bestScore = score;

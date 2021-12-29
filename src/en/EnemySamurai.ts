@@ -14,6 +14,7 @@ export class EnemySamurai extends Enemy {
         this.char = 'S';
         this.name = randomName(g);
         this.apply(Samurai);
+        this.investigatesNoises = true;
 
         if (rnd(g.rng, 4) == 0) {
             this.equip(constructItem(g, katana));
