@@ -19,6 +19,7 @@ module.exports = {
         rules: [
             { test: /\.ts$/i, use: ['ts-loader'], exclude: /node_modules/ },
             { test: /\.txt$/i, use: ['raw-loader'] },
+            { test: /\.(woff|woff2|eot|ttf|otf)$/i, type: 'asset/resource' },
             { test: /\.css$/i, use: ['style-loader', 'css-loader'] },
         ],
     },

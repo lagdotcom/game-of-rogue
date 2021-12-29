@@ -1,11 +1,33 @@
-.dg {
-    display: inline-grid;
-    font-family: monospace;
-    font-size: 14px;
+@font-face {
+    font-family: 'Roboto Mono';
+    font-weight: 100;
+    src: url('./robotomono/RobotoMono-Thin.ttf') format('truetype');
 }
-.dc {
-    text-align: center;
-    height: 1.3em;
-    width: 0.6em;
-    border: 1px solid transparent;
+@font-face {
+    font-family: 'Roboto Mono';
+    font-weight: 300;
+    src: url('./robotomono/RobotoMono-Light.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Roboto Mono';
+    font-weight: 400;
+    src: url('./robotomono/RobotoMono-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Roboto Mono';
+    font-weight: 500;
+    src: url('./robotomono/RobotoMono-Medium.ttf') format('truetype');
+}
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-weight: normal;
+    font-family: 'Roboto Mono', monospace;
+}
+
+canvas {
+    font-weight: 300;
+    font-family: 'Roboto Mono', monospace;
 }

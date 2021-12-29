@@ -47,14 +47,19 @@ export default class Game {
     timer: number;
     ui: UIElement[];
 
-    constructor(parent: HTMLElement) {
+    constructor(public parent: HTMLElement, public font: string) {
         this.t = new Trace();
         this.t.enter('Game.new');
         this.seed();
         this.draw = this.draw.bind(this);
 
-        this.display = new Display(parent, 100, 40);
+        this.display = new Display(parent, 100, 40, 12, 16, font);
         this.display.str(0, 0, 'setting up...');
+
+        document.fonts.load(font).then(() => {
+            // this.t.message('console font loaded, redrawing');
+            this.redraw();
+        });
 
         this.actors = [];
         this.architect = new Architect(this);
@@ -67,12 +72,12 @@ export default class Game {
         this.timer = 0;
         this.ui = [this.playerUI, this.log, this.prompt];
 
-        this.t.leave('Game.new');
-
         this.hooks.on('sys.advance', ({ time }) => {
             this.timer += time;
             this.actors.forEach((a) => a.regen(time));
         });
+
+        this.t.leave('Game.new');
     }
 
     seed(s?: string) {
@@ -133,6 +138,7 @@ export default class Game {
         getSightCone(this.player).forEach(draw);
 
         this.ui.forEach((u) => u.draw());
+        this.display.update();
     }
 
     drawTile(p: XY) {
@@ -248,5 +254,7 @@ export default class Game {
         for (let y = 0; y < this.f.map.height; y++)
             for (let x = 0; x < this.f.map.width; x++)
                 this.drawTile(this.f.map.ref(x, y));
+
+        this.display.update();
     }
 }

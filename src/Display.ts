@@ -1,23 +1,28 @@
 import { Token } from './types';
 
 export class DisplayCell {
-    el: HTMLElement;
     f: string;
     b: string;
     bo: string;
-    x: number;
-    y: number;
     value: string;
+    dirty: boolean;
+    tx: number;
+    ty: number;
 
-    constructor(parent: Display) {
-        this.el = document.createElement('div');
-        this.el.className = 'dc';
-        parent.container.append(this.el);
-
+    constructor(
+        public parent: Display,
+        public x: number,
+        public y: number,
+        public w: number,
+        public h: number,
+    ) {
         this.fg('white');
         this.bg('black');
         this.text(' ');
         this.border('transparent');
+
+        this.tx = x + w / 2;
+        this.ty = y + h / 2;
     }
 
     set(tok: Token) {
@@ -28,46 +33,105 @@ export class DisplayCell {
     }
 
     fg(colour?: string) {
-        if (colour !== undefined && this.f != colour)
-            this.el.style.color = this.f = colour;
+        if (colour !== undefined && this.f != colour) {
+            this.dirty = true;
+            this.f = colour;
+        }
         return this.f;
     }
 
     bg(colour?: string) {
-        if (colour !== undefined && this.b != colour)
-            this.el.style.backgroundColor = this.b = colour;
+        if (colour !== undefined && this.b != colour) {
+            this.dirty = true;
+            this.b = colour;
+        }
         return this.b;
     }
 
     border(colour?: string) {
         if (colour !== undefined && this.bo != colour) {
-            this.el.style.borderColor = this.bo = colour;
+            this.dirty = true;
+            this.bo = colour;
         }
         return this.bo;
     }
 
     text(text?: string) {
-        if (text !== undefined) this.el.innerText = this.value = text;
+        if (text !== undefined) {
+            this.dirty = true;
+            this.value = text;
+        }
         return this.value;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+        if (this.dirty) {
+            this.dirty = false;
+
+            ctx.fillStyle = this.b;
+            ctx.fillRect(this.x, this.y, this.w, this.h);
+
+            ctx.strokeStyle = this.f;
+            ctx.strokeText(this.value, this.tx, this.ty);
+
+            if (this.bo !== 'transparent') {
+                ctx.strokeStyle = this.bo;
+                ctx.rect(this.x, this.y, this.w, this.h);
+            }
+        }
     }
 }
 
 export class Display {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
     cells: DisplayCell[];
     container: HTMLElement;
     defaultBackground: string;
     defaultForeground: string;
-    height: number;
-    parent: HTMLElement;
-    width: number;
 
-    constructor(parent: HTMLElement, width: number, height: number) {
-        this.parent = parent;
-        this.width = width;
-        this.height = height;
+    constructor(
+        public parent: HTMLElement,
+        public width: number,
+        public height: number,
+        public tileWidth: number,
+        public tileHeight: number,
+        public font: string,
+    ) {
         this.defaultBackground = 'black';
         this.defaultForeground = 'white';
-        this.makeContainer();
+
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = width * tileWidth;
+        this.canvas.height = height * tileHeight;
+
+        this.cells = [];
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                this.cells.push(
+                    new DisplayCell(
+                        this,
+                        x * this.tileWidth,
+                        y * this.tileHeight,
+                        this.tileWidth,
+                        this.tileHeight,
+                    ),
+                );
+            }
+        }
+
+        parent.append(this.canvas);
+        const ctx = this.canvas.getContext('2d');
+        if (!ctx) throw new Error('Could not get rendering context');
+
+        ctx.font = font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        this.ctx = ctx;
+    }
+
+    update() {
+        this.cells.forEach((cell) => cell.draw(this.ctx));
     }
 
     fill(char: string) {
@@ -94,29 +158,5 @@ export class Display {
             tok.char = s[i];
             this.at(x + i, y).set(tok);
         }
-    }
-
-    private makeContainer() {
-        this.container = document.createElement('div');
-        this.container.className = 'dg';
-        this.container.style.gridTemplateColumns = this.gtc();
-        this.container.style.maxWidth = this.width + 'em';
-
-        this.cells = [];
-        for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x++) {
-                this.cells.push(new DisplayCell(this));
-            }
-        }
-
-        this.parent.append(this.container);
-    }
-
-    private gtc() {
-        const cols = [];
-
-        for (let x = 0; x < this.width; x++) cols.push('1fr');
-
-        return cols.join(' ');
     }
 }

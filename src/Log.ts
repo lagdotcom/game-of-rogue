@@ -55,7 +55,6 @@ export default class Log implements UIElement {
     constructor(
         public g: Game,
         public height: number = 5,
-        public size: number = 10,
         public x: number = 1,
     ) {
         this.logs = [];
@@ -72,7 +71,7 @@ export default class Log implements UIElement {
 
     private add(log: LogMessage) {
         this.logs.unshift(log);
-        while (this.logs.length > this.size) this.logs.pop();
+        while (this.logs.length > this.height) this.logs.pop();
     }
 
     error(msg: string, ...args: LogArg[]) {
