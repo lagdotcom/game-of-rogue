@@ -43,9 +43,11 @@ export default class Game {
     playerUI: PlayerUI;
     prompt: Prompt;
     rng: RNG;
+    seen: Set<XY>;
     t: Trace;
     timer: number;
     ui: UIElement[];
+    view: Set<XY>;
 
     constructor(public parent: HTMLElement, public font: string) {
         this.t = new Trace();
@@ -91,6 +93,7 @@ export default class Game {
         this.player.pos = f.player;
         this.actors = [this.player, ...this.f.enemies];
 
+        this.seen = new Set<XY>();
         this.redraw();
         this.input.listening = true;
 
@@ -134,8 +137,13 @@ export default class Game {
         this.drawTimeout = 0;
         this.display.fill(' ');
 
-        const draw = this.drawTile.bind(this);
-        getSightCone(this.player).forEach(draw);
+        this.view = getSightCone(this.player);
+        this.view.forEach((pos) => this.seen.add(pos));
+
+        this.seen.forEach((p) => {
+            if (this.view.has(p)) this.drawTile(p);
+            else this.drawSeenTile(p);
+        });
 
         this.ui.forEach((u) => u.draw());
         this.display.update();
@@ -156,6 +164,22 @@ export default class Game {
             const char = this.f.map.get(p.x, p.y);
             if (!colours[char]) return;
             tok = { ...colours[char], char };
+        }
+
+        this.display.at(p.x, p.y).set(tok);
+    }
+
+    drawSeenTile(p: XY) {
+        const item = this.f.itemAt(p);
+        const tok: Token = { char: '?', fg: '#222', bg: 'black' };
+
+        if (this.player.pos == p) {
+            tok.char = this.player.char;
+        } else if (item) {
+            tok.char = item.token.char;
+            tok.fg = '#444';
+        } else {
+            tok.char = this.f.map.get(p.x, p.y);
         }
 
         this.display.at(p.x, p.y).set(tok);
