@@ -3,7 +3,7 @@ import { TIMER_FREQUENCY } from './constants';
 export default class Timer {
     active: boolean;
     callback: () => any;
-    handle: number;
+    handle: ReturnType<typeof setInterval>;
     length: number;
 
     constructor(cb: () => any) {
