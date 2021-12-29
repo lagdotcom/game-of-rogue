@@ -22,6 +22,9 @@ export const Samurai: Class = {
         p.equip(constructItem(p.g, domaru));
         p.get(constructItem(p.g, yumi));
         p.get(constructItem(p.g, ya));
+
+        // TODO
+        p.skills.push(Sweep.name);
     },
 };
 

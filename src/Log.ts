@@ -72,6 +72,8 @@ export default class Log implements UIElement {
     private add(log: LogMessage) {
         this.logs.unshift(log);
         while (this.logs.length > this.height) this.logs.pop();
+
+        this.g.redraw();
     }
 
     error(msg: string, ...args: LogArg[]) {

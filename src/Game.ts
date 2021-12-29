@@ -14,6 +14,7 @@ import Player from './Player';
 import PlayerUI from './PlayerUI';
 import Prompt from './Prompt';
 import RNG, { tychei } from './RNG';
+import { Skill } from './Skill';
 import { getDistanceBetween } from './tools';
 import Trace from './Trace';
 import { Traceline } from './Traceline';
@@ -217,6 +218,19 @@ export default class Game {
     playerMove(d: Dir) {
         const result = this.playerAct(d);
         return result;
+    }
+
+    playerSkill(sk: Skill) {
+        if (!this.player.skills.includes(sk.name))
+            return this.log.error("You don't know that skill.");
+
+        if (this.player.ki < sk.ki)
+            return this.log.error('Your ki is too low.');
+
+        if (this.player.balance < sk.balance)
+            return this.log.error('Your balance is off.');
+
+        sk.fn(this.player);
     }
 
     trace(
