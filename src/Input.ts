@@ -16,10 +16,11 @@ export default class Input {
 
     getDirection(prompt: string, cb: (d: Dir) => any) {
         this.g.t.todo('getDirection', prompt);
-        // TODO: show prompt
+        this.g.prompt.show(prompt);
 
         const cbh = (d: Dir) => {
             cb(d);
+            this.g.prompt.clear();
             return true;
         };
 
@@ -43,7 +44,7 @@ export default class Input {
                     return cbh(Dir.NW);
             }
 
-            // TODO: clear prompt
+            this.g.prompt.clear();
             return true;
         };
     }

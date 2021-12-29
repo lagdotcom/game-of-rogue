@@ -4,14 +4,10 @@ import { ItemSlot } from './types';
 import UIElement from './UIElement';
 
 export default class PlayerUI implements UIElement {
-    g: Game;
-    width: number;
     x: number;
     y: number;
 
-    constructor(g: Game, width: number = 20) {
-        this.g = g;
-        this.width = width;
+    constructor(public g: Game, public width: number = 20) {
         this.x = g.display.width - width;
     }
 

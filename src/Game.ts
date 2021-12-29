@@ -11,6 +11,7 @@ import { getSightCone } from './lights';
 import Log from './Log';
 import Player from './Player';
 import PlayerUI from './PlayerUI';
+import Prompt from './Prompt';
 import RNG, { tychei } from './RNG';
 import Trace from './Trace';
 import { Traceline } from './Traceline';
@@ -38,6 +39,7 @@ export default class Game {
     log: Log;
     player: Player;
     playerUI: PlayerUI;
+    prompt: Prompt;
     rng: RNG;
     t: Trace;
     ui: UIElement[];
@@ -57,7 +59,8 @@ export default class Game {
         this.log = new Log(this);
         this.player = new Player(this, Samurai);
         this.playerUI = new PlayerUI(this);
-        this.ui = [this.playerUI];
+        this.prompt = new Prompt(this);
+        this.ui = [this.playerUI, this.log, this.prompt];
 
         this.t.leave('Game.new');
 

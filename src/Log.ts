@@ -2,6 +2,7 @@ import { Actor } from './Actor';
 import Game from './Game';
 import Item from './Item';
 import { capFirst } from './tools';
+import UIElement from './UIElement';
 
 const argLookup = {
     a: 0,
@@ -45,21 +46,43 @@ const actorFormatters: FormatterMatrix<Actor> = {
     '#': (a) => a.name,
 };
 
-export default class Log {
-    g: Game;
+type LogMessage = { message: string; fg?: string; bg?: string };
 
-    constructor(g: Game) {
-        this.g = g;
+export default class Log implements UIElement {
+    logs: LogMessage[];
+    y: number;
+
+    constructor(
+        public g: Game,
+        public height: number = 5,
+        public size: number = 10,
+        public x: number = 1,
+    ) {
+        this.logs = [];
+        this.y = g.display.height - 1;
+    }
+
+    draw() {
+        let y = this.y;
+        this.logs.forEach(({ message, fg, bg }) => {
+            this.g.display.str(this.x, y, message, fg, bg);
+            y--;
+        });
+    }
+
+    private add(log: LogMessage) {
+        this.logs.unshift(log);
+        while (this.logs.length > this.size) this.logs.pop();
     }
 
     error(msg: string, ...args: LogArg[]) {
-        this.g.t.todo('Log.error', msg, args);
-        this.g.t.message(this.format(msg, ...args));
+        const message = this.format(msg, ...args);
+        this.add({ message, fg: 'red' });
     }
 
     info(msg: string, ...args: LogArg[]) {
-        this.g.t.todo('Log.info', msg, args);
-        this.g.t.message(this.format(msg, ...args));
+        const message = this.format(msg, ...args);
+        this.add({ message });
     }
 
     format(msg: string, ...args: LogArg[]) {

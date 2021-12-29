@@ -21,9 +21,7 @@ function getSweepDir(from: Dir, to: Dir) {
 
 function sweepAttack(a: Actor, ox: number, oy: number) {
     const p = a.g.f.map.ref(ox + a.pos.x, oy + a.pos.y);
-    a.g.blockers(p).forEach((v) => {
-        attack(a, v);
-    });
+    a.g.blockers(p).forEach((v) => attack(a, v));
 }
 
 export const Sweep: Skill = {
