@@ -37,7 +37,7 @@ export function bonusText(n: number) {
     return n < 0 ? `${n}` : `+${n}`;
 }
 
-export function getDirectionBetween(a: XY, b: XY) {
+export function getCardinalDirectionBetween(a: XY, b: XY) {
     const dx = a.x - b.x;
     const dy = a.y - b.y;
     const ax = Math.abs(dx);
@@ -49,7 +49,17 @@ export function getDirectionBetween(a: XY, b: XY) {
     return Dir.S;
 }
 
-export function getAngleBetween(a: Dir, b: Dir) {
+const octant = Math.PI / 4;
+export function getDirectionBetween(a: XY, b: XY) {
+    const dy = b.y - a.y;
+    const dx = b.x - a.x;
+    const theta = Math.atan2(dy, dx) + octant / 2;
+    const q = Math.floor(theta / octant) + 3;
+
+    return [Dir.NW, Dir.N, Dir.NE, Dir.E, Dir.SE, Dir.S, Dir.SW, Dir.W][q];
+}
+
+export function getCardinalAngleBetween(a: Dir, b: Dir) {
     if (a === b) return 0;
 
     if (a === Dir.N && b === Dir.S) return 2;

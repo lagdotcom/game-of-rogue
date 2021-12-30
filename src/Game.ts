@@ -15,10 +15,9 @@ import PlayerUI from './PlayerUI';
 import Prompt from './Prompt';
 import RNG, { tychei } from './RNG';
 import { Skill } from './Skill';
-import { getDistanceBetween } from './tools';
 import Trace from './Trace';
 import { Traceline } from './Traceline';
-import { Dir, Tile, Token, XY } from './types';
+import { AIState, Dir, Tile, Token, XY } from './types';
 import UIElement from './UIElement';
 
 interface TileColour {
@@ -164,10 +163,11 @@ export default class Game {
             tok = this.player;
         } else if (enemy) {
             tok = enemy;
-            if (enemy.alerted) {
+
+            if (enemy.aiState === AIState.Angry) {
                 if (enemy.target === this.player) cell.border('red');
                 else cell.border('orange');
-            } else if (enemy.investigating) {
+            } else if (enemy.aiState === AIState.Investigating) {
                 cell.border('yellow');
             }
         } else if (item) {
@@ -269,23 +269,6 @@ export default class Game {
         }
 
         return tl;
-    }
-
-    getNearestEnemy(a: Actor) {
-        let best: Actor | undefined = undefined;
-        let bestDistance = Infinity;
-
-        this.actors.forEach((v) => {
-            if (v.side === a.side) return;
-
-            const dist = getDistanceBetween(a.pos, v.pos);
-            if (dist < bestDistance) {
-                bestDistance = dist;
-                best = v;
-            }
-        });
-
-        return best;
     }
 
     debugNewFloor() {

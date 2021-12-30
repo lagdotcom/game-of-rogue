@@ -1,13 +1,16 @@
 import { Actor } from './Actor';
 import { STRENGTH_RATIO } from './constants';
 import { Weapon } from './Item';
-import { getAngleBetween, getDirectionBetween } from './tools';
+import { getCardinalAngleBetween, getCardinalDirectionBetween } from './tools';
+import { AIState } from './types';
 
 const StrikeWasSubstituted = -100;
 
 function kill(attacker: Actor, victim: Actor) {
     const g = attacker.g;
     victim.dead = true;
+    victim.target = undefined;
+    victim.targetPos = undefined;
 
     if (victim.isPlayer) {
         g.log.info('You died!');
@@ -16,7 +19,7 @@ function kill(attacker: Actor, victim: Actor) {
         if (victim.cloneOf) {
             g.log.info('%an vanishes with a puff of smoke!', victim);
         } else {
-            if (victim.alerted) {
+            if (victim.aiState === AIState.Angry) {
                 g.log.info('%an screams as they die!', victim);
                 g.noise.add(victim.pos, 8, victim, 2);
             } else {
@@ -49,8 +52,8 @@ function damage(attacker: Actor, victim: Actor, dmg: number) {
 }
 
 function applyArmour(a: Actor, v: Actor, dmg: number) {
-    const dir = getDirectionBetween(v.pos, a.pos);
-    const ang = getAngleBetween(dir, v.facing);
+    const dir = getCardinalDirectionBetween(v.pos, a.pos);
+    const ang = getCardinalAngleBetween(dir, v.facing);
 
     let absorb = v.armour;
     if (ang === 1) absorb *= 0.75;
@@ -111,8 +114,5 @@ export function attack(a: Actor, v: Actor): boolean {
 }
 
 export function combatAlert(a: Actor, v: Actor) {
-    if (v.alive && !v.alerted) {
-        v.alerted = true;
-        v.target = a;
-    }
+    if (v.isEnemy) v.aiHurtBy = a;
 }

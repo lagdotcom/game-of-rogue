@@ -70,3 +70,13 @@ export enum Side {
     Player,
     Enemy,
 }
+
+export enum AIState {
+    Passive,
+    Investigating,
+    Angry,
+}
+
+export interface AITraits {
+    investigatesNoises?: boolean;
+}

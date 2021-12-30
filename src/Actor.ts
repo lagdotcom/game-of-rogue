@@ -1,11 +1,22 @@
-import { aiMove, aiStand, clearDeadTarget } from './AI';
+import { aiAngry, aiInvestigating, aiPassive } from './AI';
 import { Class } from './Class';
 import Game from './Game';
 import Item, { Armour, Equipment, Weapon } from './Item';
-import { Dir, ItemSlot, ItemType, Side, Tile, XY } from './types';
+import {
+    AIState,
+    AITraits,
+    Dir,
+    ItemSlot,
+    ItemType,
+    Side,
+    Tile,
+    XY,
+} from './types';
 
 export abstract class Actor {
-    alerted: boolean;
+    aiHurtBy?: Actor;
+    aiState: AIState;
+    aiTraits: AITraits;
     armour: number;
     balance: number;
     balanceMax: number;
@@ -22,9 +33,6 @@ export abstract class Actor {
     hpMax: number;
     hpRegen: number;
     inventory: Item[];
-    investigatesNoises?: true;
-    investigating?: XY;
-    investigationTimer: number;
     isEnemy?: true;
     isPlayer?: true;
     ki: number;
@@ -40,10 +48,13 @@ export abstract class Actor {
     skills: string[];
     str: number;
     target?: Actor;
+    targetPos?: XY;
     turnCost: number;
 
     constructor(public g: Game, public name: string, public side: Side) {
         this.g = g;
+        this.aiState = AIState.Passive;
+        this.aiTraits = {};
         this.armour = 0;
         this.balance = this.balanceMax = 100;
         this.balanceRegen = 1;
@@ -273,15 +284,15 @@ export abstract class Actor {
     }
 
     ai() {
-        clearDeadTarget(this);
-
-        if (!this.alerted) {
-            const result = aiStand(this);
-            if (result) return false;
-        }
-
-        if (this.alerted) {
-            aiMove(this, this.target.pos);
+        switch (this.aiState) {
+            case AIState.Passive:
+                return aiPassive(this);
+            case AIState.Investigating:
+                return aiInvestigating(this);
+            case AIState.Angry:
+                return aiAngry(this);
+            default:
+                return false;
         }
     }
 

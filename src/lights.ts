@@ -47,3 +47,12 @@ export function getSightCone(a: Actor) {
 
     return set;
 }
+
+export function canSee(a: Actor, pos: XY) {
+    return getSightCone(a).has(pos);
+}
+
+export function getVisibleEnemies(a: Actor) {
+    const cone = getSightCone(a);
+    return a.g.actors.filter((v) => v.side !== a.side && cone.has(v.pos));
+}

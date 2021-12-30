@@ -54,16 +54,29 @@ function pathLowest(positions: Set<XY>, scores: Map<XY, number>) {
 function neighbours(f: Floor, pos: XY) {
     const n: XY[] = [];
 
-    if (pos.x > 0) n.push(f.map.ref(pos.x - 1, pos.y));
-    if (pos.y > 0) n.push(f.map.ref(pos.x, pos.y - 1));
-    if (pos.x < f.map.width - 1) n.push(f.map.ref(pos.x + 1, pos.y));
-    if (pos.y < f.map.height - 1) n.push(f.map.ref(pos.x, pos.y + 1));
+    const canLeft = pos.x > 0;
+    const canUp = pos.y > 0;
+    const canRight = pos.x < f.map.width - 1;
+    const canDown = pos.y < f.map.height - 1;
+
+    if (canLeft) {
+        n.push(f.map.ref(pos.x - 1, pos.y));
+        if (canUp) n.push(f.map.ref(pos.x - 1, pos.y - 1));
+        if (canDown) n.push(f.map.ref(pos.x - 1, pos.y + 1));
+    }
+    if (canUp) n.push(f.map.ref(pos.x, pos.y - 1));
+    if (canRight) {
+        n.push(f.map.ref(pos.x + 1, pos.y));
+        if (canUp) n.push(f.map.ref(pos.x + 1, pos.y - 1));
+        if (canDown) n.push(f.map.ref(pos.x + 1, pos.y + 1));
+    }
+    if (canDown) n.push(f.map.ref(pos.x, pos.y + 1));
 
     return n;
 }
 
 function reconstructPath(links: Map<XY, XY>, goal: XY) {
-    const route: XY[] = [];
+    const route: XY[] = [goal];
     let current = goal;
 
     while (links.has(current)) {
