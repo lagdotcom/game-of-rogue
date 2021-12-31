@@ -1,5 +1,5 @@
 import { Floor } from './Floor';
-import { getDistanceBetween } from './tools';
+import { distance } from './tools';
 import { Tile, XY } from './types';
 
 export function makePath(f: Floor, start: XY, goal: XY) {
@@ -10,7 +10,7 @@ export function makePath(f: Floor, start: XY, goal: XY) {
     const gScore = new Map<XY, number>();
     gScore.set(start, 0);
     const fScore = new Map<XY, number>();
-    fScore.set(start, getDistanceBetween(start, goal));
+    fScore.set(start, distance(start, goal));
 
     while (open.size) {
         const current = pathLowest(open, fScore);
@@ -29,7 +29,7 @@ export function makePath(f: Floor, start: XY, goal: XY) {
 
             from.set(n, current);
             gScore.set(n, tentative);
-            fScore.set(n, tentative + getDistanceBetween(n, goal));
+            fScore.set(n, tentative + distance(n, goal));
         });
     }
 

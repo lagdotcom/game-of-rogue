@@ -1,4 +1,3 @@
-import { aiAngry, aiInvestigating, aiPassive } from './AI';
 import { Class } from './Class';
 import Game from './Game';
 import Item, { Armour, Equipment, Weapon } from './Item';

@@ -2,7 +2,7 @@ import { Actor } from './Actor';
 import { attack } from './combat';
 import { canSee, getVisibleEnemies } from './lights';
 import { makePath } from './path';
-import { getDirectionBetween, getDistanceBetween, oneOf } from './tools';
+import { distance, getDirectionBetween, oneOf } from './tools';
 import { AIState, XY } from './types';
 
 export function normalAI(this: Actor) {
@@ -47,8 +47,18 @@ export function aiAngry(a: Actor) {
 }
 
 function anger(a: Actor, target: Actor) {
+    const g = a.g;
     a.target = target;
     a.aiState = AIState.Angry;
+
+    if (a.aiTraits.yellsOnSight) {
+        if (canSee(g.player, a.pos))
+            g.log.info('%an yells a challenge at %bn!', a, target);
+        else if (distance(g.player.pos, a.pos) < g.player.hearingRange)
+            g.log.info('You hear someone shout a challenge!');
+        g.noise.add(a.pos, a.aiTraits.yellsOnSight, a, 2);
+    }
+
     return aiAngry(a);
 }
 
@@ -134,7 +144,7 @@ function ifReachedTargetGiveUp(a: Actor) {
     const pos = a.targetPos;
     if (!pos) return passive(a);
 
-    if (getDistanceBetween(a.pos, pos) === 0) return passive(a);
+    if (distance(a.pos, pos) === 0) return passive(a);
 
     return false;
 }

@@ -79,4 +79,5 @@ export enum AIState {
 
 export interface AITraits {
     investigatesNoises?: boolean;
+    yellsOnSight?: number;
 }

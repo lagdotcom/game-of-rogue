@@ -1,6 +1,6 @@
 import { Actor } from './Actor';
 import Game from './Game';
-import { getDistanceBetween } from './tools';
+import { distance } from './tools';
 import { XY } from './types';
 
 export interface Noise {
@@ -42,9 +42,9 @@ export default class Noises {
         let closest: Noise | undefined = undefined;
 
         this.noises.forEach((n) => {
-            const distance = getDistanceBetween(a.pos, n.pos) - n.volume;
-            if (distance < lowest) {
-                lowest = distance;
+            const dist = distance(a.pos, n.pos) - n.volume;
+            if (dist < lowest) {
+                lowest = dist;
                 closest = n;
             }
         });

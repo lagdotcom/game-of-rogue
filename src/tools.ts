@@ -69,7 +69,7 @@ export function getCardinalAngleBetween(a: Dir, b: Dir) {
     return 1;
 }
 
-export function getDistanceBetween(a: XY, b: XY) {
+export function distance(a: XY, b: XY) {
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
