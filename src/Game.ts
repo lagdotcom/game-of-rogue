@@ -233,9 +233,9 @@ export default class Game {
         return this.player.move(dest, true);
     }
 
-    playerMove(d: Dir) {
-        const result = this.playerAct(d);
-        return result;
+    playerMove(d: Dir): true {
+        this.playerAct(d);
+        return true;
     }
 
     playerSkill(sk: Skill) {
@@ -289,7 +289,7 @@ export default class Game {
         return tl;
     }
 
-    debugNewFloor() {
+    debugNewFloor(): true {
         this.player = new Player(this, oneOf(this.rng, [Samurai, Ninja, Monk]));
 
         this.enter(
@@ -300,13 +300,16 @@ export default class Game {
                 200,
             ),
         );
+
+        return true;
     }
 
-    debugShowAll() {
+    debugShowAll(): true {
         for (let y = 0; y < this.f.map.height; y++)
             for (let x = 0; x < this.f.map.width; x++)
                 this.drawTile(this.f.map.ref(x, y));
 
         this.display.update();
+        return true;
     }
 }

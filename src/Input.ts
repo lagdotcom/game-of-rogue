@@ -52,6 +52,9 @@ export default class Input {
         //this.g.t.message('keydown', e.key);
 
         if (this.handler) {
+            // TODO this is slightly risky...
+            e.preventDefault();
+
             if (this.handler(e.key, e.shiftKey, e.metaKey)) {
                 this.handler = null;
             }
@@ -59,10 +62,10 @@ export default class Input {
             return;
         }
 
-        return this.playerInput(e.key, e.shiftKey, e.metaKey);
+        if (this.playerInput(e.key, e.shiftKey, e.metaKey)) e.preventDefault();
     }
 
-    playerInput(code: string, shift: boolean, ctrl: boolean) {
+    playerInput(code: string, shift: boolean, ctrl: boolean): boolean {
         switch (code) {
             case 'ArrowUp':
                 return this.g.playerMove(Dir.N);
@@ -90,15 +93,17 @@ export default class Input {
             // DEBUG
             case 'r':
                 return this.g.debugNewFloor();
-
             case 's':
                 return this.g.debugShowAll();
+
+            default:
+                return false;
         }
     }
 
-    usePlayerSkill(index: number) {
+    usePlayerSkill(index: number): true {
         const sk = this.g.player.class.skills[index];
         if (sk && sk.fn) this.g.playerSkill(sk);
-        return;
+        return true;
     }
 }
