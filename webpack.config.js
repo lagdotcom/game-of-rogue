@@ -3,14 +3,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     entry: './src/index.ts',
     output: {
-        path: __dirname + '/dist',
+        path: __dirname + '/docs',
         filename: 'bundle.js',
         clean: true,
     },
     plugins: [new HtmlWebpackPlugin()],
     devtool: 'inline-source-map',
     devServer: {
-        static: './dist',
+        static: './docs',
     },
     resolve: {
         extensions: ['.ts', '.js', '.json'],
