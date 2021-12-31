@@ -40,6 +40,10 @@ export const Ninja: Class = {
     init: (p: Player) => {
         p.equip(constructItem(p.g, tanto));
         p.equip(constructItem(p.g, shuriken));
+
+        // TODO
+        p.skills.push(Clone.name);
+        p.skills.push(Substitute.name);
     },
 };
 

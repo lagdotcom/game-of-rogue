@@ -5,6 +5,19 @@ import { makePath } from './path';
 import { getDirectionBetween, getDistanceBetween, oneOf } from './tools';
 import { AIState, XY } from './types';
 
+export function normalAI(this: Actor) {
+    switch (this.aiState) {
+        case AIState.Passive:
+            return aiPassive(this);
+        case AIState.Investigating:
+            return aiInvestigating(this);
+        case AIState.Angry:
+            return aiAngry(this);
+        default:
+            return false;
+    }
+}
+
 export function aiPassive(a: Actor) {
     if (ifHurtFaceAttacker(a)) return true;
     if (ifEnemyVisibleAnger(a)) return true;

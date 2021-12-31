@@ -1,5 +1,6 @@
+import Game from './Game';
 import RNG from './RNG';
-import { Dir, XY } from './types';
+import { Dir, Tile, XY } from './types';
 
 export function int(n: number) {
     return Math.floor(n);
@@ -70,4 +71,21 @@ export function getCardinalAngleBetween(a: Dir, b: Dir) {
 
 export function getDistanceBetween(a: XY, b: XY) {
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+export function findSpace(g: Game, pos: XY, dist: number) {
+    for (let attempts = 0; attempts < 1000; attempts++) {
+        const ox = rnd(g.rng, dist * 2) - dist;
+        const oy = rnd(g.rng, dist * 2) - dist;
+        const dest = g.f.map.ref(pos.x + ox, pos.y + oy);
+
+        if (!isBlocked(g, dest)) return dest;
+    }
+}
+
+export function isBlocked(g: Game, pos: XY) {
+    const tile = g.f.map.get(pos.x, pos.y);
+    const blockers = g.blockers(pos);
+
+    return blockers.length > 0 || tile !== Tile.Space;
 }

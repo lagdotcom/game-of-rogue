@@ -38,6 +38,7 @@ export abstract class Actor {
     ki: number;
     kiMax: number;
     kiRegen: number;
+    lifetime: number;
     moveCost: number;
     natural?: Weapon;
     natural2?: Weapon;
@@ -65,6 +66,7 @@ export abstract class Actor {
         this.hpRegen = 0.01;
         this.inventory = [];
         this.kiRegen = 0.1;
+        this.lifetime = Infinity;
         this.name = name;
         this.nextMove = 0;
         this.moveCost = 1;
@@ -286,16 +288,7 @@ export abstract class Actor {
     }
 
     ai() {
-        switch (this.aiState) {
-            case AIState.Passive:
-                return aiPassive(this);
-            case AIState.Investigating:
-                return aiInvestigating(this);
-            case AIState.Angry:
-                return aiAngry(this);
-            default:
-                return false;
-        }
+        return false;
     }
 
     getPrimaryWeapon() {

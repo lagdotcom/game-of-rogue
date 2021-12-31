@@ -13,7 +13,7 @@ export const Kick: Skill = {
     fn: (a) => {
         const g = a.g;
         const o = dirOffsets[a.facing];
-        const dest = g.f.map.ref(a.pos.x + o.x, a.pos.y + o.y);
+        const dest = g.f.map.addFacing(a.pos, a.facing);
         const b = g.blockers(dest);
         if (!b.length) {
             g.log.error("There's nobody in front of you.");

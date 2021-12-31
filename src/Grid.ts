@@ -1,5 +1,6 @@
+import { dirOffsets } from './constants';
 import { int } from './tools';
-import { XY } from './types';
+import { Dir, XY } from './types';
 
 interface GridRef<T> extends XY {
     g: Grid<T>;
@@ -41,6 +42,11 @@ export class Grid<T = string> {
         const rx = int(x),
             ry = int(y);
         return this.contains(rx, ry) ? this.refs[ry][rx] : this.oob;
+    }
+
+    addFacing(ref: XY, facing: Dir) {
+        const offset = dirOffsets[facing];
+        return this.ref(ref.x + offset.x, ref.y + offset.y);
     }
 
     get(x: number, y: number) {

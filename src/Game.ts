@@ -1,9 +1,9 @@
 import { Actor } from './Actor';
 import Architect from './Architect';
-import { Monk, Samurai } from './classes';
+import { Monk, Ninja, Samurai } from './classes';
 import { attack } from './combat';
-import { dirOffsets } from './constants';
 import { Display } from './Display';
+import Enemy from './Enemy';
 import { Floor } from './Floor';
 import Hooks from './Hooks';
 import Input from './Input';
@@ -14,6 +14,7 @@ import Player from './Player';
 import PlayerUI from './PlayerUI';
 import Prompt from './Prompt';
 import RNG, { tychei } from './RNG';
+import { swapPositionWithClone } from './sk/Clone';
 import { Skill } from './Skill';
 import Trace from './Trace';
 import { Traceline } from './Traceline';
@@ -71,7 +72,7 @@ export default class Game {
         this.input = new Input(this);
         this.log = new Log(this);
         this.noise = new Noises(this);
-        this.player = new Player(this, Monk);
+        this.player = new Player(this, Ninja);
         this.playerUI = new PlayerUI(this);
         this.prompt = new Prompt(this);
         this.timer = 0;
@@ -101,6 +102,11 @@ export default class Game {
         this.input.listening = true;
 
         this.t.leave('enter');
+    }
+
+    add(x: Enemy) {
+        this.actors.push(x);
+        this.f.enemies.push(x);
     }
 
     remove(x: Actor) {
@@ -204,15 +210,19 @@ export default class Game {
     playerAct(d: Dir) {
         if (this.player.facing !== d) return this.player.turn(d, true);
 
-        const o = dirOffsets[d];
-        const dest = this.f.map.ref(
-            this.player.pos.x + o.x,
-            this.player.pos.y + o.y,
-        );
-        const b = this.blockers(dest);
-        if (!b.length) return this.player.move(dest, true);
+        const dest = this.f.map.addFacing(this.player.pos, d);
+        const blockers = this.blockers(dest);
+        if (blockers.length) {
+            const b = blockers[0];
+            if (b.cloneOf === this.player) {
+                swapPositionWithClone(this.player, b);
+                return true;
+            }
 
-        return attack(this.player, b[0]);
+            return attack(this.player, b);
+        }
+
+        return this.player.move(dest, true);
     }
 
     playerMove(d: Dir) {
