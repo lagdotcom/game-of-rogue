@@ -9,7 +9,12 @@ export class Floor {
     map: Grid;
     player: XY;
 
-    constructor(name: string, width: number, height: number) {
+    constructor(
+        public name: string,
+        public floor: number,
+        public width: number,
+        public height: number,
+    ) {
         this.map = new Grid(name, width, height, Tile.Empty);
         this.enemies = [];
         this.items = [];

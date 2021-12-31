@@ -84,6 +84,8 @@ export default class Input {
             // TEMP
             case '1':
                 return this.usePlayerSkill(0);
+            case '2':
+                return this.usePlayerSkill(1);
 
             // DEBUG
             case 'r':

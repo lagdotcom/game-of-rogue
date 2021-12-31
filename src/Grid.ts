@@ -83,6 +83,21 @@ export class Grid<T = string> {
         return points;
     }
 
+    square(centre: XY, range: number): GridRef<T>[] {
+        const sx = Math.max(0, centre.x - range);
+        const sy = Math.max(0, centre.y - range);
+        const ex = Math.min(this.width - 1, centre.x + range);
+        const ey = Math.min(this.height - 1, centre.y + range);
+
+        const refs = [];
+        for (let y = sy; y <= ey; y++) {
+            for (let x = sx; x <= ex; x++) {
+                refs.push(this.ref(x, y));
+            }
+        }
+        return refs;
+    }
+
     rotate(turns: number) {
         const { width, height, init } = this;
         let r: Grid<T>;

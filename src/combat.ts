@@ -1,6 +1,8 @@
 import { Actor } from './Actor';
+import { colourDeath } from './colours';
 import { STRENGTH_RATIO } from './constants';
 import { Weapon } from './Item';
+import { applyNinjaSubstitute } from './sk/Substitute';
 import { getCardinalAngleBetween, getCardinalDirectionBetween } from './tools';
 import { AIState } from './types';
 
@@ -13,21 +15,29 @@ export function kill(attacker: Actor, victim: Actor) {
     victim.targetPos = undefined;
 
     if (victim.isPlayer) {
-        g.log.info('You died!');
+        g.log.coloured(colourDeath, 'You died!');
         g.hooks.fire('player.died', { attacker, victim });
     } else {
         if (victim.cloneOf) {
-            g.log.info('%an vanishes with a puff of smoke!', victim);
+            g.log.coloured(
+                colourDeath,
+                '%an vanishes with a puff of smoke!',
+                victim,
+            );
         } else {
             if (victim.aiState === AIState.Angry) {
-                g.log.info('%an screams as they die!', victim);
+                g.log.coloured(colourDeath, '%an screams as they die!', victim);
                 g.noise.add(victim.pos, 8, victim, 2);
             } else {
-                attacker.g.log.info('%an falls to the ground, dead!', victim);
+                g.log.coloured(
+                    colourDeath,
+                    '%an falls to the ground, dead!',
+                    victim,
+                );
             }
         }
 
-        attacker.g.hooks.fire('enemy.died', { attacker, victim });
+        g.hooks.fire('enemy.died', { attacker, victim });
     }
 
     // TOOD: drop items
@@ -66,12 +76,13 @@ function applyArmour(a: Actor, v: Actor, dmg: number) {
 function strike(a: Actor, v: Actor, w: Weapon): number {
     if (v.dead) return 0;
 
-    // TODO: substitute
+    if (v.substituteActive) {
+        applyNinjaSubstitute(v, a);
+        return StrikeWasSubstituted;
+    }
 
     let dmg = a.str / STRENGTH_RATIO + w.template.strength;
     dmg = applyArmour(a, v, dmg);
-    // TODO: log
-
     a.g.log.info('%ao %cn hits %bn for %d#.', a, v, w, dmg);
 
     if (dmg > 0) damage(a, v, dmg);

@@ -1,11 +1,12 @@
 import { Class } from './Class';
+import Game from './Game';
 import { doMaru, hachimaki } from './it/armor';
 import { shuriken, tanto, wakizashi, ya, yumi } from './it/weapon';
 import { constructItem } from './Item';
 import Player from './Player';
 import { Clone } from './sk/Clone';
 import { Kick } from './sk/Kick';
-import { Substitute } from './sk/Substitute';
+import { expireSubstitute, Substitute } from './sk/Substitute';
 import { Sweep } from './sk/Sweep';
 
 export const Samurai: Class = {
@@ -77,3 +78,7 @@ export const Taoist: Class = {
         p.g.t.todo('Taoist.init');
     },
 };
+
+export function initClasses(g: Game) {
+    g.hooks.on('sys.advance', () => expireSubstitute(g));
+}

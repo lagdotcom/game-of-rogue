@@ -40,7 +40,7 @@ export default class Architect {
             this.g.hooks.fire('architect.begin', {});
         }
 
-        const f = new Floor(`Floor${floor}`, width, height);
+        const f = new Floor(`Floor${floor}`, floor, width, height);
         const centre = this.randomRoom();
         const cx = int((width - centre.width) / 2);
         const cy = int((height - centre.height) / 2);

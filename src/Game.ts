@@ -1,6 +1,6 @@
 import { Actor } from './Actor';
 import Architect from './Architect';
-import { Monk, Ninja, Samurai } from './classes';
+import { initClasses, Monk, Ninja, Samurai } from './classes';
 import { attack } from './combat';
 import { Display } from './Display';
 import Enemy from './Enemy';
@@ -16,6 +16,7 @@ import Prompt from './Prompt';
 import RNG, { tychei } from './RNG';
 import { swapPositionWithClone } from './sk/Clone';
 import { Skill } from './Skill';
+import { oneOf } from './tools';
 import Trace from './Trace';
 import { Traceline } from './Traceline';
 import { AIState, Dir, Tile, Token, XY } from './types';
@@ -72,7 +73,7 @@ export default class Game {
         this.input = new Input(this);
         this.log = new Log(this);
         this.noise = new Noises(this);
-        this.player = new Player(this, Ninja);
+        this.player = new Player(this, oneOf(this.rng, [Samurai, Ninja, Monk]));
         this.playerUI = new PlayerUI(this);
         this.prompt = new Prompt(this);
         this.timer = 0;
@@ -82,6 +83,7 @@ export default class Game {
             this.timer += time;
             this.actors.forEach((a) => a.regen(time));
         });
+        initClasses(this);
 
         this.t.leave('Game.new');
     }
@@ -96,6 +98,12 @@ export default class Game {
         this.f = f;
         this.player.pos = f.player;
         this.actors = [this.player, ...this.f.enemies];
+
+        if (f.floor === 1)
+            this.log.coloured(
+                'purple',
+                `Welcome to the Game of Rogue, young ${this.player.class.name}.`,
+            );
 
         this.seen = new Set<XY>();
         this.redraw();
@@ -282,6 +290,8 @@ export default class Game {
     }
 
     debugNewFloor() {
+        this.player = new Player(this, oneOf(this.rng, [Samurai, Ninja, Monk]));
+
         this.enter(
             this.architect.generate(
                 1,

@@ -49,6 +49,8 @@ export abstract class Actor {
     skills: string[];
     skillsMastered: string[];
     str: number;
+    substituteActive: boolean;
+    substituteTimer: number;
     target?: Actor;
     targetPos?: XY;
     turnCost: number;
@@ -74,6 +76,7 @@ export abstract class Actor {
         this.sightRange = 5;
         this.skills = [];
         this.skillsMastered = [];
+        this.substituteTimer = 0;
         this.turnCost = 0.5;
     }
 

@@ -57,8 +57,14 @@ export const Kick: Skill = {
                     ty < mapHeight - 1
                 ) {
                     rekt = true;
-                    g.f.map.set(tx, ty, Tile.Space);
                     g.noise.add(tr, 12, a, 3);
+
+                    g.f.map.set(tx, ty, Tile.Space);
+                    // plug leaks
+                    g.f.map.square(tr, 1).forEach((pos) => {
+                        if (g.f.map.get(pos.x, pos.y) === Tile.Empty)
+                            g.f.map.set(pos.x, pos.y, Tile.Wall);
+                    });
                 }
 
                 const suffix = rekt ? ', destroying it!' : '!';
