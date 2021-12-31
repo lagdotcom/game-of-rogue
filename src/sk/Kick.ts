@@ -83,6 +83,7 @@ export const Kick: Skill = {
                     blocker,
                 );
 
+                g.noise.add(tr, 6, a, 3);
                 damage(a, blocker, dmg);
 
                 dmg *= 1.5;
