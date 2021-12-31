@@ -13,10 +13,10 @@ function w(i: {
     hands?: number;
     offhand?: true;
     strength: number;
-    movetimer?: number;
+    moveTimer?: number;
     thrown?: true;
     stacked?: true;
-    findamt?: (g: Game) => number;
+    getStackAmount?: (g: Game) => number;
     ammo?: true;
     missile?: true;
     firedBy?: ItemTraits;
@@ -30,11 +30,11 @@ function w(i: {
         traits: i.traits || {},
         rarity: i.rarity || 1,
         stacked: i.stacked || false,
-        getStackAmount: i.findamt,
+        getStackAmount: i.getStackAmount,
         hands: i.hands || (i.ammo ? 0 : 1),
         offhand: i.offhand || false,
         strength: i.strength,
-        moveTimer: i.movetimer || 1,
+        moveTimer: i.moveTimer || 1,
         thrown: i.thrown || false,
         ammo: i.ammo || false,
         firedBy: i.firedBy,
@@ -47,7 +47,7 @@ export const katana = w({
     hands: 2,
     strength: 3,
     weight: 5,
-    movetimer: 1.1,
+    moveTimer: 1.1,
     traits: { handle: true, blade: true, sword: true },
 });
 
@@ -56,7 +56,7 @@ export const sai = w({
     offhand: true,
     strength: 1,
     weight: 1,
-    movetimer: 0.7,
+    moveTimer: 0.7,
     rarity: 10,
     traits: { handle: true, blade: true, sword: true },
 });
@@ -64,11 +64,11 @@ export const sai = w({
 export const shuriken = w({
     name: 'shuriken',
     strength: 1,
-    movetimer: 0.5,
+    moveTimer: 0.5,
     offhand: true,
     thrown: true,
     stacked: true,
-    findamt: (g: Game) => rnd(g.rng, 5) + 1,
+    getStackAmount: (g: Game) => rnd(g.rng, 5) + 1,
     traits: { blade: true, missile: true },
 });
 
@@ -76,7 +76,7 @@ export const tanto = w({
     name: 'tantō',
     strength: 1,
     weight: 1,
-    movetimer: 0.8,
+    moveTimer: 0.8,
     traits: { handle: true, blade: true, knife: true },
 });
 
@@ -86,7 +86,7 @@ export const tekko = w({
     hands: 2,
     strength: 1,
     weight: 1,
-    movetimer: 0.9,
+    moveTimer: 0.9,
     traits: { handle: true, blade: true, fist: true },
 });
 
@@ -103,11 +103,11 @@ export const ya = w({
     offhand: true,
     strength: 3,
     weight: 0,
-    movetimer: 0,
+    moveTimer: 0,
     ammo: true,
     firedBy: { bow: true },
     stacked: true,
-    findamt: (g: Game) => rnd(g.rng, 4) + 1,
+    getStackAmount: (g: Game) => rnd(g.rng, 4) + 1,
     traits: { point: true, missile: true, arrow: true },
 });
 
@@ -116,13 +116,13 @@ export const yumi = w({
     hands: 2,
     strength: 0,
     weight: 3,
-    movetimer: 1.5,
+    moveTimer: 1.5,
     missile: true,
     traits: { bow: true, wood: true },
 });
 
-export const humanFists = w({
-    name: 'fists',
+export const humanFist = w({
+    name: 'fist',
     article: 'your',
     hands: 2,
     strength: 0,

@@ -1,7 +1,7 @@
 import { Samurai } from '../classes';
 import Enemy from '../Enemy';
 import Game from '../Game';
-import { domaru, sujibachi } from '../it/armor';
+import { doMaru, sujiBachi } from '../it/armor';
 import { katana, wakizashi, ya, yumi } from '../it/weapon';
 import { constructItem } from '../Item';
 import { randomName } from '../names';
@@ -26,11 +26,11 @@ export class EnemySamurai extends Enemy {
         }
 
         if (rnd(g.rng, 3) === 0) {
-            this.equip(constructItem(g, domaru));
+            this.equip(constructItem(g, doMaru));
         }
 
         if (rnd(g.rng, 3) === 0) {
-            this.equip(constructItem(g, sujibachi));
+            this.equip(constructItem(g, sujiBachi));
         }
     }
 }

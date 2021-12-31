@@ -7,6 +7,7 @@ window.addEventListener('load', () => {
         document.getElementById('game-container'),
         '300 15px "Roboto Mono", monospace',
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (<any>window).G = game;
 
     game.debugNewFloor();

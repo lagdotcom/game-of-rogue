@@ -12,7 +12,7 @@ export default class Input {
         document.addEventListener('keydown', this.keydown.bind(this));
     }
 
-    getDirection(prompt: string, cb: (d: Dir) => any) {
+    getDirection(prompt: string, cb: (d: Dir) => unknown) {
         this.g.t.todo('getDirection', prompt);
         this.g.prompt.show(prompt);
 
@@ -83,9 +83,7 @@ export default class Input {
 
             // TEMP
             case '1':
-                const sk = this.g.player.class.skills[0];
-                if (sk && sk.fn) this.g.playerSkill(sk);
-                return;
+                return this.usePlayerSkill(0);
 
             // DEBUG
             case 'r':
@@ -94,5 +92,11 @@ export default class Input {
             case 's':
                 return this.g.debugShowAll();
         }
+    }
+
+    usePlayerSkill(index: number) {
+        const sk = this.g.player.class.skills[index];
+        if (sk && sk.fn) this.g.playerSkill(sk);
+        return;
     }
 }

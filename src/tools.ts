@@ -1,4 +1,3 @@
-import { Actor } from './Actor';
 import RNG from './RNG';
 import { Dir, XY } from './types';
 

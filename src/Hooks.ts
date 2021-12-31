@@ -6,7 +6,7 @@ import { Dir, XY } from './types';
 
 export type GameEventHandler<T extends GameEventName> = (
     e: GameEventMap[T],
-) => any;
+) => unknown;
 export type GameEventListeners = {
     [T in GameEventName]?: GameEventHandler<T>[];
 };
@@ -21,13 +21,13 @@ export default class Hooks {
     on<T extends GameEventName>(type: T, fn: GameEventHandler<T>) {
         if (!this.listeners[type]) this.listeners[type] = [];
 
-        //@ts-ignore
+        //@ts-expect-error: dunno how to tell TS it's the right type
         this.listeners[type].push(fn);
     }
 
     off<T extends GameEventName>(type: T, fn: GameEventHandler<T>) {
         if (this.listeners[type]) {
-            //@ts-ignore
+            //@ts-expect-error: dunno how to tell TS it's the right type
             this.listeners[type] = this.listeners[type].filter((c) => c !== fn);
         }
     }
@@ -54,6 +54,7 @@ export interface GameEventMap {
 }
 export type GameEventName = keyof GameEventMap;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface GameEvent {}
 
 export interface AdvanceEvent extends GameEvent {

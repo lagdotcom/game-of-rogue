@@ -1,5 +1,5 @@
 import { Class } from './Class';
-import { domaru, hachimaki } from './it/armor';
+import { doMaru, hachimaki } from './it/armor';
 import { shuriken, tanto, wakizashi, ya, yumi } from './it/weapon';
 import { constructItem } from './Item';
 import Player from './Player';
@@ -19,7 +19,7 @@ export const Samurai: Class = {
     skills: [Sweep],
     init: (p: Player) => {
         p.equip(constructItem(p.g, wakizashi));
-        p.equip(constructItem(p.g, domaru));
+        p.equip(constructItem(p.g, doMaru));
         p.get(constructItem(p.g, yumi));
         p.get(constructItem(p.g, ya));
 
@@ -54,6 +54,9 @@ export const Monk: Class = {
     skills: [Kick],
     init: (p: Player) => {
         p.equip(constructItem(p.g, hachimaki));
+
+        // TODO
+        p.skills.push(Kick.name);
     },
 };
 

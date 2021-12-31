@@ -6,7 +6,7 @@ import { AIState } from './types';
 
 const StrikeWasSubstituted = -100;
 
-function kill(attacker: Actor, victim: Actor) {
+export function kill(attacker: Actor, victim: Actor) {
     const g = attacker.g;
     victim.dead = true;
     victim.target = undefined;
@@ -34,7 +34,7 @@ function kill(attacker: Actor, victim: Actor) {
     g.remove(victim);
 }
 
-function damage(attacker: Actor, victim: Actor, dmg: number) {
+export function damage(attacker: Actor, victim: Actor, dmg: number) {
     victim.hp -= dmg;
     // TODO: on_attack triggers
     // TODO: on_hit triggers

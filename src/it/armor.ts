@@ -23,7 +23,7 @@ function a(i: {
     };
 }
 
-export const domaru = a({
+export const doMaru = a({
     name: 'dō-maru',
     slot: ItemSlot.Body,
     weight: 5,
@@ -35,7 +35,7 @@ export const hachimaki = a({
     slot: ItemSlot.Head,
 });
 
-export const sujibachi = a({
+export const sujiBachi = a({
     name: 'suji bachi',
     slot: ItemSlot.Head,
     weight: 2,

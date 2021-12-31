@@ -3,7 +3,7 @@ import { XY } from './types';
 
 interface GridRef<T> extends XY {
     g: Grid<T>;
-    s: Symbol;
+    s: symbol;
 }
 
 export class Grid<T = string> {
@@ -83,8 +83,8 @@ export class Grid<T = string> {
         if (!turns) return this;
 
         const name = `${this.name}/${turns}`;
-        if (turns === 2) r = new Grid(name, width, height, this.init);
-        else r = new Grid(name, height, width, this.init);
+        if (turns === 2) r = new Grid(name, width, height, init);
+        else r = new Grid(name, height, width, init);
 
         for (let y = 0; y < height; y++)
             for (let x = 0; x < width; x++) {

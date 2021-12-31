@@ -46,6 +46,7 @@ export abstract class Actor {
     sightFov: number;
     sightRange: number;
     skills: string[];
+    skillsMastered: string[];
     str: number;
     target?: Actor;
     targetPos?: XY;
@@ -70,6 +71,7 @@ export abstract class Actor {
         this.sightFov = 160;
         this.sightRange = 5;
         this.skills = [];
+        this.skillsMastered = [];
         this.turnCost = 0.5;
     }
 

@@ -1,7 +1,7 @@
 import { ARTIFACT_CHANCE, MAGIC_CHANCE } from './constants';
 import Game from './Game';
 import { GameEventHandler, GameEventName } from './Hooks';
-import { domaru, hachimaki, sujibachi } from './it/armor';
+import { doMaru, hachimaki, sujiBachi } from './it/armor';
 import { kusanagi } from './it/artifact';
 import {
     katana,
@@ -120,9 +120,9 @@ const items = [
     wakizashi,
     ya,
     yumi,
-    domaru,
+    doMaru,
     hachimaki,
-    sujibachi,
+    sujiBachi,
 ];
 
 const itemChars = {

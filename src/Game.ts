@@ -1,6 +1,6 @@
 import { Actor } from './Actor';
 import Architect from './Architect';
-import { Samurai } from './classes';
+import { Monk, Samurai } from './classes';
 import { attack } from './combat';
 import { dirOffsets } from './constants';
 import { Display } from './Display';
@@ -71,7 +71,7 @@ export default class Game {
         this.input = new Input(this);
         this.log = new Log(this);
         this.noise = new Noises(this);
-        this.player = new Player(this, Samurai);
+        this.player = new Player(this, Monk);
         this.playerUI = new PlayerUI(this);
         this.prompt = new Prompt(this);
         this.timer = 0;

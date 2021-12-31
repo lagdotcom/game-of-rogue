@@ -1,8 +1,8 @@
 import {
+    ARCHITECT_ATTEMPTS,
+    ARCHITECT_MIN_ENEMIES,
+    ARCHITECT_MIN_ROOMS,
     dirOffsets,
-    ROOMGEN_ATTEMPTS,
-    ROOMGEN_MINENEMIES,
-    ROOMGEN_MINROOMS,
 } from './constants';
 import { EnemyNinja } from './en/EnemyNinja';
 import { EnemySamurai } from './en/EnemySamurai';
@@ -27,7 +27,7 @@ export default class Architect {
         width: number,
         height: number,
         maxParts: number,
-        recurse: boolean = false,
+        recurse = false,
     ): Floor {
         if (!recurse) {
             this.g.t.enter(
@@ -61,14 +61,14 @@ export default class Architect {
                 taken.add(pos);
             } else {
                 attempts++;
-                if (attempts > ROOMGEN_ATTEMPTS) {
+                if (attempts > ARCHITECT_ATTEMPTS) {
                     this.g.t.message('exceeded attempts threshold');
                     break;
                 }
             }
         }
 
-        if (parts < ROOMGEN_MINROOMS) {
+        if (parts < ARCHITECT_MIN_ROOMS) {
             this.g.t.message("didn't generate enough rooms, retrying");
             return this.generate(floor, width, height, maxParts, true);
         }
@@ -290,7 +290,7 @@ export default class Architect {
             f.enemies.push(enemy);
         });
 
-        while (f.enemies.length < ROOMGEN_MINENEMIES) {
+        while (f.enemies.length < ARCHITECT_MIN_ENEMIES) {
             const enemy = randomEnemy(this.g);
             const p = oneOf(this.g.rng, f.map.find(Tile.Space));
 
@@ -341,4 +341,28 @@ export function randomEnemy(g: Game) {
     const e = new enemyClass(g);
     g.t.leave('randomEnemy');
     return e;
+}
+
+export function describeTile(t: Tile) {
+    switch (t) {
+        case Tile.NotDoor:
+        case Tile.Wall:
+            return 'a wall';
+
+        case Tile.Empty:
+        case Tile.Space:
+            return 'an empty space';
+
+        case Tile.Door:
+            return 'a door';
+        case Tile.Enemy:
+            return 'an enemy';
+        case Tile.Treasure:
+            return 'a piece of treasure';
+        case Tile.Player:
+            return 'a challenger';
+
+        default:
+            return 'dunno';
+    }
 }

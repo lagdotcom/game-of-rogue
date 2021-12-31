@@ -1,19 +1,19 @@
 import { Dir } from './types';
 
 /**
- * Number of attempts to place a room before exiting roomgen
+ * Number of attempts to place a room before exiting architect
  */
-export const ROOMGEN_ATTEMPTS = 1000;
+export const ARCHITECT_ATTEMPTS = 1000;
 
 /**
  * Minimum amount of rooms per floor
  */
-export const ROOMGEN_MINROOMS = 6;
+export const ARCHITECT_MIN_ROOMS = 6;
 
 /**
  * Minimum amount of enemies per floor
  */
-export const ROOMGEN_MINENEMIES = 10;
+export const ARCHITECT_MIN_ENEMIES = 10;
 
 /**
  * Percentage chance of generating magic-level items

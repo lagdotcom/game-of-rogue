@@ -1,4 +1,5 @@
 import { Actor } from './Actor';
+import { colourError, colourInfo } from './colours';
 import Game from './Game';
 import Item from './Item';
 import { capFirst } from './tools';
@@ -76,14 +77,21 @@ export default class Log implements UIElement {
         this.g.redraw();
     }
 
-    error(msg: string, ...args: LogArg[]) {
+    message(message: string, fg?: string, bg?: string) {
+        this.add({ message, fg, bg });
+    }
+
+    coloured(fg: string, msg: string, ...args: LogArg[]) {
         const message = this.format(msg, ...args);
-        this.add({ message, fg: 'red' });
+        return this.message(message, fg);
+    }
+
+    error(msg: string, ...args: LogArg[]) {
+        return this.coloured(colourError, msg, ...args);
     }
 
     info(msg: string, ...args: LogArg[]) {
-        const message = this.format(msg, ...args);
-        this.add({ message });
+        return this.coloured(colourInfo, msg, ...args);
     }
 
     format(msg: string, ...args: LogArg[]) {

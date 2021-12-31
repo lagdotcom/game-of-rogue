@@ -7,16 +7,16 @@ export default class Trace {
         this.on = true;
     }
 
-    enter(item: string, ...args: any) {
+    enter(item: string, ...args: any[]) {
         this.message(item, ...args);
         this.level++;
     }
 
-    message(item: string, ...args: any) {
+    message(item: string, ...args: any[]) {
         if (this.on) console.log(this.space() + item, ...args);
     }
 
-    todo(item: string, ...args: any) {
+    todo(item: string, ...args: any[]) {
         return this.message('TODO:' + item, ...args);
     }
 
