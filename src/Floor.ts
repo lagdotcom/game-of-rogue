@@ -24,11 +24,11 @@ export class Floor {
 
     enemyAt(p: XY) {
         const enemies = this.enemies.filter((e) => e.pos === p);
-        return enemies.length ? enemies[0] : null;
+        return enemies.length ? enemies[0] : undefined;
     }
 
     itemAt(p: XY) {
         const items = this.items.filter((i) => i.pos === p);
-        return items.length ? items[0] : null;
+        return items.length ? items[0] : undefined;
     }
 }

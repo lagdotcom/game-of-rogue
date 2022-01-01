@@ -7,6 +7,7 @@ import Enemy from './Enemy';
 import { Floor } from './Floor';
 import Hooks from './Hooks';
 import Input from './Input';
+import { initItems } from './Item';
 import { getSightCone } from './lights';
 import Log from './Log';
 import Noises from './Noises';
@@ -87,6 +88,7 @@ export default class Game {
             this.actors.forEach((a) => a.regen(time));
         });
         initClasses(this);
+        initItems(this);
 
         this.t.leave('Game.new');
     }

@@ -249,3 +249,14 @@ export function dropItems(g: Game, v: Actor) {
 
     g.log.coloured(colourItems, '%an drop%as %b#.', v, niceListJoin(drops));
 }
+
+export function initItems(g: Game) {
+    g.hooks.on('player.move', ({ actor }) => {
+        const items = g.f.items.filter((i) => i.pos === actor.pos);
+        if (items.length)
+            g.log.info(
+                'You see here %a#.',
+                niceListJoin(items.map((i) => i.name({ article: true }))),
+            );
+    });
+}
