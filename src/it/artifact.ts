@@ -7,7 +7,7 @@ export const kusanagi: WeaponTemplate = {
     type: ItemType.Weapon,
     hands: 2,
     offhand: false,
-    strength: 8,
+    power: 8,
     weight: 4,
     traits: { handle: true, blade: true, sword: true, legendary: true },
     moveTimer: 1,
@@ -15,7 +15,6 @@ export const kusanagi: WeaponTemplate = {
     thrown: false,
     ammo: false,
     stacked: false,
-    mods: {},
     listeners: {
         'player.attack': (e) => {
             // TODO

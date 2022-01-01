@@ -14,18 +14,19 @@ export function makePath(f: Floor, start: XY, goal: XY) {
 
     while (open.size) {
         const current = pathLowest(open, fScore);
+        if (!current) break;
         if (current === goal) return reconstructPath(from, goal);
 
         open.delete(current);
         closed.add(current);
 
+        const tentative = (gScore.get(current) || 0) + 1;
         neighbours(f, current).forEach((n) => {
             if (closed.has(n)) return;
             if (f.map.get(n.x, n.y) === Tile.Wall) return;
 
-            const tentative = gScore.get(current) + 1;
             if (!open.has(n)) open.add(n);
-            else if (tentative >= gScore.get(n)) return;
+            else if (tentative >= (gScore.get(n) || 0)) return;
 
             from.set(n, current);
             gScore.set(n, tentative);
@@ -41,7 +42,7 @@ function pathLowest(positions: Set<XY>, scores: Map<XY, number>) {
     let bestScore = Infinity;
 
     for (const pos of positions) {
-        const score = scores.get(pos);
+        const score = scores.get(pos) || Infinity;
         if (score < bestScore) {
             best = pos;
             bestScore = score;
@@ -80,7 +81,10 @@ function reconstructPath(links: Map<XY, XY>, goal: XY) {
     let current = goal;
 
     while (links.has(current)) {
-        current = links.get(current);
+        const next = links.get(current);
+        if (!next) break;
+
+        current = next;
         route.unshift(current);
     }
 

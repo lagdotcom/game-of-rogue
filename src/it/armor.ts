@@ -1,43 +1,56 @@
 import { ArmourTemplate } from '../Item';
-import { ItemSlot, ItemTraits, ItemType, Mods } from '../types';
+import { ItemSlot, ItemTraits, ItemType } from '../types';
 
-function a(i: {
+function a({
+    article = 'a',
+    name,
+    rarity = 1,
+    slot,
+    traits = {},
+    armour,
+    sightFov,
+    weight = 0,
+}: {
     article?: string;
-    mods?: Mods;
     name: string;
     rarity?: number;
     slot: ItemSlot;
     traits?: ItemTraits;
+    armour: number;
+    sightFov?: number;
     weight?: number;
 }): ArmourTemplate {
     return {
-        name: i.name,
-        article: i.article || 'a',
+        name,
+        article,
         type: ItemType.Armour,
-        slot: i.slot,
-        mods: i.mods || {},
-        weight: i.weight || 0,
-        traits: i.traits || {},
-        rarity: i.rarity || 1,
+        slot,
+        armour,
+        sightFov,
+        weight,
+        traits,
+        rarity,
         stacked: false,
     };
 }
 
-export const doMaru = a({
+export const doMaru: ArmourTemplate = a({
     name: 'dō-maru',
     slot: ItemSlot.Body,
     weight: 5,
-    mods: { armour: 3 },
+    armour: 3,
 });
 
 export const hachimaki = a({
     name: 'hachimaki',
     slot: ItemSlot.Head,
+    armour: 0,
 });
 
 export const sujiBachi = a({
     name: 'suji bachi',
     slot: ItemSlot.Head,
     weight: 2,
-    mods: { armour: 1, sightFov: -20 },
+    armour: 1,
+    sightFov: -20,
 });

@@ -4,7 +4,7 @@ import { Dir } from './types';
 type InputHandler = (code: string, shift: boolean, ctrl: boolean) => boolean;
 
 export default class Input {
-    handler: InputHandler;
+    handler?: InputHandler;
     listening: boolean;
 
     constructor(public g: Game) {
@@ -56,7 +56,7 @@ export default class Input {
             e.preventDefault();
 
             if (this.handler(e.key, e.shiftKey, e.metaKey)) {
-                this.handler = null;
+                this.handler = undefined;
             }
 
             return;
@@ -103,7 +103,7 @@ export default class Input {
 
     usePlayerSkill(index: number): true {
         const sk = this.g.player.class.skills[index];
-        if (sk && sk.fn) this.g.playerSkill(sk);
+        if (sk) this.g.playerSkill(sk);
         return true;
     }
 }

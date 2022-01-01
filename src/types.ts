@@ -46,11 +46,24 @@ export interface XY {
     y: number;
 }
 
-export type Mod = number;
-export interface Mods {
-    armour?: Mod;
-    sightFov?: Mod;
-}
+export type ModKey =
+    | 'armour'
+    | 'balanceMax'
+    | 'balanceRegen'
+    | 'hearingRange'
+    | 'hpMax'
+    | 'hpRegen'
+    | 'kiMax'
+    | 'kiRegen'
+    | 'moveCost'
+    | 'moveTimer'
+    | 'power'
+    | 'sightFov'
+    | 'sightRange'
+    | 'strength'
+    | 'weight';
+export type Mod = number | ((x: number) => number);
+export type Mods = Map<ModKey, Mod>;
 
 export interface ItemTraits {
     arrow?: boolean;

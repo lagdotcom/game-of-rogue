@@ -1,7 +1,7 @@
 import { Actor } from './Actor';
 import { colourDeath } from './colours';
 import { STRENGTH_RATIO } from './constants';
-import { Weapon } from './Item';
+import Item, { dropItems, WeaponTemplate } from './Item';
 import { applyNinjaSubstitute } from './sk/Substitute';
 import { getCardinalAngleBetween, getCardinalDirectionBetween } from './tools';
 import { AIState } from './types';
@@ -38,9 +38,9 @@ export function kill(attacker: Actor, victim: Actor) {
         }
 
         g.hooks.fire('enemy.died', { attacker, victim });
+        dropItems(g, victim);
     }
 
-    // TOOD: drop items
     g.remove(victim);
 }
 
@@ -73,7 +73,7 @@ function applyArmour(a: Actor, v: Actor, dmg: number) {
     return Math.floor(dmg - absorb);
 }
 
-function strike(a: Actor, v: Actor, w: Weapon): number {
+function strike(a: Actor, v: Actor, w: Item<WeaponTemplate>): number {
     if (v.dead) return 0;
 
     if (v.substituteActive) {
@@ -81,7 +81,7 @@ function strike(a: Actor, v: Actor, w: Weapon): number {
         return StrikeWasSubstituted;
     }
 
-    let dmg = a.str / STRENGTH_RATIO + w.template.strength;
+    let dmg = a.strength / STRENGTH_RATIO + w.power;
     dmg = applyArmour(a, v, dmg);
     a.g.log.info('%ao %cn hits %bn for %d#.', a, v, w, dmg);
 
@@ -103,16 +103,16 @@ export function attack(a: Actor, v: Actor): boolean {
         if (dmg === StrikeWasSubstituted) substituted = true;
         else totalDamage += dmg;
 
-        balanceCost += primary.template.weight || 0;
-        timerCost += primary.template.moveTimer;
+        balanceCost += primary.weight || 0;
+        timerCost += primary.moveTimer;
     }
 
     if (!substituted) {
         const secondary = a.getSecondaryWeapon();
         if (secondary && !secondary.template.ammo && v.alive) {
             totalDamage += strike(a, v, secondary);
-            balanceCost += secondary.template.weight || 0;
-            timerCost += secondary.template.moveTimer;
+            balanceCost += secondary.weight || 0;
+            timerCost += secondary.moveTimer;
         }
     }
 

@@ -1,51 +1,65 @@
 import Game from '../Game';
 import { WeaponTemplate } from '../Item';
 import { rnd } from '../tools';
-import { ItemTraits, ItemType, Mods } from '../types';
+import { ItemTraits, ItemType } from '../types';
 
-function w(i: {
+function w({
+    article = 'a',
+    name,
+    rarity = 1,
+    traits = {},
+    weight = 0,
+    hands,
+    offhand = false,
+    power,
+    moveTimer = 1,
+    thrown = false,
+    stacked = false,
+    getStackAmount,
+    ammo = false,
+    missile = false,
+    firedBy,
+}: {
     article?: string;
-    mods?: Mods;
     name: string;
     rarity?: number;
     traits?: ItemTraits;
     weight?: number;
     hands?: number;
-    offhand?: true;
-    strength: number;
+    offhand?: boolean;
+    power: number;
     moveTimer?: number;
-    thrown?: true;
-    stacked?: true;
+    thrown?: boolean;
+    stacked?: boolean;
     getStackAmount?: (g: Game) => number;
-    ammo?: true;
-    missile?: true;
+    ammo?: boolean;
+    missile?: boolean;
     firedBy?: ItemTraits;
 }): WeaponTemplate {
     return {
-        name: i.name,
-        article: i.article || 'a',
+        name,
+        article,
         type: ItemType.Weapon,
-        mods: i.mods || {},
-        weight: i.weight || 0,
-        traits: i.traits || {},
-        rarity: i.rarity || 1,
-        stacked: i.stacked || false,
-        getStackAmount: i.getStackAmount,
-        hands: i.hands || (i.ammo ? 0 : 1),
-        offhand: i.offhand || false,
-        strength: i.strength,
-        moveTimer: i.moveTimer || 1,
-        thrown: i.thrown || false,
-        ammo: i.ammo || false,
-        firedBy: i.firedBy,
-        missile: i.missile || false,
+        weight,
+        traits,
+        rarity,
+        stacked,
+        getStackAmount: getStackAmount,
+        hands: hands || (ammo ? 0 : 1),
+        offhand,
+        power,
+        moveTimer,
+        thrown,
+        ammo,
+        firedBy,
+        missile,
     };
 }
 
 export const katana = w({
     name: 'katana',
     hands: 2,
-    strength: 3,
+    power: 3,
     weight: 5,
     moveTimer: 1.1,
     traits: { handle: true, blade: true, sword: true },
@@ -54,7 +68,7 @@ export const katana = w({
 export const sai = w({
     name: 'sai',
     offhand: true,
-    strength: 1,
+    power: 1,
     weight: 1,
     moveTimer: 0.7,
     rarity: 10,
@@ -63,7 +77,7 @@ export const sai = w({
 
 export const shuriken = w({
     name: 'shuriken',
-    strength: 1,
+    power: 1,
     moveTimer: 0.5,
     offhand: true,
     thrown: true,
@@ -74,7 +88,7 @@ export const shuriken = w({
 
 export const tanto = w({
     name: 'tantō',
-    strength: 1,
+    power: 1,
     weight: 1,
     moveTimer: 0.8,
     traits: { handle: true, blade: true, knife: true },
@@ -84,7 +98,7 @@ export const tekko = w({
     name: 'tekkō',
     article: 'a pair of',
     hands: 2,
-    strength: 1,
+    power: 1,
     weight: 1,
     moveTimer: 0.9,
     traits: { handle: true, blade: true, fist: true },
@@ -92,7 +106,7 @@ export const tekko = w({
 
 export const wakizashi = w({
     name: 'wakizashi',
-    strength: 2,
+    power: 2,
     weight: 3,
     traits: { blade: true, handle: true, sword: true },
 });
@@ -101,7 +115,7 @@ export const ya = w({
     name: 'ya',
     hands: 0,
     offhand: true,
-    strength: 3,
+    power: 3,
     weight: 0,
     moveTimer: 0,
     ammo: true,
@@ -114,7 +128,7 @@ export const ya = w({
 export const yumi = w({
     name: 'yumi',
     hands: 2,
-    strength: 0,
+    power: 0,
     weight: 3,
     moveTimer: 1.5,
     missile: true,
@@ -125,5 +139,5 @@ export const humanFist = w({
     name: 'fist',
     article: 'your',
     hands: 2,
-    strength: 0,
+    power: 0,
 });

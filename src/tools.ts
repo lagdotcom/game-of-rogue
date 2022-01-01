@@ -2,6 +2,10 @@ import Game from './Game';
 import RNG from './RNG';
 import { Dir, Tile, XY } from './types';
 
+export function isDefined<T>(x?: T): x is T {
+    return typeof x !== 'undefined';
+}
+
 export function int(n: number) {
     return Math.floor(n);
 }
@@ -11,7 +15,8 @@ export function rnd(rng: RNG, max: number) {
 }
 
 export function oneOf<T>(rng: RNG, list: T[]) {
-    return list.length ? list[rnd(rng, list.length)] : null;
+    if (!list.length) throw new Error('called oneOf on empty list');
+    return list[rnd(rng, list.length)];
 }
 
 export function any<T>(list: T[], fn: (item: T) => boolean) {
@@ -19,6 +24,13 @@ export function any<T>(list: T[], fn: (item: T) => boolean) {
 
     return false;
 }
+
+export const entries: <T extends string>(
+    o: Partial<Record<T, unknown>>,
+) => [T, unknown][] = Object.entries;
+
+export const keys: <T extends string>(o: Partial<Record<T, unknown>>) => T[] =
+    Object.keys;
 
 const pi2 = Math.PI * 2;
 export function deg2rad(a: number): number {
@@ -88,4 +100,12 @@ export function isBlocked(g: Game, pos: XY) {
     const blockers = g.blockers(pos);
 
     return blockers.length > 0 || tile !== Tile.Space;
+}
+
+export function niceListJoin(items: string[]) {
+    if (items.length === 0) return 'nothing';
+    if (items.length === 1) return items[0];
+    if (items.length === 2) return `${items[0]} and ${items[1]}`;
+
+    return items.slice(0, -1).join(', ') + ' and ' + items.at(-1);
 }

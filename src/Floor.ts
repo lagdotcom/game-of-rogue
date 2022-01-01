@@ -18,7 +18,8 @@ export class Floor {
         this.map = new Grid(name, width, height, Tile.Empty);
         this.enemies = [];
         this.items = [];
-        this.player = null;
+
+        this.player = this.map.oob;
     }
 
     enemyAt(p: XY) {

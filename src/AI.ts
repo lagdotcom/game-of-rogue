@@ -43,15 +43,13 @@ export function aiAngry(a: Actor) {
     if (ifTargetGoneInvestigate(a)) return true;
     if (ifTargetInRangeAttack(a)) return true;
 
-    return approach(a, a.target.pos);
+    return approach(a, a.target?.pos);
 }
 
 function anger(a: Actor, target: Actor) {
     const g = a.g;
-    a.target = target;
-    a.aiState = AIState.Angry;
 
-    if (a.aiTraits.yellsOnSight) {
+    if (a.aiTraits.yellsOnSight && a.target !== target) {
         if (canSee(g.player, a.pos))
             g.log.info('%an yells a challenge at %bn!', a, target);
         else if (distance(g.player.pos, a.pos) < g.player.hearingRange)
@@ -59,6 +57,8 @@ function anger(a: Actor, target: Actor) {
         g.noise.add(a.pos, a.aiTraits.yellsOnSight, a, 2);
     }
 
+    a.target = target;
+    a.aiState = AIState.Angry;
     return aiAngry(a);
 }
 
@@ -149,7 +149,9 @@ function ifReachedTargetGiveUp(a: Actor) {
     return false;
 }
 
-function approach(a: Actor, pos: XY) {
+function approach(a: Actor, pos?: XY) {
+    if (!pos) return false;
+
     const path = makePath(a.g.f, a.pos, pos);
     if (!path) return false;
 

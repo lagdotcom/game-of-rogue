@@ -38,7 +38,7 @@ export default class Game {
     architect: Architect;
     display: Display;
     drawTimeout: number;
-    f: Floor;
+    f!: Floor;
     hooks: Hooks;
     input: Input;
     log: Log;
@@ -46,7 +46,7 @@ export default class Game {
     player: Player;
     playerUI: PlayerUI;
     prompt: Prompt;
-    rng: RNG;
+    rng!: RNG;
     seen: Set<XY>;
     t: Trace;
     timer: number;
@@ -69,6 +69,7 @@ export default class Game {
 
         this.actors = [];
         this.architect = new Architect(this);
+        this.drawTimeout = 0;
         this.hooks = new Hooks(this);
         this.input = new Input(this);
         this.log = new Log(this);
@@ -76,8 +77,10 @@ export default class Game {
         this.player = new Player(this, oneOf(this.rng, [Samurai, Ninja, Monk]));
         this.playerUI = new PlayerUI(this);
         this.prompt = new Prompt(this);
+        this.seen = new Set();
         this.timer = 0;
         this.ui = [this.playerUI, this.log, this.prompt];
+        this.view = new Set();
 
         this.hooks.on('sys.advance', ({ time }) => {
             this.timer += time;
@@ -105,7 +108,7 @@ export default class Game {
                 `Welcome to the Game of Rogue, young ${this.player.class.name}.`,
             );
 
-        this.seen = new Set<XY>();
+        this.seen.clear();
         this.redraw();
         this.input.listening = true;
 
@@ -263,7 +266,7 @@ export default class Game {
             start: this.f.map.ref(sx, sy),
             projected: this.f.map.ref(ex, ey),
             visited: new Set<XY>(),
-            end: null,
+            end: this.f.map.oob,
         };
 
         let tx = sx;

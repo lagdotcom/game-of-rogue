@@ -1,4 +1,8 @@
+import { Actor } from './Actor';
+import { colourItems } from './colours';
 import { ARTIFACT_CHANCE, MAGIC_CHANCE } from './constants';
+import Enchantment, { EnchantmentSlot } from './Enchantment';
+import { randomEnchant } from './enchantments';
 import Game from './Game';
 import { GameEventHandler, GameEventName } from './Hooks';
 import { doMaru, hachimaki, sujiBachi } from './it/armor';
@@ -13,102 +17,164 @@ import {
     ya,
     yumi,
 } from './it/weapon';
-import { oneOf, rnd } from './tools';
-import { ItemSlot, ItemTraits, ItemType, Mods, Token, XY } from './types';
+import { entries, isDefined, niceListJoin, oneOf, rnd } from './tools';
+import {
+    ItemSlot,
+    ItemTraits,
+    ItemType,
+    ModKey,
+    Mods,
+    Token,
+    XY,
+} from './types';
 
-export default abstract class Item {
+export default class Item<T extends ItemTemplate = ItemTemplate> {
     count?: number;
-    mods: Mods;
-    pos: XY;
-    template: ItemTemplate;
+    enchantments: Enchantment[];
+    pos?: XY;
+    template: T;
     token: Token;
     type: ItemType;
 
-    constructor(public g: Game, t?: ItemTemplate) {
-        this.token = { bg: '#202000', char: '$', fg: 'yellow' };
-        this.type = ItemType.Other;
+    constructor(public g: Game, t: T) {
+        this.enchantments = [];
+        this.token = {
+            bg: t.bg || '#202000',
+            char: t.char || itemChars[t.type] || '$',
+            fg: t.fg || 'yellow',
+        };
+        this.template = t;
+        this.type = t.type;
 
-        if (t) {
-            this.mods = Object.assign({}, t.mods);
-            this.template = t;
-            this.token.char = itemChars[t.type];
-            this.type = t.type;
+        if (t.getStackAmount) this.count = t.getStackAmount(g);
+    }
 
-            if (t.getStackAmount) this.count = t.getStackAmount(g);
-        }
+    get armour() {
+        return this.stat('armour');
+    }
+    get moveTimer() {
+        return this.stat('moveTimer');
+    }
+    get power() {
+        return this.stat('power');
+    }
+    get sightFov() {
+        return this.stat('sightFov');
+    }
+    get strength() {
+        return this.stat('strength');
+    }
+    get weight() {
+        return this.stat('weight');
     }
 
     matches(tr: ItemTraits) {
         let result = true;
-        Object.values(tr).forEach((p: [string, boolean]) => {
-            if (this.template.traits[p[0]] !== p[1]) result = false;
+        entries(tr).forEach((p) => {
+            if (this.template?.traits[p[0]] !== p[1]) result = false;
         });
 
         return result;
     }
 
+    get fullName() {
+        let prefix = '';
+        let suffix = '';
+        this.enchantments.forEach((e) => {
+            if (e.slot === EnchantmentSlot.Prefix) prefix = e.name + ' ';
+            else if (e.slot === EnchantmentSlot.Suffix) suffix = ' ' + e.name;
+        });
+
+        return `${prefix}${this.template.name}${suffix}`;
+    }
+
     name(flags: { article?: boolean; singular?: boolean } = {}) {
         if (this.template.stacked && !flags.singular)
-            return `${this.count} ${this.template.name}`;
+            return `${this.count} ${this.fullName}`;
 
-        if (flags.article)
-            return `${this.template.article} ${this.template.name}`;
+        if (flags.article) return `${this.template.article} ${this.fullName}`;
 
-        return this.template.name;
+        return this.fullName;
+    }
+
+    stat(k: ModKey) {
+        let base = this.template[k] ?? 0;
+
+        const allMods = [
+            this.template.mods?.get(k),
+            ...this.enchantments.map((e) => e.mods?.get(k)),
+        ].filter(isDefined);
+        for (const mod of allMods) {
+            if (typeof mod === 'function') base = mod(base);
+            else base += mod;
+        }
+
+        return base;
     }
 }
 
-export interface ItemTemplate {
+export function isArmour(i: Item): i is Item<ArmourTemplate> {
+    return i.type === ItemType.Armour;
+}
+export function isOther(i: Item): i is Item<OtherTemplate> {
+    return i.type === ItemType.Other;
+}
+export function isWeapon(i: Item): i is Item<WeaponTemplate> {
+    return i.type === ItemType.Weapon;
+}
+
+interface BaseTemplate {
     name: string;
+    char?: string;
+    fg?: string;
+    bg?: string;
     article: string;
     type: ItemType;
-    slot?: ItemSlot;
-    weight?: number;
     rarity: number;
     stacked: boolean;
     getStackAmount?: (g: Game) => number;
     traits: ItemTraits;
-    mods: Mods;
+    armour?: number;
+    balanceMax?: number;
+    balanceRegen?: number;
+    hearingRange?: number;
+    hpMax?: number;
+    hpRegen?: number;
+    kiMax?: number;
+    kiRegen?: number;
+    moveCost?: number;
+    moveTimer?: number;
+    power?: number;
+    sightFov?: number;
+    sightRange?: number;
+    strength?: number;
+    weight?: number;
+    mods?: Mods;
     listeners?: {
         [T in GameEventName]?: GameEventHandler<T>;
     };
 }
 
-export interface ArmourTemplate extends ItemTemplate {
+export interface ArmourTemplate extends BaseTemplate {
     type: ItemType.Armour;
+    slot: ItemSlot;
 }
 
-export interface WeaponTemplate extends ItemTemplate {
-    type: ItemType.Weapon;
-    hands: number;
-    offhand: boolean;
-    moveTimer: number;
-    strength: number;
-    thrown: boolean;
-    ammo: boolean;
-    missile: boolean;
-    firedBy?: ItemTraits;
-}
-
-export class Armour extends Item {
-    template: ArmourTemplate;
-    type: ItemType.Armour;
-}
-
-export class OtherItem extends Item {
+export interface OtherTemplate extends BaseTemplate {
     type: ItemType.Other;
 }
 
-export class Weapon extends Item {
-    template: WeaponTemplate;
+export interface WeaponTemplate extends BaseTemplate {
     type: ItemType.Weapon;
-
-    constructor(g: Game, template: WeaponTemplate) {
-        super(g, template);
-
-        if (template.ammo) this.token.char = '/';
-    }
+    hands: number;
+    offhand: boolean;
+    missile: boolean;
+    thrown: boolean;
+    ammo: boolean;
+    firedBy?: ItemTraits;
 }
+
+export type ItemTemplate = ArmourTemplate | OtherTemplate | WeaponTemplate;
 
 const artifacts = [kusanagi];
 const items = [
@@ -140,26 +206,15 @@ function randomItemTemplate(g: Game) {
     }
 }
 
-function randomEnchant(g: Game, i: Item) {
-    g.t.todo('randomEnchant', i.template.name);
-}
+export function constructItem(g: Game, template: ItemTemplate, enchant = true) {
+    g.t.enter('constructItem', template.name, enchant);
+    const item = new Item(g, template);
 
-export function instantiateItem(g: Game, template: ItemTemplate) {
-    switch (template.type) {
-        case ItemType.Armour:
-            return new Armour(g, <ArmourTemplate>template);
-        case ItemType.Weapon:
-            return new Weapon(g, <WeaponTemplate>template);
-        default:
-            return new OtherItem(g, template);
-    }
-}
-
-export function constructItem(g: Game, template: ItemTemplate) {
-    g.t.enter('constructItem', template.name);
-    const item = instantiateItem(g, template);
-
-    if (!template.traits.legendary && rnd(g.rng, 100) < MAGIC_CHANCE) {
+    if (
+        enchant &&
+        !template.traits.legendary &&
+        rnd(g.rng, 100) < MAGIC_CHANCE
+    ) {
         randomEnchant(g, item);
         if (rnd(g.rng, 100) < MAGIC_CHANCE) randomEnchant(g, item);
     }
@@ -168,15 +223,29 @@ export function constructItem(g: Game, template: ItemTemplate) {
     return item;
 }
 
-export function randomItem(g: Game) {
+export function randomItem(g: Game, enchant = true) {
     const template = randomItemTemplate(g);
-    return constructItem(g, template);
+    return constructItem(g, template, enchant);
 }
 
 export type Equipment = {
-    [ItemSlot.Body]?: Armour;
-    [ItemSlot.BothHands]?: Weapon;
-    [ItemSlot.Head]?: Armour;
-    [ItemSlot.Primary]?: Weapon;
-    [ItemSlot.Secondary]?: Weapon;
+    [ItemSlot.Body]?: Item<ArmourTemplate>;
+    [ItemSlot.BothHands]?: Item<WeaponTemplate>;
+    [ItemSlot.Head]?: Item<ArmourTemplate>;
+    [ItemSlot.Primary]?: Item<WeaponTemplate>;
+    [ItemSlot.Secondary]?: Item<WeaponTemplate>;
 };
+
+export function dropItems(g: Game, v: Actor) {
+    const drops: string[] = [];
+    const items = v.inventory.concat(
+        Object.values(v.equipment).filter(isDefined),
+    );
+    items.forEach((i) => {
+        drops.push(i.name({ article: true }));
+        i.pos = v.pos;
+        g.f.items.push(i);
+    });
+
+    g.log.coloured(colourItems, '%an drop%as %b#.', v, niceListJoin(drops));
+}

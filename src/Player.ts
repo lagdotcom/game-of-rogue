@@ -2,11 +2,10 @@ import { Actor } from './Actor';
 import { Class } from './Class';
 import Game from './Game';
 import { humanFist } from './it/weapon';
-import { instantiateItem, Weapon } from './Item';
+import Item from './Item';
 import { Dir, Side } from './types';
 
 export default class Player extends Actor {
-    isActor: true;
     isPlayer: true;
     class: Class;
     level: number;
@@ -24,13 +23,13 @@ export default class Player extends Actor {
         this.apply(spec);
         spec.init(this);
 
-        if (!this.natural) this.natural = <Weapon>instantiateItem(g, humanFist);
+        if (!this.natural) this.natural = new Item(g, humanFist);
     }
 
     levelUp() {
         this.level++;
-        this.hpMax += this.class.hpGain;
-        this.kiMax += this.class.kiGain;
-        this.str += this.class.strGain;
+        this.base.hpMax += this.class.hpGain;
+        this.base.kiMax += this.class.kiGain;
+        this.base.strength += this.class.strGain;
     }
 }

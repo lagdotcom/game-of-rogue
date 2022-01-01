@@ -98,7 +98,7 @@ export class Grid<T = string> {
         return refs;
     }
 
-    rotate(turns: number) {
+    rotate(turns: 0 | 1 | 2 | 3) {
         const { width, height, init } = this;
         let r: Grid<T>;
         if (!turns) return this;

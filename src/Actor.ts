@@ -1,12 +1,13 @@
 import { Class } from './Class';
 import Game from './Game';
-import Item, { Armour, Equipment, Weapon } from './Item';
+import Item, { Equipment, isArmour, isWeapon, WeaponTemplate } from './Item';
+import { isDefined } from './tools';
 import {
     AIState,
     AITraits,
     Dir,
     ItemSlot,
-    ItemType,
+    ModKey,
     Side,
     Tile,
     XY,
@@ -16,10 +17,8 @@ export abstract class Actor {
     aiHurtBy?: Actor;
     aiState: AIState;
     aiTraits: AITraits;
-    armour: number;
     balance: number;
-    balanceMax: number;
-    balanceRegen: number;
+    base: Record<ModKey, number>;
     bg: string;
     char: string;
     cloneOf?: Actor;
@@ -27,27 +26,19 @@ export abstract class Actor {
     equipment: Equipment;
     facing: Dir;
     fg: string;
-    hearingRange: number;
     hp: number;
-    hpMax: number;
-    hpRegen: number;
     inventory: Item[];
+    isActor: true;
     isEnemy?: true;
     isPlayer?: true;
     ki: number;
-    kiMax: number;
-    kiRegen: number;
     lifetime: number;
-    moveCost: number;
-    natural?: Weapon;
-    natural2?: Weapon;
+    natural?: Item<WeaponTemplate>;
+    natural2?: Item<WeaponTemplate>;
     nextMove: number;
     pos: XY;
-    sightFov: number;
-    sightRange: number;
     skills: string[];
     skillsMastered: string[];
-    str: number;
     substituteActive: boolean;
     substituteTimer: number;
     target?: Actor;
@@ -58,23 +49,41 @@ export abstract class Actor {
         this.g = g;
         this.aiState = AIState.Passive;
         this.aiTraits = {};
-        this.armour = 0;
-        this.balance = this.balanceMax = 100;
-        this.balanceRegen = 1;
+        this.base = {
+            armour: 0,
+            balanceMax: 100,
+            balanceRegen: 1,
+            hearingRange: 10,
+            hpRegen: 0.01,
+            hpMax: 0,
+            kiRegen: 0.1,
+            kiMax: 0,
+            moveCost: 1,
+            moveTimer: 0,
+            power: 0,
+            sightFov: 160,
+            sightRange: 5,
+            strength: 0,
+            weight: 0,
+        };
+        this.bg = 'red';
+        this.balance = this.base.balanceMax;
+        this.char = '?';
         this.dead = false;
         this.equipment = {};
-        this.hearingRange = 10;
-        this.hpRegen = 0.01;
+        this.facing = Dir.N;
+        this.fg = 'yellow';
+        this.hp = 1;
         this.inventory = [];
-        this.kiRegen = 0.1;
+        this.isActor = true;
+        this.ki = 0;
         this.lifetime = Infinity;
         this.name = name;
         this.nextMove = 0;
-        this.moveCost = 1;
-        this.sightFov = 160;
-        this.sightRange = 5;
+        this.pos = { x: -1, y: -1 };
         this.skills = [];
         this.skillsMastered = [];
+        this.substituteActive = false;
         this.substituteTimer = 0;
         this.turnCost = 0.5;
     }
@@ -83,10 +92,56 @@ export abstract class Actor {
         return !this.dead;
     }
 
+    get armour() {
+        return this.stat('armour');
+    }
+    get balanceMax() {
+        return this.stat('balanceMax');
+    }
+    get balanceRegen() {
+        return this.stat('balanceRegen');
+    }
+    get hearingRange() {
+        return this.stat('hearingRange');
+    }
+    get hpMax() {
+        return this.stat('hpMax');
+    }
+    get hpRegen() {
+        return this.stat('hpRegen');
+    }
+    get kiMax() {
+        return this.stat('kiMax');
+    }
+    get kiRegen() {
+        return this.stat('kiRegen');
+    }
+    get moveCost() {
+        return this.stat('moveCost');
+    }
+    get sightFov() {
+        return this.stat('sightFov');
+    }
+    get sightRange() {
+        return this.stat('sightRange');
+    }
+    get strength() {
+        return this.stat('strength');
+    }
+
+    stat(k: ModKey): number {
+        let base = this.base[k];
+        Object.values(this.equipment)
+            .filter(isDefined)
+            .forEach((item) => (base += item.stat(k)));
+
+        return base;
+    }
+
     apply(cl: Class) {
-        this.hp = this.hpMax = cl.hp;
-        this.ki = this.kiMax = cl.ki;
-        this.str = cl.str;
+        this.hp = this.base.hpMax = cl.hp;
+        this.ki = this.base.kiMax = cl.ki;
+        this.base.strength = cl.str;
     }
 
     move(dest: XY, spend: boolean) {
@@ -139,16 +194,14 @@ export abstract class Actor {
     }
 
     equip(i: Item) {
-        if (i.type === ItemType.Other) return false;
         this.g.t.enter('Actor.equip', this.name, i.template.name);
 
-        if (i.type === ItemType.Weapon) {
-            const wi = <Weapon>i;
-            if (wi.template.hands === 0 && wi.template.ammo) {
-                let w: Weapon;
+        if (isWeapon(i)) {
+            if (i.template.hands === 0 && i.template.ammo) {
+                let w: Item<WeaponTemplate>;
 
-                if (!this.slotUsed(ItemSlot.BothHands)) {
-                    if (!this.slotUsed(ItemSlot.Primary)) {
+                if (!this.equipment.both) {
+                    if (!this.equipment.primary) {
                         if (this.isPlayer)
                             this.g.log.info('Equip the weapon first.');
 
@@ -159,12 +212,12 @@ export abstract class Actor {
                         return false;
                     }
 
-                    w = this.equipment[ItemSlot.Primary];
-                } else w = this.equipment[ItemSlot.BothHands];
+                    w = this.equipment.primary;
+                } else w = this.equipment.both;
 
-                if (!w.matches(wi.template.firedBy)) {
+                if (i.template.firedBy && !w.matches(i.template.firedBy)) {
                     if (this.isPlayer)
-                        this.g.log.info(`${w.name()} can't fire ${wi.name()}`);
+                        this.g.log.info(`${w.name()} can't fire ${i.name()}`);
 
                     this.g.t.message(
                         'cannot equip ammo; wrong weapon equipped',
@@ -173,13 +226,13 @@ export abstract class Actor {
                     return false;
                 }
 
-                const result = this.equipApply(wi, ItemSlot.Secondary);
+                const result = this.equipApply(i, ItemSlot.Secondary);
                 this.g.t.leave('Actor.equip');
                 return result;
             }
 
-            if (wi.template.hands === 2) {
-                if (this.slotUsed(ItemSlot.BothHands)) {
+            if (i.template.hands === 2) {
+                if (this.equipment.both) {
                     if (!this.unEquip(ItemSlot.BothHands)) {
                         this.g.t.message('cannot remove BothHand');
                         this.g.t.leave('Actor.equip');
@@ -188,7 +241,7 @@ export abstract class Actor {
                     }
                 }
 
-                if (this.slotUsed(ItemSlot.Secondary)) {
+                if (this.equipment.secondary) {
                     if (!this.unEquip(ItemSlot.Secondary)) {
                         this.g.t.message('cannot remove Secondary');
                         this.g.t.leave('Actor.equip');
@@ -196,7 +249,7 @@ export abstract class Actor {
                     }
                 }
 
-                if (this.slotUsed(ItemSlot.Primary)) {
+                if (this.equipment.primary) {
                     if (!this.unEquip(ItemSlot.Primary)) {
                         this.g.t.message('cannot remove Primary');
                         this.g.t.leave('Actor.equip');
@@ -204,12 +257,12 @@ export abstract class Actor {
                     }
                 }
 
-                const result = this.equipApply(wi, ItemSlot.BothHands);
+                const result = this.equipApply(i, ItemSlot.BothHands);
                 this.g.t.leave('Actor.equip');
                 return result;
             }
 
-            if (this.slotUsed(ItemSlot.BothHands)) {
+            if (this.equipment.both) {
                 if (!this.unEquip(ItemSlot.BothHands)) {
                     this.g.t.message('cannot remove BothHands');
                     this.g.t.leave('Actor.equip');
@@ -217,9 +270,9 @@ export abstract class Actor {
                 }
             }
 
-            if (wi.template.offhand) {
-                if (this.slotUsed(ItemSlot.Primary)) {
-                    if (this.slotUsed(ItemSlot.Secondary)) {
+            if (i.template.offhand) {
+                if (this.equipment.primary) {
+                    if (this.equipment.secondary) {
                         if (!this.unEquip(ItemSlot.Secondary)) {
                             this.g.t.message('cannot remove Secondary');
                             this.g.t.leave('Actor.equip');
@@ -227,7 +280,7 @@ export abstract class Actor {
                         }
                     }
 
-                    const result = this.equipApply(wi, ItemSlot.Secondary);
+                    const result = this.equipApply(i, ItemSlot.Secondary);
                     this.g.t.leave('Actor.equip');
                     return result;
                 }
@@ -241,29 +294,27 @@ export abstract class Actor {
                 return false;
             }
 
-            const result = this.equipApply(wi, ItemSlot.Primary);
+            const result = this.equipApply(i, ItemSlot.Primary);
+            this.g.t.leave('Actor.equip');
+            return result;
+        } else if (isArmour(i)) {
+            if (!this.unEquip(i.template.slot)) {
+                this.g.t.message('cannot remove', i.template.slot);
+                this.g.t.leave('Actor.equip');
+                return false;
+            }
+
+            const result = this.equipApply(i, i.template.slot);
             this.g.t.leave('Actor.equip');
             return result;
         }
 
-        if (!this.unEquip(i.template.slot)) {
-            this.g.t.message('cannot remove', i.template.slot);
-            this.g.t.leave('Actor.equip');
-            return false;
-        }
-
-        const result = this.equipApply(<Armour>i, i.template.slot);
-        this.g.t.leave('Actor.equip');
-        return result;
+        return false;
     }
 
     equipApply<T extends keyof Equipment>(i: Equipment[T], sl: T) {
         this.equipment[sl] = i;
         this.inventory = this.inventory.filter((x) => x !== i);
-
-        Object.entries(i.mods).forEach((p) => {
-            this[p[0]] += p[1];
-        });
     }
 
     unEquip(sl: ItemSlot) {
@@ -275,18 +326,11 @@ export abstract class Actor {
 
     unEquipApply(sl: ItemSlot) {
         const i = this.equipment[sl];
-        this.inventory.push(i);
-        delete this.equipment[sl];
-
-        Object.entries(i.mods).forEach((p) => {
-            this[p[0]] -= p[1];
-        });
-
+        if (i) {
+            this.inventory.push(i);
+            delete this.equipment[sl];
+        }
         return true;
-    }
-
-    slotUsed(sl: ItemSlot) {
-        return !!this.equipment[sl];
     }
 
     ai() {
@@ -294,18 +338,18 @@ export abstract class Actor {
     }
 
     getPrimaryWeapon() {
-        if (this.slotUsed(ItemSlot.BothHands))
-            return this.equipment[ItemSlot.BothHands];
+        const both = this.equipment.both;
+        if (both) return both;
 
-        if (this.slotUsed(ItemSlot.Primary))
-            return this.equipment[ItemSlot.Primary];
+        const primary = this.equipment.primary;
+        if (primary) return primary;
 
         return this.natural;
     }
 
     getSecondaryWeapon() {
-        if (this.slotUsed(ItemSlot.Secondary))
-            return this.equipment[ItemSlot.Secondary];
+        const secondary = this.equipment.secondary;
+        if (secondary) return secondary;
 
         return this.natural2;
     }

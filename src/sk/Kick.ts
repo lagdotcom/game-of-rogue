@@ -35,7 +35,7 @@ export const Kick: Skill = {
         const mapWidth = g.f.map.width;
         const mapHeight = g.f.map.height;
 
-        let dmg = a.str;
+        let dmg = a.strength;
         let distance = a.skillsMastered.includes(Kick.name) ? Infinity : 5;
         while (distance > 0) {
             const vx = v.pos.x;
@@ -104,5 +104,6 @@ export const Kick: Skill = {
         }
 
         a.spend(Kick.moveTimer);
+        return true;
     },
 };

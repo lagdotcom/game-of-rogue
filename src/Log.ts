@@ -13,6 +13,7 @@ const argLookup = {
     e: 4,
     f: 5,
 };
+type ArgLookupChar = keyof typeof argLookup;
 
 type LogArg = Actor | Item | number | string;
 function getArgType(a: LogArg) {
@@ -97,9 +98,11 @@ export default class Log implements UIElement {
     format(msg: string, ...args: LogArg[]) {
         return capFirst(
             msg.replace(/%../g, (pat) => {
-                const ch = pat[2];
-                const arg = args[argLookup[pat[1]]];
+                const ord = pat[1] as ArgLookupChar;
+                if (!(ord in argLookup)) return '?';
+                const arg = args[argLookup[ord]];
 
+                const ch = pat[2] as FormatterChar;
                 switch (getArgType(arg)) {
                     case 'actor':
                         return actorFormatters[ch](<Actor>arg);

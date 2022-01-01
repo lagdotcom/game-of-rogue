@@ -8,11 +8,11 @@ export default interface RNG {
 }
 
 type prng = ReturnType<typeof seedrandom.tychei>;
-type prng_maker = (seed: string, options: seedrandom.Options) => prng;
+type prng_maker = (seed?: string, options?: seedrandom.Options) => prng;
 
 abstract class AbstractRNG {
     gen: prng_maker;
-    impl: prng;
+    impl!: prng;
 
     constructor(gen: prng_maker, seed?: string) {
         this.gen = gen;

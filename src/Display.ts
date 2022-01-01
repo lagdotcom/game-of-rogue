@@ -1,10 +1,10 @@
 import { Token } from './types';
 
 export class DisplayCell {
-    f: string;
-    b: string;
-    bo: string;
-    value: string;
+    f!: string;
+    b!: string;
+    bo!: string;
+    value!: string;
     dirty: boolean;
     tx: number;
     ty: number;
@@ -21,6 +21,7 @@ export class DisplayCell {
         this.text(' ');
         this.border('transparent');
 
+        this.dirty = false;
         this.tx = x + w / 2;
         this.ty = y + h / 2;
     }
@@ -86,7 +87,6 @@ export class Display {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     cells: DisplayCell[];
-    container: HTMLElement;
     defaultBackground: string;
     defaultForeground: string;
 

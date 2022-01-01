@@ -1,7 +1,7 @@
 import { Actor } from './Actor';
 import { Floor } from './Floor';
 import Game from './Game';
-import { Weapon } from './Item';
+import Item, { WeaponTemplate } from './Item';
 import { Dir, XY } from './types';
 
 export type GameEventHandler<T extends GameEventName> = (
@@ -34,7 +34,9 @@ export default class Hooks {
 
     fire<T extends GameEventName>(type: T, e: GameEventMap[T]) {
         this.g.t.enter('Hooks.fire', type, e);
-        if (this.listeners[type]) this.listeners[type].forEach((h) => h(e));
+        const callbacks = this.listeners[type];
+        //@ts-expect-error: dunno how to tell TS it's the right type
+        if (callbacks) callbacks.forEach((h) => h(e));
         this.g.t.leave('Hooks.fire');
     }
 }
@@ -64,7 +66,7 @@ export interface AdvanceEvent extends GameEvent {
 export interface AttackEvent extends GameEvent {
     attacker: Actor;
     victim: Actor;
-    weapon: Weapon;
+    weapon: Item<WeaponTemplate>;
 }
 
 export interface CombatEvent extends GameEvent {

@@ -41,13 +41,13 @@ export default class Noises {
         let lowest = a.hearingRange + 1;
         let closest: Noise | undefined = undefined;
 
-        this.noises.forEach((n) => {
+        for (const n of this.noises) {
             const dist = distance(a.pos, n.pos) - n.volume;
             if (dist < lowest) {
                 lowest = dist;
                 closest = n;
             }
-        });
+        }
 
         return closest;
     }

@@ -9,6 +9,7 @@ export default class PlayerUI implements UIElement {
 
     constructor(public g: Game, public width: number = 20) {
         this.x = g.display.width - width;
+        this.y = 0;
     }
 
     draw() {
@@ -25,20 +26,19 @@ export default class PlayerUI implements UIElement {
         this.stat('Balance', `${f(p.balance)}%`);
 
         this.y++;
-        const psb = this.strBonus(false);
-        const ssb = this.strBonus(true);
+        const psb = <number>this.powerModifier(false);
+        const ssb = this.powerModifier(true);
         this.stat(
             'Strength',
-            `${f(p.str)} ${bonusText(psb)}${
+            `${f(p.strength)} ${bonusText(psb)}${
                 ssb !== null ? '/' + bonusText(ssb) : ''
             }`,
         );
         this.stat('Armour', `${f(p.armour)}`);
 
         this.y++;
-        if (p.slotUsed(ItemSlot.Primary)) this.drawItem(ItemSlot.Primary);
-        else if (p.slotUsed(ItemSlot.BothHands))
-            this.drawItem(ItemSlot.BothHands);
+        if (p.equipment.primary) this.drawItem(ItemSlot.Primary);
+        else if (p.equipment.both) this.drawItem(ItemSlot.BothHands);
         else this.y++;
 
         this.drawItem(ItemSlot.Secondary);
@@ -56,30 +56,26 @@ export default class PlayerUI implements UIElement {
     }
 
     drawItem(sl: ItemSlot) {
-        if (!this.g.player.slotUsed(sl)) {
+        const i = this.g.player.equipment[sl];
+        if (!i) {
             this.y++;
             return;
         }
-
-        const i = this.g.player.equipment[sl];
 
         this.str('  ' + i.name(), 'silver');
         this.g.display.at(this.x, this.y - 1).set(i.token);
     }
 
-    strBonus(secondary: boolean) {
+    powerModifier(secondary: boolean) {
         const p = this.g.player;
 
         if (secondary) {
-            if (p.slotUsed(ItemSlot.Secondary))
-                return p.equipment[ItemSlot.Secondary].template.strength;
+            if (p.equipment.secondary) return p.equipment.secondary.power;
             return null;
         }
 
-        if (p.slotUsed(ItemSlot.Primary))
-            return p.equipment[ItemSlot.Primary].template.strength;
-        if (p.slotUsed(ItemSlot.BothHands))
-            return p.equipment[ItemSlot.BothHands].template.strength;
+        if (p.equipment.primary) return p.equipment.primary.power;
+        if (p.equipment.both) return p.equipment.both.power;
 
         // TODO: monk barehand bonus
         return 0;

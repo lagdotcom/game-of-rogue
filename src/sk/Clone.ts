@@ -3,6 +3,7 @@ import { kill } from '../combat';
 import { EnemyNinja } from '../en/EnemyNinja';
 import { Skill } from '../Skill';
 import { findSpace, isBlocked } from '../tools';
+import { XY } from '../types';
 
 export const Clone: Skill = {
     name: 'Clone',
@@ -13,7 +14,7 @@ export const Clone: Skill = {
         const g = a.g;
         const mastered = a.skillsMastered.includes(Clone.name);
 
-        let dest = g.f.map.addFacing(a.pos, a.facing);
+        let dest: XY | undefined = g.f.map.addFacing(a.pos, a.facing);
         if (isBlocked(g, dest)) {
             dest = findSpace(g, a.pos, 1);
             if (!dest) {
@@ -38,7 +39,7 @@ export const Clone: Skill = {
         clone.isEnemy = a.isEnemy;
         clone.pos = dest;
         clone.name = a.name;
-        clone.hp = clone.hpMax = cloneHP;
+        clone.hp = clone.base.hpMax = cloneHP;
         clone.ai = ninjaCloneAI.bind(clone);
         clone.cloneOf = a;
         clone.side = a.side;
@@ -50,6 +51,7 @@ export const Clone: Skill = {
         g.add(clone);
 
         a.spend(Clone.moveTimer);
+        return true;
     },
 };
 
@@ -60,6 +62,7 @@ function ninjaCloneAI(this: Actor) {
     }
 
     // TODO other ai?
+    return false;
 }
 
 export function swapPositionWithClone(ninja: Actor, clone: Actor) {

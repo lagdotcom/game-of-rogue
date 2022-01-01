@@ -85,13 +85,14 @@ export default class Architect {
 
     randomRoom() {
         const room = oneOf(this.g.rng, rooms);
-        return room.rotate(rnd(this.g.rng, 4));
+        return room.rotate(rnd(this.g.rng, 4) as 0 | 1 | 2 | 3);
     }
 
-    pickPastePoint(g: Grid, r: Grid, ...t: string[]): XY {
-        const w = oneOf(this.g.rng, g.find(...t));
-        if (!w) return null;
+    pickPastePoint(g: Grid, r: Grid, ...t: string[]): XY | undefined {
+        const points = g.find(...t);
+        if (!points.length) return undefined;
 
+        const w = oneOf(this.g.rng, g.find(...t));
         return {
             x: rnd(this.g.rng, 2) ? w.x : w.x - r.width + 1,
             y: rnd(this.g.rng, 2) ? w.y : w.y - r.height + 1,

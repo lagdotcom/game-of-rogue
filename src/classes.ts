@@ -19,10 +19,10 @@ export const Samurai: Class = {
     strGain: 1,
     skills: [Sweep],
     init: (p: Player) => {
-        p.equip(constructItem(p.g, wakizashi));
-        p.equip(constructItem(p.g, doMaru));
-        p.get(constructItem(p.g, yumi));
-        p.get(constructItem(p.g, ya));
+        p.equip(constructItem(p.g, wakizashi, false));
+        p.equip(constructItem(p.g, doMaru, false));
+        p.get(constructItem(p.g, yumi, false));
+        p.get(constructItem(p.g, ya, false));
 
         // TODO
         p.skills.push(Sweep.name);
@@ -39,8 +39,8 @@ export const Ninja: Class = {
     strGain: 0,
     skills: [Clone, Substitute],
     init: (p: Player) => {
-        p.equip(constructItem(p.g, tanto));
-        p.equip(constructItem(p.g, shuriken));
+        p.equip(constructItem(p.g, tanto, false));
+        p.equip(constructItem(p.g, shuriken, false));
 
         // TODO
         p.skills.push(Clone.name);
@@ -58,7 +58,7 @@ export const Monk: Class = {
     strGain: 0.5,
     skills: [Kick],
     init: (p: Player) => {
-        p.equip(constructItem(p.g, hachimaki));
+        p.equip(constructItem(p.g, hachimaki, false));
 
         // TODO
         p.skills.push(Kick.name);
