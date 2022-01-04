@@ -1,7 +1,10 @@
 import { Grid } from './Grid';
 
 function room(name: string, s: string) {
-    const lines = s.replace('\r', '').split('\n');
+    const lines = s
+        .replace(/[\r\n]*$/, '') // trim last line ending, just in case
+        .replace(/\r/g, '')
+        .split('\n');
     const g = new Grid(name, lines[0].length, lines.length, '');
 
     for (let y = 0; y < g.height; y++)

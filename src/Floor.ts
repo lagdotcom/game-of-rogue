@@ -31,4 +31,8 @@ export class Floor {
         const items = this.items.filter((i) => i.pos === p);
         return items.length ? items[0] : undefined;
     }
+
+    removeItem(item: Item) {
+        this.items = this.items.filter((i) => i !== item);
+    }
 }

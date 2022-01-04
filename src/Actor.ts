@@ -129,11 +129,23 @@ export abstract class Actor {
         return this.stat('strength');
     }
 
+    get maxCarriedWeight() {
+        return this.strength * 3;
+    }
+
+    get equippedItems() {
+        return Object.values(this.equipment).filter(isDefined);
+    }
+
+    get carriedWeight() {
+        return this.inventory
+            .concat(this.equippedItems)
+            .reduce((total, i) => total + i.totalWeight, 0);
+    }
+
     stat(k: ModKey): number {
         let base = this.base[k];
-        Object.values(this.equipment)
-            .filter(isDefined)
-            .forEach((item) => (base += item.stat(k)));
+        this.equippedItems.forEach((item) => (base += item.stat(k)));
 
         return base;
     }
@@ -315,6 +327,8 @@ export abstract class Actor {
     equipApply<T extends keyof Equipment>(i: Equipment[T], sl: T) {
         this.equipment[sl] = i;
         this.inventory = this.inventory.filter((x) => x !== i);
+
+        return true;
     }
 
     unEquip(sl: ItemSlot) {

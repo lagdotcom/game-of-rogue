@@ -68,6 +68,10 @@ export default class Item<T extends ItemTemplate = ItemTemplate> {
         return this.stat('weight');
     }
 
+    get totalWeight() {
+        return this.weight * (this.count || 1);
+    }
+
     matches(tr: ItemTraits) {
         let result = true;
         entries(tr).forEach((p) => {
@@ -247,7 +251,7 @@ export function dropItems(g: Game, v: Actor) {
         g.f.items.push(i);
     });
 
-    g.log.coloured(colourItems, '%an drop%as %b#.', v, niceListJoin(drops));
+    g.log.coloured(colourItems, '%an drop%as %bn.', v, niceListJoin(drops));
 }
 
 export function initItems(g: Game) {
@@ -255,7 +259,7 @@ export function initItems(g: Game) {
         const items = g.f.items.filter((i) => i.pos === actor.pos);
         if (items.length)
             g.log.info(
-                'You see here %a#.',
+                'You see here %an.',
                 niceListJoin(items.map((i) => i.name({ article: true }))),
             );
     });

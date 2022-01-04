@@ -156,16 +156,24 @@ export class Display {
         return this.cells[y * this.width + x];
     }
 
-    str(x: number, y: number, s: string, fg?: string, bg?: string) {
+    str(sx: number, sy: number, s: string, fg?: string, bg?: string) {
         const tok: Token = {
             fg: fg ? fg : this.defaultForeground,
             bg: bg ? bg : this.defaultBackground,
             char: '',
         };
 
+        let x = sx,
+            y = sy;
         for (let i = 0; i < s.length; i++) {
+            if (s[i] === '\n') {
+                x = sx;
+                y++;
+                continue;
+            }
+
             tok.char = s[i];
-            this.at(x + i, y).set(tok);
+            this.at(x++, y).set(tok);
         }
     }
 }

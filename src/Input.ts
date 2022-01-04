@@ -12,8 +12,42 @@ export default class Input {
         document.addEventListener('keydown', this.keydown.bind(this));
     }
 
+    getChoice<T>(
+        header: string,
+        items: T[],
+        getName: (t: T) => string,
+        cb: (t: T) => unknown,
+    ) {
+        let prompt = `${header}`;
+
+        const choices = new Map<string, T>();
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const ch = String.fromCharCode(97 + i);
+            const name = getName(item);
+            choices.set(ch, item);
+            prompt += `\n${ch}: ${name}`;
+        }
+
+        this.g.prompt.show(prompt);
+        this.handler = (code: string) => {
+            const item = choices.get(code);
+            if (item) {
+                cb(item);
+                this.g.prompt.clear();
+                return true;
+            }
+
+            if (code === 'Escape') {
+                this.g.prompt.clear();
+                return true;
+            }
+
+            return false;
+        };
+    }
+
     getDirection(prompt: string, cb: (d: Dir) => unknown) {
-        this.g.t.todo('getDirection', prompt);
         this.g.prompt.show(prompt);
 
         const cbh = (d: Dir) => {
@@ -22,7 +56,7 @@ export default class Input {
             return true;
         };
 
-        this.handler = (code: string, shift: boolean, ctrl: boolean) => {
+        this.handler = (code: string) => {
             switch (code) {
                 case 'ArrowUp':
                     return cbh(Dir.N);
@@ -83,6 +117,13 @@ export default class Input {
                 return this.g.playerMove(Dir.W);
             case 'Home':
                 return this.g.playerMove(Dir.NW);
+
+            case 'd':
+                return this.g.playerDrop();
+            case 'e':
+                return this.g.playerEquip();
+            case 'g':
+                return this.g.playerGet();
 
             // TEMP
             case '1':

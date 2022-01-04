@@ -176,6 +176,8 @@ export default class Architect {
                         y === 0 ||
                         y === m.height - 1
                     ) {
+                        if (debugCleanup) this.g.t.message('border door', x, y);
+                        cleanup = true;
                         m.set(x, y, Tile.Wall);
                         continue;
                     }

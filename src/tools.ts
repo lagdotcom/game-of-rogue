@@ -20,7 +20,7 @@ export function oneOf<T>(rng: RNG, list: T[]) {
 }
 
 export function any<T>(list: T[], fn: (item: T) => boolean) {
-    for (let i = 0; i < list.length; i++) if (fn(list[i])) return true;
+    for (const item of list) if (fn(item)) return true;
 
     return false;
 }

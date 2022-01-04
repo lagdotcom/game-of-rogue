@@ -42,7 +42,7 @@ export const Sweep: Skill = {
             let facing = from;
             const sweep = getSweepDir(a.facing, dir);
             const weaponName = 'weapon';
-            a.g.log.info('%an sweep%as %ar %b#!', a, weaponName);
+            a.g.log.info('%an sweep%as %ar %bn!', a, weaponName);
 
             while (facing !== dir) {
                 facing += sweep;

@@ -1,6 +1,7 @@
 import { Actor } from './Actor';
 import Architect from './Architect';
 import { initClasses, Monk, Ninja, Samurai } from './classes';
+import { colourItems } from './colours';
 import { attack } from './combat';
 import { Display } from './Display';
 import Enemy from './Enemy';
@@ -17,10 +18,10 @@ import Prompt from './Prompt';
 import RNG, { tychei } from './RNG';
 import { swapPositionWithClone } from './sk/Clone';
 import { Skill } from './Skill';
-import { oneOf } from './tools';
+import { niceListJoin, oneOf } from './tools';
 import Trace from './Trace';
 import { Traceline } from './Traceline';
-import { AIState, Dir, Tile, Token, XY } from './types';
+import { AIState, Dir, ItemType, Tile, Token, XY } from './types';
 import UIElement from './UIElement';
 
 interface TileColour {
@@ -254,6 +255,88 @@ export default class Game {
             return this.log.error('Your balance is off.');
 
         sk.fn(this.player);
+    }
+
+    playerGet(): true {
+        const p = this.player;
+        let hitLimit = false;
+        const got: string[] = [];
+        const items = this.f.items.filter((i) => i.pos === p.pos);
+        if (!items.length) {
+            this.log.info("There's nothing here!");
+            return true;
+        }
+
+        for (const item of items) {
+            if (p.carriedWeight + item.totalWeight > p.maxCarriedWeight) {
+                hitLimit = true;
+                continue;
+            }
+
+            p.get(item);
+            this.f.removeItem(item);
+            got.push(item.name({ article: true }));
+        }
+
+        if (got.length) {
+            this.log.coloured(
+                colourItems,
+                'You pick up %an.',
+                niceListJoin(got),
+            );
+            p.spend(1);
+        }
+        if (hitLimit)
+            this.log.coloured(colourItems, "You can't carry any more.");
+
+        return true;
+    }
+
+    playerEquip(): true {
+        const p = this.player;
+        const choices = p.inventory.filter(
+            (i) => i.type === ItemType.Weapon || i.type === ItemType.Armour,
+        );
+
+        if (!choices.length) {
+            this.log.info('You have no equippable items!');
+            return true;
+        }
+
+        this.input.getChoice(
+            'Which item?',
+            choices,
+            (i) => i.name(),
+            (item) => {
+                if (p.equip(item)) p.spend(1);
+            },
+        );
+        return true;
+    }
+
+    playerDrop(): true {
+        const p = this.player;
+        if (!p.inventory.length) {
+            this.log.info('You have no items!');
+            return true;
+        }
+
+        this.input.getChoice(
+            'Which item?',
+            p.inventory,
+            (i) => i.name(),
+            (item) => {
+                p.inventory = p.inventory.filter((i) => i !== item);
+                item.pos = p.pos;
+                this.f.items.push(item);
+                this.log.coloured(
+                    colourItems,
+                    'You drop %an.',
+                    item.name({ article: true }),
+                );
+            },
+        );
+        return true;
     }
 
     trace(
