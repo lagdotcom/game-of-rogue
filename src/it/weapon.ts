@@ -1,58 +1,37 @@
 import Game from '../Game';
 import { WeaponTemplate } from '../Item';
-import { rnd } from '../tools';
-import { ItemTraits, ItemType } from '../types';
+import { RequireSome, rnd } from '../tools';
+import { ItemType } from '../types';
 
 function w({
     article = 'a',
-    name,
+    type = ItemType.Weapon,
     rarity = 1,
     traits = {},
     weight = 0,
-    hands,
     offhand = false,
-    power,
     moveTimer = 1,
     thrown = false,
     stacked = false,
-    getStackAmount,
     ammo = false,
+    hands = ammo ? 0 : 1,
     missile = false,
-    firedBy,
-}: {
-    article?: string;
-    name: string;
-    rarity?: number;
-    traits?: ItemTraits;
-    weight?: number;
-    hands?: number;
-    offhand?: boolean;
-    power: number;
-    moveTimer?: number;
-    thrown?: boolean;
-    stacked?: boolean;
-    getStackAmount?: (g: Game) => number;
-    ammo?: boolean;
-    missile?: boolean;
-    firedBy?: ItemTraits;
-}): WeaponTemplate {
+    ...etc
+}: RequireSome<WeaponTemplate, 'name'>): WeaponTemplate {
     return {
-        name,
         article,
-        type: ItemType.Weapon,
+        type,
         weight,
         traits,
         rarity,
         stacked,
-        getStackAmount: getStackAmount,
-        hands: hands || (ammo ? 0 : 1),
+        hands,
         offhand,
-        power,
         moveTimer,
         thrown,
         ammo,
-        firedBy,
         missile,
+        ...etc,
     };
 }
 
@@ -77,6 +56,7 @@ export const sai = w({
 
 export const shuriken = w({
     name: 'shuriken',
+    char: '*',
     power: 1,
     moveTimer: 0.5,
     offhand: true,

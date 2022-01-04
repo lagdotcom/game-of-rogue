@@ -1,36 +1,22 @@
 import { ArmourTemplate } from '../Item';
-import { ItemSlot, ItemTraits, ItemType } from '../types';
+import { RequireSome } from '../tools';
+import { ItemSlot, ItemType } from '../types';
 
 function a({
     article = 'a',
-    name,
     rarity = 1,
-    slot,
     traits = {},
-    armour,
-    sightFov,
     weight = 0,
-}: {
-    article?: string;
-    name: string;
-    rarity?: number;
-    slot: ItemSlot;
-    traits?: ItemTraits;
-    armour: number;
-    sightFov?: number;
-    weight?: number;
-}): ArmourTemplate {
+    ...etc
+}: RequireSome<ArmourTemplate, 'name' | 'slot'>): ArmourTemplate {
     return {
-        name,
         article,
         type: ItemType.Armour,
-        slot,
-        armour,
-        sightFov,
         weight,
         traits,
         rarity,
         stacked: false,
+        ...etc,
     };
 }
 

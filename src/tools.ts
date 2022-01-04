@@ -2,6 +2,8 @@ import Game from './Game';
 import RNG from './RNG';
 import { Dir, Tile, XY } from './types';
 
+export type RequireSome<T, U extends keyof T> = Pick<T, U> & Partial<T>;
+
 export function isDefined<T>(x?: T): x is T {
     return typeof x !== 'undefined';
 }
