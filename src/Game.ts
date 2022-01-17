@@ -61,7 +61,7 @@ export default class Game {
         this.seed();
         this.draw = this.draw.bind(this);
 
-        this.display = new Display(parent, 100, 40, 12, 16, font);
+        this.display = new Display(parent, 90, 40, 14, 18, font);
         this.display.str(0, 0, 'setting up...');
 
         document.fonts.load(font).then(() => {
@@ -178,11 +178,14 @@ export default class Game {
         const enemy = this.f.enemyAt(p);
         const item = this.f.itemAt(p);
         let tok: Token;
+        let dir: Dir | undefined;
 
         if (this.player.pos === p) {
             tok = this.player;
+            dir = this.player.facing;
         } else if (enemy) {
             tok = enemy;
+            dir = enemy.facing;
 
             if (enemy.aiState === AIState.Angry) {
                 if (enemy.target === this.player) cell.border('red');
@@ -198,15 +201,17 @@ export default class Game {
             tok = { ...colours[char], char };
         }
 
-        cell.set(tok);
+        cell.set(tok, dir);
     }
 
     drawSeenTile(p: XY) {
         const item = this.f.itemAt(p);
         const tok: Token = { char: '?', fg: '#222', bg: 'black' };
+        let dir: Dir | undefined;
 
         if (this.player.pos === p) {
             tok.char = this.player.char;
+            dir = this.player.facing;
         } else if (item) {
             tok.char = item.token.char;
             tok.fg = '#444';
@@ -214,7 +219,7 @@ export default class Game {
             tok.char = this.f.map.get(p.x, p.y);
         }
 
-        this.display.at(p.x, p.y).set(tok);
+        this.display.at(p.x, p.y).set(tok, dir);
     }
 
     blockers(p: XY) {
